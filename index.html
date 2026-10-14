@@ -507,7 +507,8 @@ function assetList(){const L=['nature','nature_autumn','nature_summer','house','
  for(const k in BFR)L.push('b_'+k,'bf_'+k);
  for(const k of ['Arrow','Fireball','IceSpike','PlantSpike','Shuriken','SpriteSheetRock','ball_red','ball_purple','ball_green','EnergyBall'])L.push('p_'+k);
  return L;}
-function loadImg(k){return new Promise(res=>{const im=new Image();im.onload=()=>{IMG[k]=im;res();};im.onerror=()=>{res();};im.src=(window.IMGDATA&&IMGDATA[k])||('assets/'+k+'.png');});}
+const asrc=k=>(window.IMGDATA&&IMGDATA[k])||('assets/'+k+'.png');
+function loadImg(k){return new Promise(res=>{const im=new Image();im.onload=()=>{IMG[k]=im;res();};im.onerror=()=>{res();};im.src=asrc(k);});}
 async function loadAssets(onp){const L=assetList();let n=0;const tot=L.length+1;
  const sndP=loadSounds().then(()=>onp(++n/tot));
  await Promise.all(L.map(k=>loadImg(k).then(()=>onp(++n/tot))));await sndP;buildDerived();}
@@ -551,7 +552,7 @@ function drawChar(key,wx,wy,dir,face,walk,moving,o={}){const im=IMG['c_'+key];if
  let row=0;if(o.attack&&rows>4)row=4;else if(moving)row=rows>=4?Math.floor(walk/1.55)%4:Math.floor(walk/2.2)%2;
  let c2=col;if(o.pose&&rows>o.pose[1]){c2=o.pose[0];row=o.pose[1];}
  const ax=P2(wx),ay=P2(wy);if(!o.noShadow)shadowAt(ax,ay);if(o.alpha!=null)bx.globalAlpha=o.alpha;bx.drawImage(o.flash?DER['Wc_'+key]:im,c2*16,row*16,16,16,ax-8,ay-15,16,16);bx.globalAlpha=1;}
-function faceSrc(who){const k=CAST[who];return k?'assets/f_'+k+'.png':null;}
+function faceSrc(who){const k=CAST[who];return k?asrc('f_'+k):null;}
 const OVL=[];
 function label(ax,ay,t,o={}){OVL.push({x:ax,y:ay,t,c:o.c||'#fff6dc',s:o.s||13,w:o.w||600,a:o.a==null?1:o.a,bg:o.bg});}
 function drawOverlay(g){g.textAlign='center';g.textBaseline='alphabetic';for(const l of OVL){const x=(l.x-CX)*PX,y=(l.y-CY)*PX;g.globalAlpha=l.a;g.font=`${l.w} ${l.s}px 'Pixelify Sans',sans-serif`;
@@ -1124,7 +1125,7 @@ function spawnEnemy(type,x,y,o={}){const D=EN[type],m=(o.small?.35:1)*(o.elite?3
  R.en.push({type,x,y,r:D.r*(o.small?.7:1)*(o.elite?1.35:1),hp:D.hp*R.hpMul*m,maxHp:D.hp*R.hpMul*m,spd:D.spd*(o.small?1.3:1)*(R.mod==='prisa'?1.35:1),dmg:D.dmg*R.dmgMul*(o.elite?1.4:1),cd:rnd(.6,1.8)+(D.fire||0)*.3,t:rnd(0,9),seed:rnd(0,6),s:0,st:0,spawn:o.quick?.15:.6,small:o.small,elite:o.elite,face:1,flash:0,wx:x,wy:y});}
 function spawnBoss(key,mult,guardian){const B=BOSS[key],spr=R.abyss?pick(Object.keys(ABN)):BSPR[key],F=BFR[spr];
  const b={type:'boss',key,spr,boss:1,x:180,y:arena().y0+130,r:clamp(Math.round(F[0]*.5),22,38),hp:B.hp*mult,maxHp:B.hp*mult,spd:B.spd,pat:'idle',pi:0,s:0,st:1.4,k:0,ang:0,alpha:1,phase:1,t:0,flash:0,dmg:12*R.dmgMul,spawn:.8,face:1,pats:R.abyss?shuffle([...B.pats,pick(B.stat?['ring','spiral','summon']:['charge','teleport','meteor','ring'])]):B.pats};
- R.boss=b;R.en.push(b);R.bossName=(guardian?'Guardián · ':'')+(R.abyss?ABN[spr]:B.n)+(R.abyss?` · piso ${R.floor}`:'');$('#rBossImg').src='assets/bf_'+spr+'.png';}
+ R.boss=b;R.en.push(b);R.bossName=(guardian?'Guardián · ':'')+(R.abyss?ABN[spr]:B.n)+(R.abyss?` · piso ${R.floor}`:'');$('#rBossImg').src=asrc('bf_'+spr);}
 function bound(o){const A=arena();o.x=clamp(o.x,A.x0+o.r,A.x1-o.r);o.y=clamp(o.y,A.y0+o.r,A.y1-o.r);}
 function pushOut(o,r){pushOutRects(o,r,R.obs);}
 function moveTo(o,tx,ty,step){const a=Math.atan2(ty-o.y,tx-o.x);o.x+=Math.cos(a)*step;o.y+=Math.sin(a)*step;if(Math.abs(Math.cos(a))>.2)o.face=Math.cos(a)<0?-1:1;}

@@ -286,10 +286,10 @@ const ITEMS={
  huevo:{n:'Huevo',p:30,c:'#f5ecd8',k:'mat'},miel:{n:'Miel',p:60,c:'#f2b33d',k:'mat'},
  asta:{n:'Púa de Espino',p:0,c:'#b8e07a',k:'key'},nucleo:{n:'Núcleo de forja',p:0,c:'#ff9a4a',k:'key'},perla:{n:'Perla de lodo',p:0,c:'#8fe0d0',k:'key'},lagrima:{n:'Lágrima de Eira',p:0,c:'#e6e1ea',k:'key'},corazon:{n:'Corazón purificado',p:0,c:'#ff6f91',k:'key'},
  ramo:{n:'Ramo silvestre',p:0,c:'#ff9fc0',k:'gift'},colgante:{n:'Colgante de raíz',p:0,c:'#93d36b',k:'gift'},
- aspersor:{n:'Aspersor',p:0,c:'#9fb3c4',k:'place',d:'Riega las 4 casillas vecinas cada mañana.'},
- aspersor2:{n:'Aspersor de calidad',p:0,c:'#e9b949',k:'place',d:'Riega las 8 casillas de alrededor.'},
- espanta:{n:'Espantapájaros',p:0,c:'#d9b46a',k:'place',d:'Protege de los cuervos en 4 casillas a la redonda.'},
- golem:{n:'Gólem jardinero',p:0,c:'#8a9a88',k:'place',d:'Cosecha y replanta solo en un radio de 2 casillas.'},
+ aspersor:{n:'Aspersor',p:0,c:'#9fb3c4',k:'place',d:'Va en una esquina entre casillas y riega cada mañana las 4 que la rodean.'},
+ aspersor2:{n:'Aspersor de calidad',p:0,c:'#e9b949',k:'place',d:'Va en una esquina entre casillas y riega cada mañana las 12 de alrededor.'},
+ espanta:{n:'Espantapájaros',p:0,c:'#d9b46a',k:'place',d:'Va en una esquina y protege de los cuervos 4 casillas en cada dirección.'},
+ golem:{n:'Gólem jardinero',p:0,c:'#8a9a88',k:'place',d:'Va en una esquina y cosecha y replanta solo las 24 casillas de alrededor.'},
  sopa:{n:'Sopa de nabo',p:60,c:'#e9d9a0',k:'food',e:40},palomitas:{n:'Palomitas',p:110,c:'#fff1b0',k:'food',e:60},tortilla:{n:'Tortilla',p:150,c:'#f2c94c',k:'food',e:90},
  guiso:{n:'Guiso de patata',p:200,c:'#b5763e',k:'dish',buff:'hp'},tarta:{n:'Tarta de fresa',p:260,c:'#ff8fa3',k:'dish',buff:'dmg'},ensalada:{n:'Ensalada de huerta',p:200,c:'#8fd16a',k:'dish',buff:'rate'},asada:{n:'Calabaza asada',p:420,c:'#f08a2c',k:'dish',buff:'perk'},caldo:{n:'Caldo de escarcha',p:420,c:'#bfe8ff',k:'dish',buff:'all'},
 };
@@ -456,7 +456,7 @@ const TS=32, FX0=7, FY0=11, HOUSE={x:12*TS,y:8*TS}, PORTAL={x:5.5*TS,y:2.9*TS};
 const P={map:'farm',x:12*TS,y:8.7*TS,dx:0,dy:1,face:1,walk:0,moving:false,act:0};
 const cam={x:0,y:0};
 function freshState(name){
- const s={v:2,name:name||'Millán',day:1,gold:500,energy:100,maxE:100,inv:{},farm:{n:6,tiles:[],house:0,deco:{},wt:[]},ch:0,stage:'prep',flags:{},npc:{},partner:null,married:false,
+ const s={v:2,name:name||'Millán',day:1,gold:500,energy:100,maxE:100,inv:{},farm:{n:6,tiles:[],house:0,deco:{},wt:[],vo:[]},ch:0,stage:'prep',flags:{},npc:{},partner:null,married:false,
   weapons:[{t:'honda',lvl:0,rar:0,aff:[]}],eq:0,wtypes:['honda'],stats:{harvest:0,seasonH:0,kills:0},bossDone:{},abyss:{best:0},esencia:0,talents:{},buff:null,rain:false,dailyDay:0,pos:{map:'farm',x:12*TS,y:8.7*TS}};
  for(const k in NPCS) s.npc[k]={p:0,t:0,g:0};
  for(let i=0;i<100;i++){const r=hash(i*31+7);s.farm.tiles.push({s:'grass',d:r<.38?(r<.12?'piedra':r<.22?'tronco':'hierba'):null,c:null,o:null,w:false});}
@@ -607,12 +607,12 @@ function objective(){
  if(S.stage==='prep'){const ok=c.prep(),prog=c.take?' ('+Object.keys(c.take).map(k=>`${ITEMS[k].n.toLowerCase()} ${Math.min(inv(k),c.take[k])}/${c.take[k]}`).join(', ')+')':'';return{t:roman,d:ok?`${c.prepTxt}. ¡Lo tienes! Ve a hablar con ${NPCS[c.who].n}.`:c.prepTxt+prog+'.',ready:ok};}
  const r=REGIONS.find(r=>r.ch===S.ch);return{t:roman,d:`Derrota a ${BOSS[r.boss].n} en ${REG[r.id].n}. Entra por la grieta al norte de tu granja.`};}
 function availableSeeds(){const se=season(),gh=S.farm.deco.invernadero;return Object.keys(CROPS).filter(k=>(!CROPS[k].req||CROPS[k].req())&&(gh||CROPS[k].se.includes(se)));}
-function renderHotbar(){if(!S)return;const seeds=availableSeeds();if(MODE.type==='seed'&&!seeds.includes(MODE.id))MODE={type:'auto'};if(MODE.type==='place'&&!inv(MODE.id))MODE={type:'auto'};
+function renderHotbar(){if(!S)return;const seeds=availableSeeds();if(MODE.type==='seed'&&!seeds.includes(MODE.id))MODE={type:'auto'};if(MODE.type==='place'&&!inv(MODE.id)&&!placedN(MODE.id))MODE={type:'auto'};
  let h=`<button class="seed ${MODE.type==='auto'?'on':''}" data-a="mode" data-v="auto">${ic('t_hoe')}<span>Manos<small>sin plantar</small></span></button>`;
  for(const k of seeds)h+=`<button class="seed ${MODE.type==='seed'&&MODE.id===k?'on':''}" data-a="mode" data-v="seed:${k}">${ic(k)}<span>${CROPS[k].n}<small>${CROPS[k].seed} oro</small></span></button>`;
- for(const k of ['aspersor','aspersor2','espanta','golem'])if(inv(k))h+=`<button class="seed ${MODE.type==='place'&&MODE.id===k?'on':''}" data-a="mode" data-v="place:${k}">${ic(k)}<span>${ITEMS[k].n}<small>×${inv(k)}</small></span></button>`;
+ for(const k of ['aspersor','aspersor2','espanta','golem'])if(inv(k)||placedN(k))h+=`<button class="seed ${MODE.type==='place'&&MODE.id===k?'on':''}" data-a="mode" data-v="place:${k}">${ic(k)}<span>${ITEMS[k].n}<small>×${inv(k)}</small></span></button>`;
  $('#hotbar').innerHTML=h;}
-ACT.mode=v=>{if(v==='auto')MODE={type:'auto'};else{const[a,b]=v.split(':');MODE={type:a,id:b};if(a==='place')toast('Ponte frente a una casilla libre y pulsa Colocar.');}renderHotbar();};
+ACT.mode=v=>{if(v==='auto')MODE={type:'auto'};else{const[a,b]=v.split(':');MODE={type:a,id:b};if(a==='place')toast('Va en la esquina entre casillas que tienes delante. La zona marcada es la que cubrirá.',3600);}renderHotbar();};
 function refreshAll(){if(!S)return;updHUD();renderHotbar();if(curTab){const sh=$('#sheet'),st=sh.scrollTop;renderSheet(curTab);sh.scrollTop=st;}}
 
 /* Sheets */
@@ -829,7 +829,7 @@ const ECOST={clear:2,till:1,water:1,harvest:0,plant:0,place:0,pickup:0};
 const ALBL={clear:'Limpiar',till:'Labrar',water:'Regar',plant:'Plantar',harvest:'Cosechar',place:'Colocar',pickup:'Recoger'};
 function fieldIdx(wx,wy){const cx=Math.floor(wx/TS)-FX0,cy=Math.floor(wy/TS)-FY0,n=S.farm.n;if(cx<0||cy<0||cx>=n||cy>=n)return -1;return cy*10+cx;}
 function tileAction(t){
- if(MODE.type==='place'){if(t.o)return'pickup';if(!t.c&&!t.d)return'place';return null;}
+ if(MODE.type==='place')return null;
  if(t.d)return'clear';if(t.o)return null;
  if(t.c){if(t.c.age>=CROPS[t.c.id].d)return'harvest';if(!t.w)return'water';return null;}
  if(t.s==='grass')return'till';if(MODE.type==='seed')return'plant';if(!t.w)return'water';return null;}
@@ -858,6 +858,7 @@ function actIcon(a,i){const t=S.farm.tiles[i];switch(a){case 'clear':return t.d=
 function blocked(){return fading||!$('#ov').hidden||!$('#dlg').hidden||!!curTab||!$('#title').hidden;}
 function actPress(){if(scene!=='world'||blocked())return;const t=curTarget;if(!t)return;unlockAudio();
  if(t.kind==='spot'){t.fn();return;}
+ if(t.kind==='vert'){doVert(t);return;}
  if(t.kind==='tile'){stroke={kind:null,seen:new Set()};actHeld=true;tryTile(t.i);}}
 actBtn.addEventListener('pointerdown',e=>{e.preventDefault();actBtn.classList.add('down');actPress();});
 const actUp=()=>{actBtn.classList.remove('down');actHeld=false;stroke=null;};
@@ -881,9 +882,10 @@ function updWorld(dt){
  updNPCs(dt,rects);
  let best=null,bd=1e9;for(const it of interactables()){const d=dist(P.x,P.y,it.x,it.y);if(d<it.r&&d<bd){bd=d;best=it;}}
  if(best)curTarget={kind:'spot',...best};
+ else if(P.map==='farm'&&MODE.type==='place')curTarget=vertTarget();
  else if(P.map==='farm'){const tx=P.x+P.dx*20,ty=P.y-4+P.dy*20,i=fieldIdx(tx,ty);if(i>=0){const a=tileAction(S.farm.tiles[i]);curTarget={kind:'tile',i,a};}else curTarget=null;}
  else curTarget=null;
- if(curTarget){if(curTarget.kind==='spot')setAct(curTarget.label,curTarget.sub||'',true,curTarget.ic);else setAct(curTarget.a?ALBL[curTarget.a]:'·',curTarget.a&&ECOST[curTarget.a]?`-${ECOST[curTarget.a]} energía`:'',!!curTarget.a,curTarget.a?actIcon(curTarget.a,curTarget.i):null);}else setAct('·','',false,null);
+ if(curTarget&&curTarget.kind==='vert')setAct(curTarget.a?ALBL[curTarget.a]:'Colocar',curTarget.a?'':'No te queda ninguno',!!curTarget.a,curTarget.o);else if(curTarget){if(curTarget.kind==='spot')setAct(curTarget.label,curTarget.sub||'',true,curTarget.ic);else setAct(curTarget.a?ALBL[curTarget.a]:'·',curTarget.a&&ECOST[curTarget.a]?`-${ECOST[curTarget.a]} energía`:'',!!curTarget.a,curTarget.a?actIcon(curTarget.a,curTarget.i):null);}else setAct('·','',false,null);
  if(actHeld&&stroke&&curTarget&&curTarget.kind==='tile'&&!blocked())tryTile(curTarget.i);
  if(P.map==='farm'&&!blocked()){const fi=fieldIdx(P.x,P.y-4);if(fi>=0)tryTile(fi,true);}
  updAnim(dt);for(const f of FT){f.life-=dt;f.y+=f.vy*dt;}FT=FT.filter(f=>f.life>0);
@@ -901,13 +903,13 @@ function sleep(){
  const water=(x,y)=>{const n=S.farm.n;if(x<0||y<0||x>=n||y>=n)return;const t=tiles[y*10+x];if(t.s==='soil')t.w=true;};
  if(S.rain){forField(t=>{if(t.s==='soil')t.w=true;});msgs.push({who:'narr',t:'Llueve. El huerto se riega solo.'});}
  else if(S.farm.deco.molino){forField(t=>{if(t.s==='soil')t.w=true;});}
- else{forField((t,i,x,y)=>{if(t.o==='aspersor'){water(x+1,y);water(x-1,y);water(x,y+1);water(x,y-1);}if(t.o==='aspersor2'){for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)water(x+a,y+b);}});
+ else{for(const v of S.farm.vo||[])if(v.o==='aspersor'||v.o==='aspersor2')for(const[x,y] of objTiles(v.o,v.x,v.y))water(x,y);
   let helpers=0;if(S.flags.nilo3)helpers+=S.flags.nilo9?10:4;if(S.married)helpers+=8;
   if(helpers){let k=0;forField(t=>{if(k<helpers&&t.c&&!t.w){t.w=true;k++;}});if(k)msgs.push({who:'narr',t:`${S.married?NPCS[S.partner].n+(S.flags.nilo3?' y Nilo han':' ha'):'Nilo ha'} regado ${k} cultivos antes de que despertaras.`});}}
- let gh=0,gr=0;forField((t,i,x,y)=>{if(t.o!=='golem')return;const n=S.farm.n;for(let a=-2;a<=2;a++)for(let b=-2;b<=2;b++){const X=x+a,Y=y+b;if(X<0||Y<0||X>=n||Y>=n)continue;const u=tiles[Y*10+X];if(!u.c)continue;const C=CROPS[u.c.id];if(u.c.age<C.d)continue;if(C.ess)S.esencia+=C.ess;else addI(u.c.id);gh++;S.stats.harvest++;S.stats.seasonH++;if(C.re)u.c.age=C.d-C.re;else{const id=u.c.id;u.c=null;if(S.gold>=C.seed&&(S.farm.deco.invernadero||C.se.includes(ns))){S.gold-=C.seed;u.c={id,age:0};gr++;}}}});
+ let gh=0,gr=0;const gt=new Set();for(const v of S.farm.vo||[])if(v.o==='golem')for(const[X,Y] of objTiles('golem',v.x,v.y))gt.add(Y*10+X);for(const gi of gt){const u=tiles[gi];if(!u.c)continue;const C=CROPS[u.c.id];if(u.c.age<C.d)continue;if(C.ess)S.esencia+=C.ess;else addI(u.c.id);gh++;S.stats.harvest++;S.stats.seasonH++;if(C.re)u.c.age=C.d-C.re;else{const id=u.c.id;u.c=null;if(S.gold>=C.seed&&(S.farm.deco.invernadero||C.se.includes(ns))){S.gold-=C.seed;u.c={id,age:0};gr++;}}}
  if(gh)msgs.push({who:'narr',t:`Los gólems han cosechado ${gh} cultivos${gr?` y replantado ${gr}`:''}.`});
- const scare=[];forField((t,i,x,y)=>{if(t.o==='espanta')scare.push([x,y]);});let eaten=0;
- forField((t,i,x,y)=>{if(!t.c||eaten>=2)return;if(scare.some(([a,b])=>Math.max(Math.abs(a-x),Math.abs(b-y))<=4))return;if(Math.random()<.05){t.c=null;eaten++;}});
+ const scare=new Set();for(const v of S.farm.vo||[])if(v.o==='espanta')for(const[x,y] of objTiles('espanta',v.x,v.y))scare.add(y*10+x);let eaten=0;
+ forField((t,i,x,y)=>{if(!t.c||eaten>=2)return;if(scare.has(i))return;if(Math.random()<.05){t.c=null;eaten++;}});
  if(eaten)msgs.push({who:'narr',t:`Los cuervos se han comido ${eaten} cultivo${eaten>1?'s':''}. Un espantapájaros lo evitaría.`});
  if(S.farm.deco.colmena)addI('miel');if(S.farm.deco.gallinero)addI('huevo',2);
  if(S.farm.deco.colmena||S.farm.deco.gallinero)msgs.push({who:'narr',t:`Recoges ${[S.farm.deco.colmena?'1 miel':'',S.farm.deco.gallinero?'2 huevos':''].filter(Boolean).join(' y ')}.`});
@@ -921,6 +923,47 @@ function festival(ps){const target=25+S.ch*10+(year()-1)*25-(ps===3?10:0);const 
  if(won){const prize=200*(S.ch+1);S.gold+=prize;addP('vera',18);out.push({who:'vera',t:pick(['¡No puede ser! ...La próxima es mía. Disfruta tu premio mientras puedas.','Has ganado. Lo apunto. Lo apunto en la lista de venganzas.'])},{who:'narr',t:`Premio de la feria: ${prize} de oro.`});}
  else{addP('vera',6);out.push({who:'vera',t:pick(['Como era de esperar. Más suerte la próxima estación.','¿Eso era todo? Vamos, que me aburro ganando.'])});}
  return out;}
+
+/* ================= FIELD ARTEFACTS ON TILE CORNERS (sprinklers, scarecrows, golems) ================= */
+/* vertex (vx,vy) is the corner shared by tiles (vx-1..vx, vy-1..vy); dx,dy = tile centre minus vertex, in tiles */
+const OBJA={aspersor:{c:'#5fb8f5',f:(dx,dy)=>Math.abs(dx)<1&&Math.abs(dy)<1},
+ aspersor2:{c:'#5fb8f5',f:(dx,dy)=>dx*dx+dy*dy<2.6},
+ espanta:{c:'#ffc94d',f:(dx,dy)=>Math.abs(dx)<4&&Math.abs(dy)<4},
+ golem:{c:'#8fe060',f:(dx,dy)=>dx*dx+dy*dy<6.6}};
+function objTiles(o,vx,vy){const n=S.farm.n,A=OBJA[o],L=[];if(!A)return L;for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(A.f(x+.5-vx,y+.5-vy))L.push([x,y]);return L;}
+const vObj=(vx,vy)=>(S.farm.vo||[]).find(v=>v.x===vx&&v.y===vy);
+const placedN=k=>S?(S.farm.vo||[]).filter(v=>v.o===k).length:0;
+const vertW=(vx,vy)=>({x:(FX0+vx)*TS,y:(FY0+vy)*TS});
+/* the first corner in front of the player (never under the feet) */
+function vertTarget(){const n=S.farm.n,gx=P.x/TS-FX0,gy=(P.y-4)/TS-FY0;
+ const vx=P.dx>0?Math.ceil(gx+.3):P.dx<0?Math.floor(gx-.3):Math.round(gx),vy=P.dy>0?Math.ceil(gy+.38):P.dy<0?Math.floor(gy-.2):Math.round(gy);
+ if(vx<0||vy<0||vx>n||vy>n)return null;const o=vObj(vx,vy);
+ return{kind:'vert',vx,vy,a:o?'pickup':inv(MODE.id)>0?'place':null,o:o?o.o:MODE.id};}
+function doVert(t){if(!t.a)return;if(!S.farm.vo)S.farm.vo=[];const w=vertW(t.vx,t.vy);
+ if(t.a==='place'){if(vObj(t.vx,t.vy)||inv(MODE.id)<=0)return;S.farm.vo.push({x:t.vx,y:t.vy,o:MODE.id});addI(MODE.id,-1);act('place',w.x,w.y,MODE.id);}
+ else{const i=S.farm.vo.findIndex(v=>v.x===t.vx&&v.y===t.vy);if(i<0)return;const o=S.farm.vo[i].o;S.farm.vo.splice(i,1);act('pickup',w.x,w.y,o);addI(o);}
+ curTarget=null;setTimeout(()=>{refreshAll();save();},0);}
+/* ---- drawing (art px) ---- */
+function drawVertObj(o,X,Y,still){if(o==='aspersor'||o==='aspersor2'){drawSprinkler(X-8,Y-12,o==='aspersor2');
+  if(!still&&((T*1.2+X*.07)%3)<.7)for(let i=0;i<8;i++){const a=i/8*6.28+T;rect('#bfe8ff',X+Math.cos(a)*9,Y-4+Math.sin(a)*5,1,1);}return;}
+ if(o==='espanta'){sprite('scarecrow',X,Y+3);return;}
+ if(o==='golem')icon('golem',X,Y+4+(still?0:Math.round(Math.sin(T*2+X))));}
+function areaFill(L,c,al){const fx=FX0*16,fy=FY0*16;bx.globalAlpha=al;bx.fillStyle=c;for(const[x,y] of L)bx.fillRect(fx+x*16,fy+y*16,16,16);bx.globalAlpha=1;}
+function areaEdge(L,c,al){const fx=FX0*16,fy=FY0*16,S_=new Set(L.map(([x,y])=>y*16+x)),has=(x,y)=>S_.has(y*16+x),dash=Math.floor(T*6)%2;bx.globalAlpha=al;
+ for(const[x,y] of L){const X=fx+x*16,Y=fy+y*16;
+  if(!has(x,y-1))for(let i=0;i<16;i+=2)rect(c,X+i+((i/2+dash)%2),Y,1,1);if(!has(x,y+1))for(let i=0;i<16;i+=2)rect(c,X+i+((i/2+dash)%2),Y+15,1,1);
+  if(!has(x-1,y))for(let i=0;i<16;i+=2)rect(c,X,Y+i+((i/2+dash)%2),1,1);if(!has(x+1,y))for(let i=0;i<16;i+=2)rect(c,X+15,Y+i+((i/2+dash)%2),1,1);}
+ bx.globalAlpha=1;}
+/* under the crops: the zone it will cover (plus the zones already covered by the same kind) */
+function drawVertZone(t){const A=OBJA[t.o];if(!A)return;
+ for(const v of S.farm.vo||[])if(v.o===t.o&&!(v.x===t.vx&&v.y===t.vy))areaFill(objTiles(v.o,v.x,v.y),A.c,.13);
+ areaFill(objTiles(t.o,t.vx,t.vy),A.c,.36+.06*Math.sin(T*4));}
+/* on top: zone outline, ghost of the object and the corner marker */
+function drawVertMark(t){const A=OBJA[t.o];if(!A)return;const L=objTiles(t.o,t.vx,t.vy);areaEdge(L,'#ffffff',.85);
+ const X=(FX0+t.vx)*16,Y=(FY0+t.vy)*16;if(t.a==='place'){bx.globalAlpha=.5;drawVertObj(t.o,X,Y,true);bx.globalAlpha=1;}
+ const o=Math.floor(T*3)%2,c=t.a?'#fff3c4':'rgba(255,255,255,.5)',r=5+o;
+ for(const[sx,sy] of [[-1,-1],[1,-1],[-1,1],[1,1]]){const cx=X+sx*r,cy=Y+sy*r;rect('rgba(19,27,27,.6)',cx-(sx<0?0:2)+1,cy+1,3,1);rect('rgba(19,27,27,.6)',cx+1,cy-(sy<0?0:2)+1,1,3);rect(c,cx-(sx<0?0:2),cy,3,1);rect(c,cx,cy-(sy<0?0:2),1,3);}}
+
 
 /* ================= ACTION ANIMATIONS (short, one tool at a time) ================= */
 const ANI={
@@ -1006,8 +1049,6 @@ function cursor(tx,ty,on){const X=tx*16,Y=ty*16,o=Math.floor(T*3)%2,c=on?'#fff3c
 function drawCrop(c,X,Y){const C=CROPS[c.id],ripe=c.age>=C.d,st=ripe?3:c.age/C.d<.25?0:c.age/C.d<.6?1:2;blit(IMG.crops,st*16,CROPI[c.id]*16,16,16,X,Y-4);
  if(ripe&&Math.sin(T*3+X*.3+Y*.7)>.8)rect('#ffffff',X+13,Y-2,1,1);if(ripe&&(C.ess||c.id==='lirio')){bx.globalAlpha=.18+.1*Math.sin(T*4+X);pxDisk(X+8,Y+2,7,c.id==='lirio'?'#fff3a3':'#b28cff');bx.globalAlpha=1;}}
 function drawSprinkler(X,Y,q){const c=q?'#f2c94c':'#a9bccb',d=q?'#9c7420':'#5f7385',k='#131b1b';rect(k,X+3,Y+10,10,5);rect(d,X+4,Y+11,8,3);rect(c,X+4,Y+11,8,1);rect(k,X+6,Y+5,4,6);rect(c,X+7,Y+6,2,5);rect(k,X+4,Y+3,8,3);rect(c,X+5,Y+4,6,1);if(q){rect('#ffe9a8',X+6,Y+4,2,1);rect(k,X+7,Y+1,2,2);}}
-function drawFieldObj(o,X,Y,gx){if(o==='aspersor'||o==='aspersor2'){drawSprinkler(X,Y,o==='aspersor2');if(((T*1.2+gx)%3)<.7)for(let i=0;i<8;i++){const a=i/8*6.28+T;rect('#bfe8ff',X+8+Math.cos(a)*9,Y+8+Math.sin(a)*5,1,1);}return;}
- if(o==='espanta'){sprite('scarecrow',X+8,Y+14);return;}if(o==='golem'){icon('golem',X+8,Y+15+Math.round(Math.sin(T*2+gx)));}}
 function drawDebris(d,X,Y,tx,ty,E){if(d==='piedra'){shadowAt(X+8,Y+14,14);natSpr(h2(tx,ty,3)<.5?'rock_s':'rock_s2',X+8,Y+14);}else if(d==='tronco'){shadowAt(X+8,Y+14,14);natSpr(h2(tx,ty,4)<.5?'log_s':'stump_s',X+8,Y+14);}
  else{const k='bush'+(1+Math.floor(h2(tx,ty,5)*3));if(E.vit<.3&&DER['dead_'+k]){const s=SPR[k];blit(DER['dead_'+k],0,0,s[3],s[4],X+8-Math.floor(s[3]/2),Y+14-s[4]);}else sprite(k,X+8,Y+14);}}
 function drawFence(add){const fx=FX0*16,fy=FY0*16,n=S.farm.n,w=n*16,H=IMG.house,f=SPR.fence_h,v=SPR.fence_v;
@@ -1024,9 +1065,9 @@ function drawWorld(){
   const n=S.farm.n,fx=FX0*16,fy=FY0*16;
   for(let cy=0;cy<n;cy++)for(let cx=0;cx<n;cx++){const i=cy*10+cx,t=S.farm.tiles[i],X=fx+cx*16,Y=fy+cy*16;if(!vis(X,Y,24))continue;
    if(t.d)add((FY0+cy+1)*TS-6,()=>drawDebris(t.d,X,Y,FX0+cx,FY0+cy,E));
-   if(t.o==='aspersor'||t.o==='aspersor2')add((FY0+cy)*TS+2,()=>drawFieldObj(t.o,X,Y,X));
    if(t.c)add((FY0+cy+1)*TS-4,()=>drawCrop(t.c,X,Y));
-   if(t.o==='espanta'||t.o==='golem')add((FY0+cy+1)*TS-2,()=>drawFieldObj(t.o,X,Y,X));}
+   }
+  for(const v of S.farm.vo||[]){const X=fx+v.x*16,Y=fy+v.y*16;if(!vis(X,Y,24))continue;add((FY0+v.y)*TS+(v.o==='espanta'||v.o==='golem'?4:1),()=>drawVertObj(v.o,X,Y));}
   if(S.farm.deco.valla)drawFence(add);else{const v=SPR.fence_v;for(const[a,b] of [[fx-2,fy-2],[fx+n*16-2,fy-2],[fx-2,fy+n*16-2],[fx+n*16-2,fy+n*16-2]])add(b*2+28,()=>blit(IMG.house,v[1],v[2],4,16,a,b-10));}
   if(S.farm.deco.invernadero)add(1e8,()=>{const w=n*16;bx.fillStyle='rgba(200,236,255,.10)';bx.fillRect(fx-4,fy-4,w+8,w+8);rect('rgba(232,246,255,.85)',fx-4,fy-4,w+8,1);rect('rgba(232,246,255,.85)',fx-4,fy+w+3,w+8,1);rect('rgba(232,246,255,.85)',fx-4,fy-4,1,w+8);rect('rgba(232,246,255,.85)',fx+w+3,fy-4,1,w+8);for(let i=1;i<n;i+=3)rect('rgba(232,246,255,.25)',fx+i*16,fy-4,1,w+8);const k=Math.floor((T*.12%1)*w);bx.fillStyle='rgba(255,255,255,.10)';for(let y=0;y<w;y+=2)bx.fillRect(fx+k-y*.4,fy+y,8,2);});
   add(HOUSE.y,()=>{const hs=HSPR[S.farm.house];sprite(hs,P2(HOUSE.x),P2(HOUSE.y));});
@@ -1064,7 +1105,9 @@ function drawWorld(){
  D.sort((a,b)=>a.y-b.y);
  const pre=D.filter(d=>d.y<-1e7),rest=D.filter(d=>d.y>=-1e7);for(const d of pre)d.fn();
  if(curTarget&&curTarget.kind==='tile'){const c=tileCenter(curTarget.i);cursor(Math.floor(c.x/TS),Math.floor(c.y/TS),!!curTarget.a);}
+ if(curTarget&&curTarget.kind==='vert')drawVertZone(curTarget);
  for(const d of rest)d.fn();
+ if(curTarget&&curTarget.kind==='vert')drawVertMark(curTarget);
  drawPops();
  if(curTarget&&curTarget.kind==='spot'&&!curTarget.npc)arrow(P2(curTarget.x),P2(curTarget.y)-26);
  if(E.vit>=.6&&!S.rain&&P.map==='farm'&&E.se!==3)for(let i=0;i<4;i++){const bxp=CX+((hash(i*9)*BW+T*7*(i%2?1:-1))%BW+BW)%BW,byp=CY+40+hash(i*7)*(BH-100)+Math.sin(T*2+i)*10,fl=Math.sin(T*14+i)>0,c=['#ffe066','#ff8fb0','#9fd8ff','#ffffff'][i];rect(c,bxp-(fl?2:1),byp,fl?2:1,2);rect(c,bxp+1,byp,fl?2:1,2);rect('#3a2621',bxp,byp,1,2);}
@@ -1085,6 +1128,34 @@ function drawWeather(){const se=season(),M=WORLD[P.map],N=S.rain?70:se===3?45:se
   if(S.rain)blit(IMG.w_rain,(i%3)*8,0,8,8,px,py);else if(se===3)blit(IMG.w_snow,(i%7)*8,0,8,8,px,py);else{const f=Math.floor(T*6+i)%6;blit(se===2?(DER.leafAut||IMG.w_leaf):IMG.w_petal,f*12,0,12,7,px,py);}}
  if(S.rain){bx.fillStyle='rgba(30,50,75,.16)';bx.fillRect(0,0,BW,BH);}
  if(M.id==='farm'&&vitality()<.2){bx.fillStyle='rgba(55,45,75,.12)';bx.fillRect(0,0,BW,BH);}}
+
+
+/* ================= ENEMY PATHING (walk around obstacles instead of pushing into them) ================= */
+/* Visibility graph over the corners of the obstacles, inflated by the enemy radius. Rebuilt per room and radius. */
+function navData(r){const k=Math.round(r);if(!R.nav||R.nav.o!==R.obs)R.nav={o:R.obs};if(R.nav[k])return R.nav[k];
+ const A=arena(),pad=k-1,m=k+5,gap=2*k+3,rects=R.obs.map(b=>{let x0=b.x,y0=b.y,x1=b.x+b.w,y1=b.y+b.h;
+  if(x0-A.x0<gap)x0=A.x0-20;if(A.x1-x1<gap)x1=A.x1+20;if(y0-A.y0<gap)y0=A.y0-20;if(A.y1-y1<gap)y1=A.y1+20;return{x:x0,y:y0,w:x1-x0,h:y1-y0};});
+ const nodes=[];for(const b of rects)for(const[x,y] of [[b.x-m,b.y-m],[b.x+b.w+m,b.y-m],[b.x-m,b.y+b.h+m],[b.x+b.w+m,b.y+b.h+m]]){
+  const cx=clamp(x,A.x0+k,A.x1-k),cy=clamp(y,A.y0+k,A.y1-k),q=pad+.5;if(rects.some(o=>cx>o.x-q&&cx<o.x+o.w+q&&cy>o.y-q&&cy<o.y+o.h+q))continue;nodes.push([cx,cy]);}
+ return R.nav[k]={pad,rects,nodes};}
+const navBlocked=(x0,y0,x1,y1,N,pad=N.pad)=>N.rects.some(b=>segHitsRect(x0,y0,x1,y1,b,pad));
+function navPath(sx,sy,gx,gy,N){const n=N.nodes.length,S=n,G=n+1,P=[...N.nodes,[sx,sy],[gx,gy]],D=new Array(n+2).fill(1e9),prev=new Array(n+2).fill(-1),done=new Array(n+2).fill(false);D[S]=0;
+ for(;;){let u=-1,bd=1e9;for(let i=0;i<n+2;i++)if(!done[i]&&D[i]<bd){bd=D[i];u=i;}if(u<0||u===G)break;done[u]=true;
+  for(let v=0;v<n+2;v++){if(done[v]||v===S)continue;const c=D[u]+Math.hypot(P[v][0]-P[u][0],P[v][1]-P[u][1]);if(c>=D[v])continue;if(navBlocked(P[u][0],P[u][1],P[v][0],P[v][1],N,u===S?N.pad*.6:N.pad))continue;D[v]=c;prev[v]=u;}}
+ if(D[G]>=1e9)return null;let v=G;while(prev[v]!==S)v=prev[v];return P[v];}
+/* next point to walk to on the way to (tx,ty) */
+function navTarget(e,tx,ty){if(!R.obs.length)return[tx,ty];const N=navData(e.r);
+ const sp=N.pad*.6;if(N.rects.some(b=>e.x>b.x-sp&&e.x<b.x+b.w+sp&&e.y>b.y-sp&&e.y<b.y+b.h+sp))return[tx,ty];
+ const g={x:tx,y:ty};pushOutRects(g,N.pad+1.5,N.rects);
+ if(!navBlocked(e.x,e.y,g.x,g.y,N,sp)){e.wp=null;return[tx,ty];}
+ if(!e.wp||R.t>e.wpT||dist(e.x,e.y,e.wp[0],e.wp[1])<5){e.wp=navPath(e.x,e.y,g.x,g.y,N)||[tx,ty];e.wpT=R.t+.3;}
+ return e.wp;}
+function steer(e,tx,ty,step){const D=EN[e.type];if(D&&D.fly){moveTo(e,tx,ty,step);return;}
+ const w=navTarget(e,tx,ty);if(w[0]===tx&&w[1]===ty){moveTo(e,tx,ty,step);return;}
+ moveTo(e,w[0],w[1],Math.min(step,dist(e.x,e.y,w[0],w[1])+.5));}
+/* direction for wobbly movers that do not fly */
+function steerAng(e,tx,ty){const D=EN[e.type];if(D&&D.fly)return Math.atan2(ty-e.y,tx-e.x);const w=navTarget(e,tx,ty);return Math.atan2(w[1]-e.y,w[0]-e.x);}
+const chargeClear=e=>!R.obs.length||!R.obs.some(b=>segHitsRect(e.x,e.y,R.p.x,R.p.y,b,e.r));
 
 /* ================= RUN ================= */
 function arena(){return{x0:12,x1:348,y0:SAFE_T+(R&&R.bossRoom?122:96)*K,y1:LH-SAFE_B-16*K};}
@@ -1168,14 +1239,14 @@ function updEnemy(e,dt){
  if(e.spawn>0){e.spawn-=dt;return;}const D=EN[e.type],p=R.p,spd=e.spd*(e.slowT>0?.5:1);e.t+=dt;e.cd-=dt;e.flash-=dt;if(e.slowT>0)e.slowT-=dt;
  for(const k of ['poison','burn'])if(e[k]&&e[k].t>0){e[k].t-=dt;damage(e,e[k].dps*dt,false,true);if(e.dead)return;}
  switch(D.ai){
-  case 'chase':case 'splitter':moveTo(e,p.x,p.y,spd*dt);break;
-  case 'erratic':{const a=aim(e,p)+Math.sin(e.t*4+e.seed)*1.1;e.x+=Math.cos(a)*spd*dt;e.y+=Math.sin(a)*spd*dt;e.face=Math.cos(a)<0?-1:1;break;}
+  case 'chase':case 'splitter':steer(e,p.x,p.y,spd*dt);break;
+  case 'erratic':{const a=steerAng(e,p.x,p.y)+Math.sin(e.t*4+e.seed)*1.1;e.x+=Math.cos(a)*spd*dt;e.y+=Math.sin(a)*spd*dt;e.face=Math.cos(a)<0?-1:1;break;}
   case 'turret':if(e.cd<=0){e.cd=D.fire;bullet(e.x,e.y-4,aim(e,p),150,e.dmg);}e.face=p.x<e.x?-1:1;break;
-  case 'charger':if(e.s===0){moveTo(e,p.x,p.y,spd*.5*dt);if(e.cd<=0&&dist(e.x,e.y,p.x,p.y)<230){e.s=1;e.st=.6;e.ang=aim(e,p);}}
+  case 'charger':if(e.s===0){steer(e,p.x,p.y,spd*.5*dt);if(e.cd<=0&&dist(e.x,e.y,p.x,p.y)<230&&chargeClear(e)){e.s=1;e.st=.6;e.ang=aim(e,p);}}
    else if(e.s===1){e.st-=dt;if(e.st<=0){e.s=2;e.st=.5;}}
    else{e.x+=Math.cos(e.ang)*300*dt;e.y+=Math.sin(e.ang)*300*dt;e.face=Math.cos(e.ang)<0?-1:1;e.st-=dt;const A=arena();if(e.st<=0||e.x<A.x0+e.r||e.x>A.x1-e.r||e.y<A.y0+e.r||e.y>A.y1-e.r||inObsR(e.x,e.y,e.r)){e.s=0;e.cd=2.2;}}break;
   case 'burst':if(e.cd<=0){e.cd=D.fire;ring(e.x,e.y,8,110,e.t,e.dmg);}break;
-  case 'shooter':if(e.st<=0||dist(e.x,e.y,e.wx,e.wy)<6){const A=arena();e.wx=rnd(A.x0+30,A.x1-30);e.wy=rnd(A.y0+30,A.y1-140);e.st=3;}e.st-=dt;moveTo(e,e.wx,e.wy,spd*dt);if(e.cd<=0){e.cd=D.fire;fan(e.x,e.y,aim(e,p),3,.25,150,e.dmg);}break;}
+  case 'shooter':if(e.st<=0||dist(e.x,e.y,e.wx,e.wy)<6){const A=arena();e.wx=rnd(A.x0+30,A.x1-30);e.wy=rnd(A.y0+30,A.y1-140);e.st=3;}e.st-=dt;steer(e,e.wx,e.wy,spd*dt);if(e.cd<=0){e.cd=D.fire;fan(e.x,e.y,aim(e,p),3,.25,150,e.dmg);}break;}
  if(!D.fly)pushOut(e,e.r);bound(e);
  if(dist(e.x,e.y,p.x,p.y)<e.r+p.r-2)hurt(e.dmg);}
 function endPat(b){b.pat='idle';b.st=.9/(b.phase===2?1.3:1);b.s=0;b.k=0;b.tele=0;b.wt=null;}
@@ -1183,7 +1254,7 @@ function nextPat(b){b.pat=b.pats[b.pi%b.pats.length];b.pi++;b.s=0;b.k=0;b.acc=0;
 function updBoss(b,dt){
  if(b.spawn>0){b.spawn-=dt;return;}const p=R.p,sp=b.phase===2?1.3:1,reg=REG[R.region];b.t+=dt;b.st-=dt*sp;b.flash-=dt;
  for(const k of ['poison','burn'])if(b[k]&&b[k].t>0){b[k].t-=dt;damage(b,b[k].dps*dt,false,true);if(b.dead)return;}
- if(b.phase===1&&b.hp<b.maxHp*.5){b.phase=2;FT.push({x:b.x,y:b.y-50,t:'¡Se enfurece!',c:'#ff7a45',life:1.4,vy:-14,big:1});shake=6;snd('boom',.6);}
+ if(b.phase===1&&b.hp<b.maxHp*.5){b.phase=2;FT.push({x:b.x,y:b.y-50,t:'¡Se enfurece!',c:'#ff7a45',life:1.4,vy:-14,big:1});shake=6;snd('boom',.6);if(b.key==='topo'&&!R.abyss)b.pats=['burrow','meteor','aimed','burrow','meteor'];}
  b.face=p.x<b.x?-1:1;
  switch(b.pat){
   case 'idle':if(!BOSS[b.key].stat)moveTo(b,p.x,p.y,b.spd*.6*dt*(b.slowT>0?.5:1));if(b.st<=0)nextPat(b);break;
@@ -1199,7 +1270,9 @@ function updBoss(b,dt){
    else{b.alpha=1-Math.max(0,b.st)/.3;if(b.st<=0){b.inv=false;b.alpha=1;ring(b.x,b.y,b.phase===2?16:12,140,0,b.dmg);shake=4;endPat(b);}}break;
   case 'teleport':if(b.s===0){b.inv=true;b.alpha=Math.max(0,b.st/.3);if(b.st<=0){const A=arena();for(let k=0;k<20;k++){b.x=rnd(A.x0+40,A.x1-40);b.y=rnd(A.y0+40,A.y1-160);if(dist(b.x,b.y,p.x,p.y)>120)break;}b.s=1;b.st=.5;}}
    else{b.alpha=1-Math.max(0,b.st)/.5;if(b.st<=0){b.inv=false;b.alpha=1;fan(b.x,b.y,aim(b,p),b.phase===2?9:7,.18,175,b.dmg);endPat(b);}}break;
-  case 'meteor':if(b.s===0){for(let i=0;i<(b.phase===2?7:5);i++){const A=arena();R.marks.push({x:clamp(p.x+rnd(-80,80),A.x0+20,A.x1-20),y:clamp(p.y+rnd(-80,80),A.y0+20,A.y1-20),r:24,t:1.1,max:1.1,dmg:b.dmg*1.3});}b.s=1;b.st=1.4;}else if(b.st<=0)endPat(b);break;}
+  case 'meteor':{const waves=b.key==='topo'&&b.phase===2?3:1;
+   if(b.s<waves){if(b.wt==null)b.wt=0;b.wt-=dt;if(b.wt<=0){const A=arena(),n=waves>1?(b.s===0?7:5):(b.phase===2?7:5);for(let i=0;i<n;i++){const c=waves>1&&i===0;R.marks.push({x:clamp(p.x+(c?0:rnd(-85,85)),A.x0+20,A.x1-20),y:clamp(p.y+(c?0:rnd(-85,85)),A.y0+20,A.y1-20),r:24,t:1.1,max:1.1,dmg:b.dmg*1.3});}if(waves>1)snd('dig',.5,.7);b.s++;b.wt=.55;if(b.s>=waves)b.st=1.4;}}
+   else if(b.st<=0)endPat(b);break;}}
  if(!b.inv&&dist(b.x,b.y,p.x,p.y)<b.r+p.r-2)hurt(b.dmg);}
 function updateRun(dt){
  R.t+=dt;const p=R.p,A=arena();
@@ -1350,7 +1423,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){if(!musEl.
 
 /* ================= BOOT ================= */
 let booted=false;
-function migrate(s){if(!s.pos)s.pos={map:'farm',x:12*TS,y:8.7*TS};if(!s.farm.wt)s.farm.wt=[];s.v=3;for(const k in NPCS)if(!s.npc[k])s.npc[k]={p:0,t:0,g:0};return s;}
+function migrate(s){if(!s.pos)s.pos={map:'farm',x:12*TS,y:8.7*TS};if(!s.farm.wt)s.farm.wt=[];if(!s.farm.vo){s.farm.vo=[];let back=0;for(const t of s.farm.tiles)if(t.o){s.inv[t.o]=(s.inv[t.o]||0)+1;t.o=null;back++;}if(back){s.flags=s.flags||{};s.flags.voBack=back;}}s.v=3;for(const k in NPCS)if(!s.npc[k])s.npc[k]={p:0,t:0,g:0};return s;}
 function placePlayerFromSave(){const p=S.pos||{map:'farm',x:12*TS,y:8.7*TS};P.map=WORLD[p.map]?p.map:'farm';P.x=p.x;P.y=p.y;P.dx=0;P.dy=1;placeNPCs();
  const o={x:P.x,y:P.y};pushOutRects(o,8,solids());P.x=o.x;P.y=o.y;updCam(1,true);}
 ACT.newgame=()=>{const nm=($('#pname').value||'').trim()||'Millán';S=freshState(nm);startGame(true);};
@@ -1358,7 +1431,7 @@ ACT.cont=()=>{const s=loadSave();if(!s)return;S=migrate(s);startGame(false);};
 ACT.credits=()=>openOv(`<h2>Créditos</h2><p>Gráficos, música y efectos de sonido: <b>Ninja Adventure</b>, de Pixel-boy y AAA. Licencia CC0 (pixel-boy.itch.io).</p><p class="sub">Tipografías: Pixelify Sans y Atkinson Hyperlegible (SIL Open Font License). Historia, código y diseño hechos para este valle.</p><button class="btn" data-a="closeov">Cerrar</button>`);
 function startGame(isNew){$('#title').hidden=true;scene='world';placePlayerFromSave();showUI();MODE={type:'seed',id:'nabo'};if(!availableSeeds().includes('nabo'))MODE={type:'auto'};refreshAll();
  if(isNew){save();say([{who:'narr',t:'La carta llegó un martes, con olor a tierra mojada. Era de tu abuela Rosa.'},{who:'rosa',t:'{name}: si lees esto, la granja es tuya. Está gris, como todo el valle. No es culpa tuya. Quizá un poco mía.'},{who:'rosa',t:'Planta algo. Lo que sea. La tierra recuerda a quien la cuida.'},{who:'narr',t:'Valle de Brezo. Diez años después de la Marchitez.'},{who:'tobias',t:'¿Tú eres quien hereda lo de Rosa? Tienes su misma cara de no rendirte. Soy Tobías, el herrero del pueblo.'},{who:'tobias',t:'Toma su vieja honda. Si te quedas aquí, la vas a necesitar.'},{who:'tobias',t:'Lo primero es la tierra. Arrastra el dedo por la pantalla para caminar. Ponte frente a una casilla del huerto y pulsa el botón redondo: limpias, labras, plantas o riegas.'},{who:'tobias',t:'Mantén el botón pulsado mientras caminas para hacerlo en fila. Las semillas se eligen en la bandeja y se pagan al plantar. Para cosechar, basta con pasar por encima.'},{who:'tobias',t:'De noche entra en casa a dormir: lo regado crece. El pueblo está al este, siguiendo el camino. Cosecha 5 cultivos y hablamos.'}]);}
- else toast(`Hola de nuevo, ${S.name}. Día ${dayIn()} de ${SEASONS[season()].toLowerCase()}.`);}
+ else{toast(`Hola de nuevo, ${S.name}. Día ${dayIn()} de ${SEASONS[season()].toLowerCase()}.`);if(S.flags.voBack){delete S.flags.voBack;save();setTimeout(()=>toast('Aspersores, espantapájaros y gólems ahora van en las esquinas entre casillas. Los tuyos están en la mochila para recolocarlos.',5200),2800);}}}
 async function boot(){resize();buildWorld();requestAnimationFrame(loop);setIcons();
  try{await loadAssets(f=>{$('#loadB').style.width=Math.round(f*100)+'%';});}catch(e){console.error(e);}
  const s=loadSave();

@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-180.png">
 <style>[hidden]{display:none!important}html,body{margin:0}</style>
-<script>window.BUILD_ID="e6d356a6e7";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
+<script>window.BUILD_ID="5e93248b91";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
 <script src="bundle.js?v=76c7ee24"></script>
 <title>Raíces del Valle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -300,7 +300,7 @@ function playMusic(force){if(!userGest)return;if(muted||!musKey){musEl.pause();r
  clearTimeout(playMusic.h);
  if(musGain&&AC&&!musEl.paused&&!force){const t=AC.currentTime;musGain.gain.cancelScheduledValues(t);musGain.gain.setValueAtTime(musGain.gain.value,t);musGain.gain.linearRampToValueAtTime(0,t+.3);playMusic.h=setTimeout(go,320);}else go();}
 function curMusic(){if(scene==='title')return 'title';if(endingNow)return 'end';
- if(scene==='run'&&R){if(R.boss&&!R.boss.dead&&!R.cleared)return 'boss';return {bosque:'forest',minas:'cave',pantano:'dungeon',espinas:'thorns',cumbre:'dungeon',raiz:'dungeon',abismo:'abyss'}[R.region]||(R.evo&&EVO[R.evo].mus)||'dungeon';}
+ if(scene==='run'&&R){if(R.cut)return 'tension';if(R.boss&&!R.boss.dead&&!R.cleared)return 'boss';return {bosque:'forest',minas:'cave',pantano:'dungeon',espinas:'thorns',cumbre:'dungeon',raiz:'dungeon',abismo:'abyss'}[R.region]||(R.evo&&EVO[R.evo].mus)||'dungeon';}
  if(!S)return 'title';if(CINE.on&&['rift','vera'].includes(CINE.name))return 'tension';if(AREA[P.map])return AREA[P.map].mus;return P.map==='town'?'town':(bossesBeaten()>=1?'farm':'farmsad');}
 
 /* ================= DATA ================= */
@@ -498,13 +498,13 @@ const TS=32, FX0=7, FY0=11, HOUSE={x:12*TS,y:8*TS}, PORTAL={x:5.5*TS,y:2.9*TS};
 const P={map:'farm',x:12*TS,y:8.7*TS,dx:0,dy:1,face:1,walk:0,moving:false,act:0};
 const cam={x:0,y:0};
 function freshState(name){
- const s={v:4,name:name||'Millán',day:1,gold:500,energy:100,maxE:100,inv:{},farm:{n:6,tiles:[],house:0,deco:{},wt:[],vo:[]},ch:0,stage:'prep',flags:{},npc:{},partner:null,married:false,
+ const s={v:5,name:name||'Millán',day:1,gold:500,energy:100,maxE:100,inv:{},farm:{n:6,tiles:[],house:0,deco:{},wt:[],vo:[]},ch:0,stage:'prep',flags:{},npc:{},partner:null,married:false,
   weapons:[{t:'honda',lvl:0,rar:0,aff:[]}],eq:0,wtypes:['honda'],stats:{harvest:0,seasonH:0,kills:0},bossDone:{},abyss:{best:0},esencia:0,talents:{},buff:null,rain:false,dailyDay:0,pos:{map:'farm',x:12*TS,y:8.7*TS}};
  for(const k in NPCS) s.npc[k]={p:0,t:0,g:0};
  for(let i=0;i<100;i++){const r=hash(i*31+7);s.farm.tiles.push({s:'grass',d:r<.38?(r<.12?'piedra':r<.22?'tronco':'hierba'):null,c:null,o:null,w:false});}
  {let k=s.farm.tiles.filter((t,i)=>i%10<6&&i<60&&t.d==='tronco').length;for(let i=0;i<60&&k<4;i++){const t=s.farm.tiles[i];if(i%10<6&&t.d==='hierba'){t.d='tronco';k++;}}} {let k=s.farm.tiles.filter((t,i)=>i%10<6&&i<60&&t.d==='piedra').length;for(let i=0;i<60&&k<4;i++){const t=s.farm.tiles[i];if(i%10<6&&t.d==='hierba'){t.d='piedra';k++;}}}
  return s;}
-const season=()=>Math.floor((S.day-1)/SL)%4, dayIn=()=>(S.day-1)%SL+1, year=()=>Math.floor((S.day-1)/(SL*4))+1;
+const natSeason=()=>Math.floor((S.day-1)/SL)%4,season=()=>S.seasonPick!=null?S.seasonPick:natSeason(), dayIn=()=>(S.day-1)%SL+1, year=()=>Math.floor((S.day-1)/(SL*4))+1;
 const bossesBeaten=()=>REGIONS.filter(r=>S.bossDone[r.boss]).length;
 const vitality=()=>Math.min(1,bossesBeaten()/5);
 const inv=k=>S.inv[k]||0;
@@ -734,7 +734,7 @@ function sheetMochila(){
  let h=sheetHead('Mochila',`${S.flags.metMav?`Nivel ${plvl()} · `:''}Esencia: ${S.esencia} · Cosechas: ${S.stats.harvest} · Enemigos: ${S.stats.kills}`);
  const groups=[['Cosecha','crop'],['Comida','food'],['Platos para la grieta','dish'],['Materiales','mat'],['Objetos especiales','key'],['Regalos','gift'],['Artefactos','place']];
  for(const[n,k]of groups){const it=Object.keys(S.inv).filter(x=>ITEMS[x]&&ITEMS[x].k===k&&inv(x)>0);if(!it.length)continue;h+=`<h3>${n}</h3><div class="grid">`;
-  for(const x of it){let a='';if(k==='food'||(k==='crop'&&foodE(x)))a=`<button class="btn alt sm" data-a="eat" data-v="${x}">Comer</button>`;if(k==='dish')a=`<button class="btn alt sm" data-a="prep" data-v="${x}" ${S.buff?'disabled':''}>Llevar</button>`;h+=`<div class="item">${ic(x)}<span class="nm">${ITEMS[x].n}${foodE(x)?`<br><span class="sub">+${foodE(x)} energía</span>`:''}${ITEMS[x].area?`<br><span class="sub">Área: ${ITEMS[x].area}</span>`:''}${ITEMS[x].buff?`<br><span class="sub">${BUFFS[ITEMS[x].buff]}</span>`:''}</span><span class="ct">${inv(x)}</span>${a}</div>`;}
+  for(const x of it){let a='';if(k==='food'||(k==='crop'&&foodE(x)))a=`<button class="btn alt sm" data-a="eat" data-v="${x}">Comer</button>`;if(k==='dish')a=`<button class="btn alt sm" data-a="prep" data-v="${x}" ${S.buff?'disabled':''}>Llevar</button>`;if(x==='reloj')a=`<button class="btn sm" data-a="reloj">Usar</button>`;h+=`<div class="item">${ic(x)}<span class="nm">${ITEMS[x].n}${foodE(x)?`<br><span class="sub">+${foodE(x)} energía</span>`:''}${ITEMS[x].area?`<br><span class="sub">Área: ${ITEMS[x].area}</span>`:''}${ITEMS[x].buff?`<br><span class="sub">${BUFFS[ITEMS[x].buff]}</span>`:''}</span><span class="ct">${inv(x)}</span>${a}</div>`;}
   h+='</div>';}
  if(!Object.keys(S.inv).length)h+='<p class="sub" style="margin-top:12px">Vacía. Cosecha algo o limpia escombros del huerto.</p>';h+=gearSummaryHTML();
  h+=`<h3>Vecinos</h3><p class="sub" style="margin-bottom:8px">Cada corazón te da +2 de vida en la grieta (ahora +${totalHearts()*2}). Viven en el pueblo, al este de tu granja.</p><div class="list">`;
@@ -947,7 +947,7 @@ function updCam(dt,snap){const M=WORLD[P.map],mw=M.w*TS,mh=M.h*TS;const F_=cineF
 /* ================= SLEEP / FESTIVAL ================= */
 ACT.sleep=()=>{closeOv();if(scene!=='world')return;fading=true;const fd=$('#fade');fd.classList.add('on');snd('magic',.5,.7);setTimeout(()=>{const msgs=sleep();placeNPCs();if(P.map==='home'){P.x=HOMEBED.x;P.y=HOMEBED.y;}else{P.map='farm';P.x=doorX();P.y=HOUSE.y+18;}P.dx=0;P.dy=1;petTo();updCam(1,true);updHotbarVis();fd.classList.remove('on');fading=false;refreshAll();save();setTimeout(()=>say(msgs,()=>wakeScene()),350);},600);};
 function sleep(){
- const msgs=[];const ps=season();S.day++;const ns=season();const tiles=S.farm.tiles;const forField=cb=>{const n=S.farm.n;for(let y=0;y<n;y++)for(let x=0;x<n;x++)cb(tiles[y*10+x],y*10+x,x,y);};
+ const msgs=[];const ps=season(),nps=natSeason();S.day++;const ns=season();if(S.seasonPick!=null&&natSeason()!==nps&&S.ch>=2)msgs.push(...festival(nps));const tiles=S.farm.tiles;const forField=cb=>{const n=S.farm.n;for(let y=0;y<n;y++)for(let x=0;x<n;x++)cb(tiles[y*10+x],y*10+x,x,y);};
  forField(t=>{if(t.c&&t.w)t.c.age++;t.w=false;});
  if(ns!==ps){if(S.ch>=2)msgs.push(...festival(ps));if(!S.farm.deco.invernadero){let dead=0;forField(t=>{if(t.c&&!CROPS[t.c.id].se.includes(ns)){t.c=null;dead++;}});if(dead)msgs.push({who:'narr',t:`Llega ${SEASONS[ns].toLowerCase()}: ${dead} cultivos fuera de temporada se marchitan.`});}else msgs.push({who:'narr',t:`Llega ${SEASONS[ns].toLowerCase()}. Bajo el invernadero nada se marchita.`});S.stats.seasonH=0;}
  S.rain=!!S.flags.rain&&ns!==3&&Math.random()<.22;
@@ -1107,7 +1107,8 @@ function petMode(){if(!S||!S.pet)return null;if(P.map==='home')return S.pet.on?'
 function petTo(){PET.map=P.map;if(petMode()==='basket'){PET.x=HPET.x;PET.y=HPET.y;return;}PET.x=P.x-14*(P.face||1);PET.y=P.y+6;}
 function updPet(dt,rects){const m=petMode();if(!m)return;if(PET.map!==P.map)petTo();
  if(m==='basket'){PET.x=HPET.x;PET.y=HPET.y;PET.moving=false;return;}
- const bx_=P.dx!==0?-P.dx*22:-(P.face||1)*12,by_=P.dy<0?16:P.dy>0?-12:3,tx=P.x+bx_,ty=P.y+by_,dx=tx-PET.x,dy=ty-PET.y,d=Math.hypot(dx,dy);
+ const lv_=typeof petLv==='function'?petLv():0,k=lv_>=6?2.3:lv_>=5?1.6:1;/* grown dragons keep a little more room so they do not cover you */
+ const bx_=P.dx!==0?-P.dx*22*k:-(P.face||1)*12*k,by_=P.dy<0?(k>1?24*k:16):P.dy>0?-12*k:(k>1?-5:3),tx=P.x+bx_,ty=P.y+by_,dx=tx-PET.x,dy=ty-PET.y,d=Math.hypot(dx,dy);
  if(d>280){PET.x=tx;PET.y=ty;return;}
  if(d>9){const s=Math.min(d,Math.min(200,50+d*2.4)*dt);PET.x+=dx/d*s;PET.y+=dy/d*s;PET.walk+=dt*9;PET.moving=true;if(Math.abs(dx)>3)PET.face=dx<0?-1:1;pushOutRects(PET,6,rects);}
  else{PET.moving=false;if(Math.abs(P.x-PET.x)>4)PET.face=P.x<PET.x?-1:1;}
@@ -1540,7 +1541,7 @@ function updateRun(dt){
  R.en=R.en.filter(e=>!e.dead);
  for(const b of R.eb){b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(b.x<A.x0-10||b.x>A.x1+10||b.y<A.y0-10||b.y>A.y1+10||inObsR(b.x,b.y,2))b.dead=1;else if(dist(b.x,b.y,p.x,p.y-8)<b.r+p.r-3){b.dead=1;hurt(b.dmg);}if(b.life<=0)b.dead=1;}
  R.eb=R.eb.filter(b=>!b.dead);
- for(const m of R.marks){m.t-=dt;if(m.t<=0){m.dead=1;if(dist(m.x,m.y,p.x,p.y)<m.r+p.r)hurt(m.dmg);R.anims.push({k:'fx_explosion',fw:40,fh:40,n:9,x:m.x,y:m.y,t:0,fps:24});snd('boom',.35);for(let i=0;i<12;i++)R.fx.push({x:m.x,y:m.y,vx:rnd(-120,120),vy:rnd(-120,120),life:.4,c:i%2?'#ff7a45':'#ffe066',s:4});shake=Math.max(shake,3);}}
+ for(const m of R.marks){m.t-=dt;if(m.t<=0){m.dead=1;if(dist(m.x,m.y,p.x,p.y)<m.r+p.r)hurt(m.dmg);if(m.k)markErupt(m);else{R.anims.push({k:'fx_explosion',fw:40,fh:40,n:9,x:m.x,y:m.y,t:0,fps:24});snd('boom',.35);}for(let i=0;i<12;i++)R.fx.push({x:m.x,y:m.y,vx:rnd(-120,120),vy:rnd(-120,120),life:.4,c:i%2?'#ff7a45':'#ffe066',s:4});shake=Math.max(shake,3);}}
  R.marks=R.marks.filter(m=>!m.dead);
  for(const f of R.fx){f.life-=dt;f.x+=f.vx*dt;f.y+=f.vy*dt;f.vx*=.92;f.vy*=.92;}R.fx=R.fx.filter(f=>f.life>0);for(const a of R.anims)a.t+=dt;R.anims=R.anims.filter(a=>a.t*a.fps<a.n);updEvoFx(dt);
  for(const d of R.drops){d.t+=dt;if(d.t<.35){d.x+=d.vx*dt;d.y+=d.vy*dt;d.vx*=.9;d.vy*=.9;}else if(R.cleared||d.t>1.2){const a=Math.atan2(p.y-d.y,p.x-d.x);d.x+=Math.cos(a)*420*dt;d.y+=Math.sin(a)*420*dt;if(dist(d.x,d.y,p.x,p.y)<10)d.dead=1;}}R.drops=R.drops.filter(d=>!d.dead);
@@ -1597,20 +1598,22 @@ function drawRun(){const A=arena(),reg=R.region,p=R.p;
  const dx=P2(180),dy=ay0;rect('#131b1b',dx-10,dy-19,20,20);
  if(R.cleared){rect('#05060a',dx-8,dy-17,16,18);const k=Math.floor(T*6)%6;for(let i=0;i<3;i++)rect(i===k%3?'#fff3c4':'#7fe0ff',dx-1,dy-4-i*4,2,2);}
  else blit(IMG.dungeon,0,0,16,16,dx-8,dy-16);
- for(const m of R.marks){const k=1-m.t/m.max;bx.globalAlpha=.25+.35*k;pxDisk(P2(m.x),P2(m.y),Math.max(1,Math.round(m.r/2*k)),'#ff5d4a');bx.globalAlpha=.9;pxRing(P2(m.x),P2(m.y),Math.round(m.r/2),'#ffb0a0');bx.globalAlpha=1;}
+ for(const m of R.marks){const k=1-m.t/m.max,MC=m.k==='root'?['#8a5a2a','#ffcf8a']:m.k==='hail'?['#5ab0e0','#e8f8ff']:['#ff5d4a','#ffb0a0'];bx.globalAlpha=.25+.35*k;pxDisk(P2(m.x),P2(m.y),Math.max(1,Math.round(m.r/2*k)),MC[0]);bx.globalAlpha=.9;pxRing(P2(m.x),P2(m.y),Math.round(m.r/2),MC[1]);bx.globalAlpha=1;}
+ drawFinaleGround();
  drawEvoGround();for(const d of R.drops){rect('#7a4e10',P2(d.x)-1,P2(d.y)-1,3,3);rect('#f6c454',P2(d.x)-1,P2(d.y)-1,2,2);}
  const L=[];for(const b of R.obs)L.push({y:b.y+b.h,f:()=>{shadowAt(P2(b.x+b.w/2),P2(b.y+b.h),Math.round(b.w*.55));natSpr(b.k,P2(b.x+b.w/2),P2(b.y+b.h)+2);}});
- for(const e of R.en)L.push({y:e.y+(e.boss?e.r*.6:0),f:()=>e.boss?drawBossS(e):drawEnemyS(e)});if(R.pet)L.push({y:R.pet.y,f:drawRunPet});if(R.st.shieldCd&&R.shield)L.push({y:R.p.y+1,f:()=>{bx.globalAlpha=.3+.12*Math.sin(T*4);pxRing(P2(R.p.x),P2(R.p.y)-8,10,'#8fe060');bx.globalAlpha=1;}});
- L.push({y:p.y+8,f:()=>{if(!(p.inv>0&&Math.floor(T*20)%2))drawChar('Boy',p.x,p.y+8,p.dir||'up',p.face,p.walk,p.moving,{attack:R.t-(p.lastFire||-9)<.16});}});
+ for(const e of R.en)L.push({y:e.y+(e.boss?e.r*.6:0),f:()=>e.boss?(e.cardo?drawCardoS(e):drawBossS(e)):drawEnemyS(e)});if(R.allies)for(const a of R.allies)L.push({y:a.y+8,f:()=>drawAlly(a)});if(R.crystal)L.push({y:R.crystal.y,f:drawCrystal});if(R.pet)L.push({y:R.pet.y,f:drawRunPet});if(R.st.shieldCd&&R.shield)L.push({y:R.p.y+1,f:()=>{bx.globalAlpha=.3+.12*Math.sin(T*4);pxRing(P2(R.p.x),P2(R.p.y)-8,10,'#8fe060');bx.globalAlpha=1;}});
+ L.push({y:p.y+8,f:()=>{if(p.ko){drawKO(p);return;}if(!(p.inv>0&&!R.cut&&Math.floor(T*20)%2))drawChar('Boy',p.x,p.y+8,p.dir||'up',p.face,p.walk,p.moving,{attack:R.t-(p.lastFire||-9)<.16});}});
  L.sort((a,b)=>a.y-b.y);for(const o of L)o.f();
  drawEvoFx();const nl=R.pk.leaf||0;for(let i=0;i<nl;i++){const a=R.t*3+i/nl*Math.PI*2;rotBlit(IMG.p_PlantSpike,72,0,24,20,P2(p.x+Math.cos(a)*36),P2(p.y-10+Math.sin(a)*36),a+Math.PI/2);}
  for(const s of R.ps){const x=P2(s.x),y=P2(s.y),a=Math.atan2(s.vy,s.vx),f=Math.floor(s.t*12);
   switch(s.kind){case 'arrow':rotBlit(IMG.p_Arrow,0,0,13,5,x,y,a);break;case 'seed':rotBlit(IMG.p_PlantSpike,(f%4)*24,0,24,20,x,y,a);break;case 'fire':rotBlit(IMG.p_Fireball,(f%4)*16,0,16,16,x,y,a+Math.PI/2);break;
    case 'ice':rotBlit(IMG.p_IceSpike,(f%6)*24,0,24,10,x,y,a);break;case 'boom':blit(IMG.p_Shuriken,(Math.floor(s.t*16)%2)*16,0,16,16,x-8,y-8);break;case 'homing':rotBlit(IMG.p_ball_green,(f%4)*16,0,16,16,x,y,a+Math.PI/2);break;
    default:if(s.mini){rect('#131b1b',x-2,y-2,4,4);rect('#efe3c4',x-1,y-1,2,2);}else blit(IMG.p_SpriteSheetRock,(f%4)*16,0,16,16,x-8,y-8);}}
- const bim=IMG[R.abyss?'p_ball_purple':'p_ball_red'];for(const b of R.eb)rotBlit(bim,(Math.floor((T+b.life)*10)%4)*16,0,16,16,P2(b.x),P2(b.y),Math.atan2(b.vy,b.vx)+Math.PI/2);
+ const bim=IMG[R.abyss?'p_ball_purple':'p_ball_red'];for(const b of R.eb)if(b.k)drawEB(b);else rotBlit(bim,(Math.floor((T+b.life)*10)%4)*16,0,16,16,P2(b.x),P2(b.y),Math.atan2(b.vy,b.vx)+Math.PI/2);
  for(const a of R.anims){const im2=IMG[a.k],fr=Math.min(a.n-1,Math.floor(a.t*a.fps));if(im2)blit(im2,fr*a.fw,0,a.fw,a.fh,P2(a.x)-a.fw/2,P2(a.y)-a.fh/2-(a.up||0));}
  for(const f of R.fx){bx.globalAlpha=Math.min(1,f.life*3);rect(f.c,P2(f.x),P2(f.y),f.s>3?2:1,f.s>3?2:1);}bx.globalAlpha=1;
+ drawFinaleFx();
  if(R.mod==='niebla'){const g=bx.createRadialGradient(P2(p.x),P2(p.y),20,P2(p.x),P2(p.y),76);g.addColorStop(0,'rgba(10,8,18,0)');g.addColorStop(1,'rgba(10,8,18,.9)');bx.fillStyle=g;bx.fillRect(CX,CY,BW,BH);}
  if(R.cleared&&!R.ended)label(dx,dy+14,'▲ Sigue',{s:14,a:.6+.4*Math.sin(T*5)});
  for(const f of FT)label(P2(f.x),P2(f.y),f.t,{c:f.c,s:f.big?17:13,w:f.big?700:600,a:Math.min(1,f.life*2.5)});}
@@ -1707,7 +1710,7 @@ function evoForgeHTML(){const wl=wmLvl(),E_=evoS();let h='<h3>Evoluciones</h3>';
  h+=`<p class="sub" style="margin-bottom:8px">Cada evolución se compra para un arma concreta. Después tendrás que derrotar a ${EVOK} enemigos con esa arma equipada; entonces se abrirá un portal en tu granja.</p><div class="list">`;
  for(const t of S.wtypes){const X=EVO[t];if(!X)continue;const done=E_.done[t],act=E_.active,mine=act&&act.t===t;
   let st='';if(done)st='<span class="tag gold">Evolucionada</span>';else if(mine)st=act.ready?'<span class="tag gold">El portal te espera en la granja</span>':`<span class="tag">Misión: ${act.k}/${EVOK} enemigos con ella</span>`;
-  h+=`<div class="card"><span class="wic">${ic('w_'+t,'l')}</span><div class="body"><div class="name">${WEAPONS[t].n} → ${X.n}</div><p class="sub">${X.d}</p><p class="sub">+30% de daño con esta arma.</p>${!done&&!mine?costHTML(X.cost.in,X.cost.gold):''}${st?`<div class="row">${st}</div>`:''}</div>${!done&&!mine?`<button class="btn sm" data-a="evobuy" data-v="${t}" ${act||!canPay(X.cost.in,X.cost.gold)?'disabled':''}>${act?'Otra en curso':'Comprar'}</button>`:''}</div>`;}
+  h+=`<div class="card"><span class="wic">${ic('w_'+t,'l')}</span><div class="body"><div class="name">${WEAPONS[t].n} → ${X.n}</div><p class="sub">${X.d}</p><p class="sub">+30% de daño con esta arma.</p>${!done&&!mine?evoCropNote(X,t):''}${!done&&!mine?costHTML(X.cost.in,X.cost.gold):''}${st?`<div class="row">${st}</div>`:''}</div>${!done&&!mine?`<button class="btn sm" data-a="evobuy" data-v="${t}" ${act||!canPay(X.cost.in,X.cost.gold)?'disabled':''}>${act?'Otra en curso':'Comprar'}</button>`:''}</div>`;}
  return h+'</div>';}
 ACT.evobuy=t=>{const X=EVO[t],E_=evoS();if(wmLvl()<EVOLV||E_.done[t]||E_.active||!canPay(X.cost.in,X.cost.gold))return;S.gold-=X.cost.gold;take(X.cost.in);E_.active={t,k:0,ready:0};snd('powerup');closeSheet();refreshAll();save();
  say([{who:'tobias',t:`¿Quieres despertar la ${WEAPONS[t].n}? El acero no cambia en la fragua: cambia en la pelea.`},{who:'tobias',t:`Derrota a ${EVOK} enemigos con ella equipada. Cuando esté lista, la grieta le abrirá un camino solo para ella.`},{who:'narr',t:'Puedes cambiar de arma en el baúl de tu casa.'}]);};
@@ -1783,7 +1786,7 @@ SHEETK.C='camp';
  const a=IMG.abandoned;if(a)DER.haunted=recolor(a,192,96,64,80,(r,g,b)=>{const l=r*.3+g*.59+b*.11;return g>r+10&&g>b?[l*.35+18,l*.55+22,l*.6+34]:[l*.6+28,l*.45+16,l*.75+34];});};}
 
 /* generated by maps.py: area layouts (see legend in o_areas.js) */
-const AMAPS={"canon": ["##########################", "##########################", "##########################", "##########################", "####..C.FFFFFFFFFF....####", "####LL..FFFFFFFFFF..LL####", "####LL..FFFFFFFFFF..LL####", "####LL..FFFFEEFFFF..LL####", "####LL^............^LL####", "####LL...........O..LL####", "####LLP.............LL####", "############KK############", "#####...............C#####", "#####.M..M......M....#####", "#####..........#.....#####", "#####..#.M...M..M....Y####", "#####.M.........M....#####", "#####.....S..........#####", "############GG############", "########...#...#...#######", "#######..##....xB#.#######", "#######......#.....#######", "#######.#..#x..##..#######", "#######...##.....B########", "#######..#..x.#.B..#######", "########.........r########", "###########,,,############", "###########,,,############", "############GG############", "######..#........x.#######", "######....##...LL..#######", "#######.......#.xB.#######", "######...#.....B#..#######", "######..#...##.....#######", "#######..........r########", "###########,,,############", "###########,,,############", "############GG############", "########..LL......########", "#######..#x.....#..#######", "#######..#.##.....########", "#######..BB..#.#...#######", "########........xr########", "###########,,,############", "##S########,,,############", ",,,,,,,R,,,,,,############", ",,,,,,,R,,,,,,############", "###..#####################", "###O.#####################", "##########################"],
+const AMAPS={"canon": ["##########################", "##########################", "##########################", "##########################", "####..C.FFFFFFFFFF....####", "####LL..FFFFFFFFFF..LL####", "####LL..FFFFFFFFFF..LL####", "####LL..FFFFEEFFFF..LL####", "####LL^............^LL####", "####LL...........O..LL####", "####LLP.............LL####", "############KK############", "#####...............C#####", "#####.M..M......M....#####", "#####..........#.....#####", "#####..#.M...M..M....Y####", "#####.M.........M....#####", "#####.....S..........#####", "############GG############", "########...#...#...#######", "#######..##....xB#.#######", "#######......#.....#######", "#######.#..#x..##..#######", "#######...##.....B########", "#######..#..x.#.B..#######", "########.........r########", "###########,,,############", "###########,,,############", "############GG############", "######..#........x.#######", "######....##...LL..#######", "#######.......#.xB.#######", "######...#.....B#..#######", "######..#...##.....#######", "#######..........r########", "###########,,,############", "###########,,,############", "############GG############", "########..LL......########", "#######..#x.....#..#######", "#######..#.##.....########", "#######..BB..#.#...#######", "########........xr########", "###########,,,############", "##S########,,,R..#########", ",,,,,,,R,,,,,,############", ",,,,,,,R,,,,,,############", "###..#####################", "###O.#####################", "##########################"],
  "susurro": ["TTT,,TTTTTTTTTTTTTTTTTTT", "TT.,,.TTTTTTTTTTTTTTTTTT", "TT..,,..TTTTTTTTTTTTTTTT", "TT...,,..STTTTTTTTTTTTTT", "TTT....,,...TTTTTTTTTTTT", "TTTT....,,..TTTTTTTTTTTT", "TTTTTFFFFFFFTTTTTTTTTTTT", "TTTTT..ff...TTTTTTTTTTTT", "TTTT...ff....TTTTTTTTTTT", "TTTTTTTTT.ff...TTTTTTTTT", "TTTTTTTT.^.ff...TTTTTTTT", "TTTTTTT.....ff...TTTTTTT", "T@...........fff......TT", "T@.............ff.....TT", "TTTTTTT..........TTTf.TT", "TTTTTTTT........TTTT..TT", "TTTTTTTTT......TTTTT.fTT", "TTTTTTTTTT..TTTTTTTT..TT", "TTTTTTTTTT..TTTTTTTTf.TT", "TTTTTTTTTT..TTTTTTTT..TT", "TTTTTTTTTT..TTTTTTTT.fTT", "TTTTTTTTTT@@TTTTTTTT..TT", "TTTTTTTTTTTTTTTTTTTTf.TT", "TTTTTTTTTTTTTTTTTTTT..TT", "TTTTTTTTT..........f..TT", "TTTTTTT..........f.TTTTT", "TTTTTT.........f....TTTT", "TTTTT........f^.......@T", "TTTTT......f..........@T", "TTTTTT...f..........TTTT", "T......f...........TTTTT", "T...f............TTTTTTT", "TT..TTTTTTTTT..TTTTTTTTT", "TTf.TTTTTTTTT..TTTTTTTTT", "TT..TTTTTTTTT..TTTTTTTTT", "TT.fTTTTTTTTT@@TTTTTTTTT", "TT....................TT", "TT...*............*...TT", "TT.........S..........TT", "TT....................TT", "TT....................TT", "TT...*............*...TT", "TT....................TT", "TTTTTTTTZZZZZZZZTTTTTTTT", "TT.t......QQQQ...g....TT", "TT........QQQQ.....C..TT", "TT........QEEQ...O....TT", "TT..P.................TT", "TT....g........g....t.TT", "TTTTTTTTTTTTTTTTTTTTTTTT"],
  "riscos": ["##########################", "####..................####", "##......................##", "##......................##", "##......................##", "##......................##", "##......................##", "##...P..............O...##", "##................H.....##", "#oooooooooooooooooooooooo#", "#oooooooooooooooooooooooo#", "#oooooooooooooooooooooooo#", "###..........oooo.Hoooo###", "###.O........oooo..oooo###", "###.........HooooH.oooo###", "###..........oooo..oooo###", "###..........oooo..oooo###", "#oooooccooooooooooooooooo#", "#oooooccooooooooooooooooo#", "#oooooccooooooooooooooooo#", "###........oooo........###", "###.....C..oooo........###", "###........oooo....2...###", "###........oooo........###", "###.1......oooo........###", "###........oooo........###", "###........oooo......H.###", "#ooooaaooooooooooobbooooo#", "#ooooaaooooooooooobbooooo#", "#ooooaaooooooooooobbooooo#", "###..................H.###", "###.................O..###", "###....................###", "###......1.............###", "###....................###", "###....................###", "###.........H..........###", "#oooooooooooooooooooooooo#", "#oooooooooooooooooooooooo#", "#oooooooooooooooooooooooo#", "####........H.........####", "####..S...............####", "####.......,,.........####", "####.......,,.....O...####", "####.......,,.........####", "####.......,,.........####"]};
 
@@ -2371,13 +2374,13 @@ Object.assign(NPCS,{
  cardo:{n:'Cardo',role:'El rival',kind:'amigo',love:['tomate','fresa','tarta'],like:['uva','berenjena','palomitas','sopa'],hate:['lirio'],avail:()=>!!S.bossDone.cardo},
  gus:{n:'Gus',role:'Herrero Legendario',kind:'mentor',love:['brasa','asada','guiso'],like:['hierro','cobre','colmillo','tortilla'],hate:['lirio'],avail:()=>S.ch>=3||!!S.flags.metGus,home:{map:'gusin',sp:[7.5,5.6],fixed:1}},
  mavilah:{n:'Mavilah',role:'Hechicera Olvidada',kind:'misterio',love:['lirio','escarcha','miel'],like:['savia','ceniza','uva','tarta'],hate:['colmillo'],avail:()=>S.ch>=5||!!S.flags.metMav,home:{map:'mavin',sp:[6,5.2],fixed:1}},
- rengo:{n:'Rengo',role:'Domador de Dragones',kind:'mentor',love:['asada','calabaza','colmillo'],like:['huevo','maiz','escama','guiso'],hate:['nabo'],avail:()=>S.ch>=8||!!S.flags.metRengo,home:{map:'riscos',sp:[15.5,6.6]}},
+ rengo:{n:'Rengo',role:'Domador de Dragones',kind:'mentor',love:['asada','calabaza','colmillo'],like:['huevo','maiz','escama','guiso'],hate:['nabo'],avail:()=>S.ch>=7||!!S.flags.metRengo,home:{map:'riscos',sp:[15.5,6.6]}},
  paloma:{n:'Paloma',role:'Cuidadora de pájaros',kind:'amiga',love:['maiz','fresa','miel'],like:['palomitas','uva','huevo'],hate:['brasa'],avail:()=>!!S.flags.taxi},
 });
 /* progressive arrivals: Darío comes with the rift, Eira watches from chapter II, Nilo goes missing in VIII */
 NPCS.eira.avail=()=>S.ch>=2;
 /* Nilo spends chapter VIII lost on the ridge */
-function npcHome(id){if(id==='nilo'&&S.ch===8&&!S.flags.niloBack)return{map:'riscos',sp:[11.2,7.1]};return NPCS[id].home||null;}
+function npcHome(id){if(id==='nilo'&&S.ch===7&&!S.flags.niloBack)return{map:'riscos',sp:[11.2,7.1]};return NPCS[id].home||null;}
 Object.assign(CAST,{cardo:'Vampire',gus:'Lion',mavilah:'NinjaMageBlack',rengo:'Hunter',paloma:'Princess'});
 Object.assign(VOICE,{cardo:[3,.92],gus:[1,.7],mavilah:[4,.82],rengo:[2,.8],paloma:[4,1.22]});
 Object.assign(SPOTS,{cardo:[[13.7,12.9],[9.6,13.7],[16.2,12.4]],paloma:[[TAXI_T.x+1.3,TAXI_T.y+.5]]});
@@ -2428,21 +2431,22 @@ CH.length=0;CH.push(
   back:()=>cineLiaVera()},
  {t:'VI · La rival de honor',who:'vera',prepTxt:'Ayuda a Vera a levantar su granja: 30 de madera, 20 de piedra y 10 de fibra',prep:()=>has({madera:30,piedra:20,fibra:10}),take:{madera:30,piedra:20,fibra:10},
   intro:()=>[{who:'vera',t:'Cardo. Ha sido Cardo. Ha arrancado mis calabazas, ha roto la valla y se ha llevado las semillas de mi bisabuela.'},{who:'vera',t:'Lo sé porque dejó un cardo seco clavado en la puerta. Siempre hacía lo mismo cuando éramos críos.'},{who:'vera',t:'Sí. Crecimos juntos. Los dos aprendimos a cultivar con tu abuela. Él era el mejor. Mejor que yo, y mira que me cuesta decirlo.'},{who:'vera',t:'Hasta que Rosa le pilló echando esencia de la grieta a los tomates para que crecieran en una noche. Le echó de la granja. Y él nunca se lo perdonó.'},{who:'vera',t:'Ayúdame a levantar la valla y el granero: 30 de madera, 20 de piedra y 10 de fibra. Luego te diré dónde se esconde. Lo sé de sobra.'}],
-  give:()=>[{who:'vera',t:'Gracias. De verdad. No se lo digas a nadie.'},{who:'vera',t:'De pequeños encontramos un hueco bajo la roca de tu granja. Él lo llamaba el Jardín de Espinas. Ahí se esconde, seguro.'},{who:'vera',t:'Si le encuentras... dile que todavía le guardo el sitio en la feria.'},{who:'narr',t:'La grieta de tu granja ahora baja al Jardín de Espinas.'}]},
- {t:'VII · Espinas',region:'espinas',
-  intro:()=>[{who:'narr',t:'Bajo la roca de tu granja, la grieta huele a tierra quemada y a espino.'},{who:'vera',t:'Ten cuidado ahí abajo. Y no le hagas demasiado daño. Un poco sí.'}]},
- {t:'VIII · El chico y el dragón',who:'rengo',kind:'reach',flag:'metRengo',reachTxt:'Cruza los Riscos del Dragón (sal de tu granja por el norte) y encuentra a Nilo',backTxt:'Nilo está a salvo. Vuelve al pueblo con él',
-  introCine:()=>cineCardoJoins(),intro:()=>[],back:()=>cineNiloBack()},
+  give:()=>[{who:'vera',t:'Gracias. De verdad. No se lo digas a nadie.'},{who:'vera',t:'De pequeños encontramos un hueco bajo la roca de tu granja. Él lo llamaba el Jardín de Espinas. Ahí se esconde, seguro.'},{who:'vera',t:'Pero la entrada se mueve. Cardo la tapa con zarzas cada vez que alguien se acerca. Déjame buscarla unos días.'},{who:'vera',t:'Si le encuentras... dile que todavía le guardo el sitio en la feria.'}]},
+ {t:'VII · El chico y el dragón',who:'rengo',kind:'reach',flag:'metRengo',reachTxt:'Cruza los Riscos del Dragón (sal de tu granja por el norte) y encuentra a Nilo',backTxt:'Nilo está a salvo. Vuelve al pueblo con él',
+  introCine:go=>cineNiloMissing(go),intro:()=>[],back:()=>cineNiloBack()},
+ {t:'VIII · Espinas',region:'espinas',
+  intro:()=>[{who:'vera',t:'¡{name}! La he encontrado. La entrada del Jardín de Espinas: estaba debajo de la roca de tu granja, como cuando éramos críos.'},{who:'vera',t:'Anoche heló sobre mis calabazas. En pleno día de sol. Y la escarcha tenía forma de espino.'},{who:'narr',t:'La grieta de tu granja ahora baja al Jardín de Espinas. Huele a tierra quemada y a espino.'},{who:'vera',t:'Ten cuidado ahí abajo. Y no le hagas demasiado daño. Un poco sí.'}]},
  {t:'IX · La Cumbre Ceniza',who:'eira',region:'cumbre',prepTxt:'Gánate al valle (4 corazones con 3 vecinos) y habla con Eira',prep:()=>Object.keys(NPCS).filter(k=>S.npc[k]&&hearts(k)>=4).length>=3,
-  intro:()=>[{who:'eira',t:'Has llegado lejos, brote. Más lejos que Rosa.'},{who:'eira',t:'Me llamo Eira. Rosa era mi hermana.',fn:()=>{S.flags.eiraName=1}},{who:'eira',t:'En la cumbre está lo que queda de mí. No subas sin gente que te espere abajo. Cuando la tengas, ven a mi cabaña.'}],
+  intro:()=>[{who:'eira',t:'Has llegado lejos, brote. Más lejos que Rosa.'},{who:'eira',t:'Anoche subió un muchacho con espinas en el abrigo. Olía a tormenta. Iba hacia lo que late bajo la cumbre.'},{who:'eira',t:'Me llamo Eira. Rosa era mi hermana.',fn:()=>{S.flags.eiraName=1}},{who:'eira',t:'En la cumbre está lo que queda de mí. No subas sin gente que te espere abajo. Cuando la tengas, ven a mi cabaña.'}],
   give:()=>[{who:'eira',t:'Ya veo. Tienes a quién volver. Entonces sube.'},{who:'eira',t:'Y no me tengas piedad: no seré yo quien pelee.'}]},
  {t:'X · El Corazón Marchito',region:'raiz',
-  intro:()=>[{who:'narr',t:'Bajo la cumbre, una raíz enorme late como un tambor.'},{who:'tobias',t:'Vuelve entero. Tengo una veleta a medio forjar.'},{who:'cardo',t:'La llave de raíz abre también esa puerta. Úsala mejor que yo.'},{who:'nilo',t:'¡Si ganas, me dejas ponerle nombre al corazón!'},{who:'narr',t:'La grieta de tu granja ya baja hasta la Raíz del Corazón.'}]},
+  intro:()=>[{who:'narr',t:'Bajo la cumbre, una raíz enorme late como un tambor. Y a su lado, alguien silba la canción que oíste la primera noche.'},{who:'narr',t:'El cielo del valle cambia cada hora: sol, granizo, niebla, sol otra vez. Cardo está jugando con él.'},{who:'tobias',t:'Vuelve entero. Tengo una veleta a medio forjar.'},{who:'vera',t:'Tráelo de vuelta. Aunque sea a rastras.'},{who:'nilo',t:'¡Si ganas, me dejas ponerle nombre al corazón!'},{who:'narr',t:'La grieta de tu granja ya baja hasta la Raíz del Corazón. Pero la puerta del fondo está sellada con espinas negras, y la llave de raíz no gira.'},{who:'gus',t:'¿Una puerta que no abre la llave de Rosa? Tráemela a la forja. Y busca por el desfiladero, el bosque y los riscos: hay reliquias escondidas que brillan cuando nadie mira.'},{who:'rengo',t:'Y no bajes sin que tu compañero sea un dragón hecho y derecho. Ahí abajo os vais a necesitar el uno al otro.'}]},
  {t:'Epílogo · El Abismo'});
 const POSTCH=CH.length-1;
 /* regions now follow the new chapter numbers; the rival's garden sits between the swamp and the summit */
 {const map={bosque:1,minas:2,pantano:4,cumbre:9,raiz:10};for(const r of REGIONS)if(map[r.id])r.ch=map[r.id];
- REGIONS.splice(3,0,{id:'espinas',boss:'cardo',ch:7});}
+ REGIONS.splice(3,0,{id:'espinas',boss:'zarza',ch:8});
+ for(const r of REGIONS)if(r.id==='raiz')r.boss='cardo';}
 const chOf=id=>{const r=REGIONS.find(x=>x.id===id);return r?r.ch:99;};
 /* old numbering (before this update), used where the game scaled with the chapter */
 const chOld=()=>S.ch===0?0:Math.min(6,1+bossesBeaten());
@@ -2482,7 +2486,8 @@ function wakeScene(){if(S.flags.riftPending){S.flags.riftPending=0;cineRift(fals
  if(S.flags.cardoPending&&S.ch>=1&&!S.bossDone.cardo){S.flags.cardoPending=0;cineRift(true);return true;}return false;}
 /* region chapters that are already beaten move on; the rival's defeat moves straight to VIII */
 bossBeaten=function(key){S.bossDone[key]=1;addI(BOSS[key].drop);if(key==='ciervo')S.flags.rain=1;S.farm.n=Math.min(10,6+bossesBeaten());
- const after=()=>{if(key==='corazon'){if(S.flags.post){advanceChapter();}else ending();}else{const r=REGIONS.find(x=>x.boss===key);if(r&&S.ch===r.ch)advanceChapter();else{refreshAll();save();}}};
+ if(key==='cardo'){S.bossDone.corazon=1;delete S.flags.cardoCk;}
+ const after=()=>{if(key==='cardo'){if(S.flags.post){advanceChapter();}else ending();}else{const r=REGIONS.find(x=>x.boss===key);if(r&&S.ch===r.ch)advanceChapter();else{refreshAll();save();}}};
  say(OUTRO[key](),after);refreshAll();save();};
 /* the ending: the old farewell, then everyone gathers at the farm */
 ending=function(){endingNow=true;const good=hearts('eira')>=6||(S.flags.otra&&hearts('eira')>=4);S.flags.eiraGood=good?1:0;S.flags.eiraTree=good?0:1;S.flags.post=1;S.ch=POSTCH;S.stage='post';placeNPCs();
@@ -2505,15 +2510,29 @@ ACT.journal=()=>{const o=objective(),c=CH[Math.min(S.ch,POSTCH)];const dl=S.stag
 /* ---- outros ---- */
 Object.assign(OUTRO,{
  lodo:()=>[{who:'narr',t:'Madre Lodo se hunde en un agua que de pronto es transparente. En el fondo queda una perla que late.'},{who:'lia',t:'Late como un corazón. La Marchitez tiene un corazón, {name}.'},{who:'dario',t:'Y en mi mapa ha aparecido un sendero nuevo al suroeste de tu granja, entre la niebla. El Bosque Susurrante.'},{who:'narr',t:'Tu huerto crece: ahora es de 9×9. Ya puedes construir el gólem jardinero y el molino.'}],
- cardo:()=>[{who:'narr',t:'Cardo cae de rodillas. Las espinas se secan a su alrededor y la llave de raíz rueda hasta tus pies.'},{who:'cardo',t:'...Rosa me escribía, ¿sabes? Una carta cada invierno. Nunca las abrí.'},{who:'cardo',t:'Pensaba que me odiaba. Que te eligió a ti porque yo no valía.',choices:[{t:'Te echó para protegerte.',fn:()=>{addP('cardo',12);say([{who:'cardo',t:'...Puede. Ojalá me lo hubiera dicho a la cara. Ojalá yo hubiera abierto las cartas.'}]);}},{t:'Eso no te daba derecho a nada.',fn:()=>{addP('cardo',4);say([{who:'cardo',t:'No. No me lo daba.'}]);}}]},
-  {who:'cardo',t:'Toma. Tu oro, con intereses. Y las semillas de Vera, que son suyas.',fn:()=>{const g=Math.max(200,STOLEN()*2);S.gold+=g;S.flags.repaid=g;}},{who:'narr',t:`Recuperas ${Math.max(200,STOLEN()*2)} de oro y la llave de raíz.`},{who:'cardo',t:'No sé si el valle me va a querer de vuelta. Pero me gustaría intentarlo.'}],
+ zarza:()=>[{who:'narr',t:'La Zarza Madre se seca de golpe y se deshace en astillas. Entre ellas aparece Cardo, aplaudiendo despacio.'},
+  {who:'cardo',t:'Bravo. Era mi primera planta de verdad. La regué con esencia de grieta durante tres inviernos.'},
+  {who:'cardo',t:'¿La helada sobre las calabazas de Vera? Fui yo. ¿La sequía del año pasado? También. ¿Ese granizo de anoche, en pleno sol? Por probar.'},
+  {who:'cardo',t:'Debajo de la cumbre late el Corazón de la Marchitez. Lo encontré con la llave de Rosa. Y desde entonces la Marchitez me obedece. Y el cielo, con ella.'},
+  {who:'yo',t:'¿Para qué? ¿Para destrozar el valle?'},
+  {who:'cardo',t:'Para que crezca. A mi ritmo. Sin esperar estaciones, sin rogarle a la lluvia. Lo que Rosa nunca se atrevió a hacer.'},
+  {who:'cardo',t:'Toma. Ya no necesito la llave: el Corazón me reconoce. Si quieres detenerme, sube a la Cumbre. La vieja Eira sabe el camino.',fn:()=>{if(!inv('llave'))addI('llave');}},
+  {who:'narr',t:'Cardo se hunde entre las raíces y desaparece. Recuperas la Llave de raíz.'}],
+ cardo:()=>[{who:'narr',t:'La Marchitez se suelta de Cardo como una piel seca. El Corazón, detrás de él, late más despacio.'},{who:'cardo',t:'...Rosa me escribía, ¿sabes? Una carta cada invierno. Nunca las abrí.'},{who:'cardo',t:'Pensaba que me odiaba. Que te eligió a ti porque yo no valía.',choices:[{t:'Te echó para protegerte.',fn:()=>{addP('cardo',12);say([{who:'cardo',t:'...Puede. Ojalá me lo hubiera dicho a la cara. Ojalá yo hubiera abierto las cartas.'}]);}},{t:'Eso no te daba derecho a nada.',fn:()=>{addP('cardo',4);say([{who:'cardo',t:'No. No me lo daba.'}]);}}]},
+  {who:'cardo',t:'Toma. Tu oro, con intereses. Y las semillas de Vera, que son suyas.',fn:()=>{const g=Math.max(200,STOLEN()*2);S.gold+=g;S.flags.repaid=g;}},{who:'narr',t:`Recuperas ${Math.max(200,STOLEN()*2)} de oro.`},
+  {who:'cardo',t:'Y esto. Con este reloj obligaba al cielo a obedecer: lluvia, sol, helada... cuando a mí me daba la gana.'},
+  {who:'cardo',t:'Úsalo tú para algo mejor. Que tu huerto tenga la estación que necesite. Sin hacerle daño a nadie.',fn:()=>{if(!inv('reloj'))addI('reloj');}},
+  {who:'narr',t:'Has conseguido el Reloj de las Estaciones: desde la mochila puedes elegir en qué estación está tu granja.'},
+  {who:'gus',t:'Y ahora, chaval, vas a ayudar a arreglar todo lo que has roto. Empezando por mi tejado.'},{who:'cardo',t:'...Vale. Me lo he ganado.'},{who:'cardo',t:'No sé si el valle me va a querer de vuelta. Pero me gustaría intentarlo.'}],
+ eira:()=>[{who:'narr',t:'La ceniza se aparta. Eira cae de rodillas y, por un momento, sus ojos son los de tu abuela.'},{who:'eira',t:'Hace diez años hubo sequía. Quise obligar a la tierra a dar fruto... y la tierra se cansó.'},{who:'eira',t:'Eso es la Marchitez: tierra agotada que muerde. Y la hice yo.'},{who:'eira',t:'Ese muchacho, Cardo, ha encontrado su corazón con la llave de Rosa. Ahora la Marchitez le obedece, y quiere hacer lo mismo que yo. Peor que yo.'},{who:'eira',t:'Su corazón late bajo la cumbre. Si lo rompes, la Marchitez muere. Y yo con ella: está hecha de mí.',choices:[{t:'Encontraremos otra forma.',fn:()=>{S.flags.otra=1;addP('eira',10);say([{who:'eira',t:'Hablas igual que ella.'}])}},{t:'Haré lo que haya que hacer.',fn:()=>{S.flags.firme=1;say([{who:'eira',t:'Bien. Alguien tiene que hacerlo.'}])}}]},{who:'narr',t:'Tu huerto crece al máximo: 10×10. Ya puedes construir el invernadero.'}],
 });
 /* the rival talks before his guardians and his own fight */
 const BOSSTALK={
  ciervo:[{who:'cardo',t:'¿Me has seguido hasta aquí? Qué tierno. El bambú no es tan amable como yo.'}],
  topo:[{who:'cardo',t:'Este cíclope forjaba para mí. Rómpelo si puedes... yo ya tengo lo que necesitaba de él.'}],
  lodo:[{who:'cardo',t:'La Madre Lodo guarda una perla que late. La quería para mi jardín. Quédatela... por ahora.'}],
- cardo:[{who:'cardo',t:'Vaya. Has llegado. Rosa estaría orgullosa... de ti. Siempre de ti.'},{who:'cardo',t:'¿Sabes lo que es que te echen de la única casa que has tenido? Yo sí.'},{who:'cardo',t:'Con la llave de raíz y la esencia de las grietas haré crecer el valle entero. Más rápido que nadie. Sin esperar a nadie.'},{who:'yo',t:'Devuélvele a Vera sus semillas. Y a mí lo mío.'},{who:'cardo',t:'Ven a por ello.'}]};
+ zarza:[{who:'cardo',t:'Has encontrado mi jardín. Vera siempre fue una chivata.'},{who:'cardo',t:'Te presento a la Zarza Madre. Crece cuando hiela... y hoy va a helar mucho.'}],
+ cardo:[{who:'cardo',t:'Llegas tarde. El Corazón ya me escucha.'},{who:'cardo',t:'¿Sabes lo que es que te echen de la única casa que has tenido? Yo sí.'},{who:'cardo',t:'Con el Corazón haré llover cuando yo quiera y helar donde yo diga. El valle entero crecerá a mi ritmo.'},{who:'yo',t:'Devuélvele a Vera sus semillas. Y al valle su cielo.'},{who:'cardo',t:'Ven a por ello. Si te atreves.'}]};
 function bossTalk(key){if(!S.flags.cardoMet||S.flags['bt_'+key]||!BOSSTALK[key])return;if(key!=='cardo'&&S.bossDone.cardo)return;S.flags['bt_'+key]=1;say(BOSSTALK[key]);}
 
 /* ================= STORY CINEMATICS ================= */
@@ -2562,15 +2581,14 @@ function cineLiaVera(){
   {a:'vera',k:'SorcererBlack',at:[20.5,17.5],dir:'up'},{cam:[16,14],nowait:1,spd:2.4},{mv:'vera',to:[17.2,16.2],spd:110},{mv:'vera',to:[13,12.4],spd:110},{dir:'vera',d:'up'},{cam:'P',spd:3},{emote:'lia',e:'!'},
   {say:[{who:'vera',t:'¡¿Dónde está?! ¡¿Dónde está ese desgraciado?!'}]}],
   ()=>{S.flags.metMavBack=1;advanceChapter();},'vera');}
-/* VII → VIII: the rival becomes a neighbour, then Nilo goes missing */
-function cineCardoJoins(done){
- cine([ST('town',12,11.2,0,1),{a:'cardo',k:'Vampire',at:[9.4,13.4],dir:'up'},{a:'vera',k:'SorcererBlack',at:[13.4,12.4],dir:'side',f:-1},{a:'tobias',k:'Master',at:[10.5,11.6],dir:'down'},
-  {say:[{who:'narr',t:'Esa tarde, en la plaza del pueblo.'}]},{mv:'cardo',to:[11.4,12.6],spd:40},{dir:'cardo',d:'side',f:1},
-  {say:[{who:'vera',t:'...Así que has vuelto.'},{who:'cardo',t:'Si me dejáis.'},{who:'vera',t:'Te dejo. Pero esta estación la feria la gano yo.'},{who:'cardo',t:'Eso ya lo veremos.'},{who:'tobias',t:'Hay un banco libre en la plaza. Y una forja que necesita a alguien que la barra.'},{who:'narr',t:'Cardo se queda en el Pueblo de Brezo. Ahora puedes hablar con él en la plaza.'}]},
+/* VI → VII: Nilo goes missing on the dragon ridge */
+function cineNiloMissing(done){
+ cine([ST('town',12,11.2,0,1),{a:'vera',k:'SorcererBlack',at:[13.4,12.4],dir:'side',f:-1},{a:'tobias',k:'Master',at:[10.5,11.6],dir:'down'},
+  {say:[{who:'narr',t:'Esa tarde, en la plaza del pueblo, cae granizo durante un minuto. Luego sale el sol como si nada.'},{who:'tobias',t:'Granizo en un día así. En cuarenta años de forja no lo había visto.'},{who:'vera',t:'Cardo hacía eso de crío: decía que las nubes le hacían caso. Nadie le creía.'}]},
   {a:'dario',k:'Inspector',at:[21.4,10.6],dir:'side',f:-1},{cam:[16,11],nowait:1,spd:2.4},{mv:'dario',to:[13.6,11.1],spd:100},{cam:'P',spd:3},{emote:'P',e:'!'},
-  {say:[{who:'dario',t:'¡Nilo! ¿Alguien ha visto a Nilo?'},{who:'dario',t:'Su madre dice que no ha dormido en casa. Ha dejado una nota: "Me boi a ver los dragones de los Riscos. No os preocupeis. Nilo."'},{who:'dario',t:'Los Riscos del Dragón están al norte de tu granja. Hay simas que no he cruzado nunca. Yo dibujo esos mapas desde el borde.'},{who:'dario',t:'Toma. Es un garfio. Lo compré hace diez años para cruzar las simas... y nunca me atreví.',fn:()=>{if(!inv('garfio'))addI('garfio');}},{who:'narr',t:'Has conseguido el Garfio de Darío: te engancha a los postes de madera al otro lado de las simas.'},{who:'cardo',t:'Yo conozco esos riscos. Las palancas de los puentes las puso un domador hace siglos. Cada una mueve dos puentes: fíjate bien en cuál sube y cuál baja.'},{who:'dario',t:'Tráelo de vuelta, ¿vale?'}]},
-  {rm:'dario'},{rm:'vera'},{rm:'tobias'},{rm:'cardo'}],()=>{placeNPCs();done&&done();},'cardo');}
-/* VIII → IX: Nilo comes home */
+  {say:[{who:'dario',t:'¡Nilo! ¿Alguien ha visto a Nilo?'},{who:'dario',t:'Su madre dice que no ha dormido en casa. Ha dejado una nota: "Me boi a ver los dragones de los Riscos. No os preocupeis. Nilo."'},{who:'dario',t:'Los Riscos del Dragón están al norte de tu granja. Hay simas que no he cruzado nunca. Yo dibujo esos mapas desde el borde.'},{who:'dario',t:'Toma. Es un garfio. Lo compré hace diez años para cruzar las simas... y nunca me atreví.',fn:()=>{if(!inv('garfio'))addI('garfio');}},{who:'narr',t:'Has conseguido el Garfio de Darío: te engancha a los postes de madera al otro lado de las simas.'},{who:'tobias',t:'Esos riscos los conozco de oídas. Las palancas de los puentes las puso un domador hace siglos. Cada una mueve dos puentes: fíjate bien en cuál sube y cuál baja.'},{who:'vera',t:'Y yo seguiré buscando la entrada del jardín de Cardo. Ve. Tráelo de vuelta.'}]},
+  {rm:'dario'},{rm:'vera'},{rm:'tobias'}],()=>{placeNPCs();done&&done();},'nilo0');}
+/* VII → VIII: Nilo comes home */
 function cineNiloBack(){
  cine([ST('town',12,11.4,0,1),{a:'nilo',k:'Child',at:[10.6,11.6],dir:'side',f:1},{a:'dario',k:'Inspector',at:[17.6,10.6],dir:'side',f:-1},{mv:'dario',to:[13.4,11.4],spd:120},
   {say:[{who:'dario',t:'¡Nilo!'},{who:'nilo',t:'Perdón. Perdón, perdón. ¡Pero he visto un dragón! ¡Tres!'},{who:'dario',t:'Me has quitado diez años de vida. Y yo no tengo tantos de sobra.'},{who:'nilo',t:'{name} cruzó las simas con tu garfio. ¡Zas! ¡Volando!'},{who:'dario',t:'...¿Con mi garfio? Vaya. Entonces sí que servía.'},{who:'nilo',t:'Cuando sea mayor seré domador de dragones. O granjero. O las dos cosas.'}]},
@@ -2589,6 +2607,14 @@ function migrateStory(s){if(s.v>=4)return;s.flags=s.flags||{};const old=s.ch||0,
  if(old>=3){s.ch=3;s.stage='prep';s.flags.storyNews=1;}
  if(!s.xp)s.xp=Math.round((s.stats&&s.stats.kills||0)*4);
  s.v=4;}
+/* v5: the ridge (VII) now comes before the thorn garden (VIII) and Cardo became the final boss at the Heart */
+function migrateStory5(s){if((s.v||0)>=5)return;const bd=s.bossDone||(s.bossDone={}),f=s.flags||(s.flags={});s.inv=s.inv||{};
+ const oldRival=!!bd.cardo;if(oldRival){bd.zarza=1;delete bd.cardo;}
+ if(bd.corazon||f.post){bd.cardo=1;bd.zarza=1;bd.corazon=1;s.inv.reloj=1;s.inv.llave=1;}
+ else if(s.ch===7){s.stage=f.metRengo?'back':'prep';s.inv.garfio=1;if(!oldRival)f.news5=1;}
+ else if(s.ch===8){s.ch=7;}
+ if(oldRival&&!bd.cardo)s.inv.llave=1;
+ s.v=5;}
 
 
 /* ================= GUS: EQUIPMENT KIT AND RARITY ================= */
@@ -2744,8 +2770,9 @@ const PETQ=[
  {n:'Paseo por el valle',d:'Cosecha 40 cultivos con tu compañero a tu lado.',ev:'harvest',goal:40,learn:'Jardinero',ld:'Cada mañana riega 6 cultivos y espanta a los cuervos del huerto.',say:'Le han salido cuernitos. No te asustes: es lo normal. Y ha aprendido a cuidar la tierra contigo.'},
  {n:'Fuego interior',d:'Trae 8 brasas y 6 escamas para avivar el fuego que lleva dentro.',give:{brasa:8,escama:6},learn:'Escudero',ld:'Te acompaña en las grietas y consigue un 15% más de oro y materiales.',say:'Ya tiene escamas. Desde hoy te seguirá también ahí abajo, en las grietas. Cuida de él. Él cuidará de ti.'},
  {n:'Bautismo de grieta',d:'Supera 3 grietas con tu compañero (completas, o retirándote del Abismo).',ev:'runwin',goal:3,learn:'Dragoncillo',ld:'En las grietas escupe bolas de fuego a los enemigos.',say:'¡Ha escupido fuego! Lo sabía. Eso es un dragoncillo como los de antes.'},
- {n:'Corazón de dragón',d:'Que tu compañero derrote a 120 enemigos en las grietas.',ev:'petkill',goal:120,learn:'Dragón',ld:'Aliento de fuego en abanico, mucho más fuerte. Ya es un dragón de verdad.',say:'Mírale. Un dragón. Un dragón de verdad, criado en este valle. Brasa estaría orgullosa.'}];
-const PSTAGE=['Cría','Cría alada','Cría con cuernos','Medio dragón','Dragoncillo','Dragón'];
+ {n:'Corazón de dragón',d:'Que tu compañero derrote a 120 enemigos en las grietas.',ev:'petkill',goal:120,learn:'Dragón',ld:'Aliento de fuego en abanico, mucho más fuerte. Ya es un dragón de verdad.',say:'Mírale. Un dragón. Un dragón de verdad, criado en este valle. Brasa estaría orgullosa.'},
+ {n:'Su mayor miedo',d:'Enfrenta a tu mascota a su mayor miedo.',fear:1,learn:'Dragón ancestral',ld:'Cinco llamaradas en abanico y, junto a ti, un ataque conjunto. Ya no le teme a nada.',say:'Ya no tiene miedo. Eso no se lo he enseñado yo: se lo has enseñado tú.'}];
+const PSTAGE=['Cría','Cría alada','Cría con cuernos','Medio dragón','Dragoncillo','Dragón','Dragón ancestral'],PETMAX=6;
 const petLv=()=>S&&S.pet?(S.pet.lv||0):0;
 const petGoal=q=>Math.ceil(q.goal*(S.flags.ren6?.7:1));
 function petQuestEvent(ev){if(!S||!S.pet||S.pet.q==null)return;const q=PETQ[S.pet.q];if(!q||q.ev!==ev)return;if(ev==='harvest'&&petMode()!=='follow')return;
@@ -2755,8 +2782,17 @@ const petReady=q=>q.give?has(q.give):(S.pet.qp||0)>=petGoal(q);
 const PDER={};
 function petTint(k){if(PDER[k])return PDER[k];const im=IMG['pet_'+k];if(!im)return null;return PDER[k]=recolor(im,0,0,im.width,im.height,(r,g,b)=>{const l=(r*.3+g*.59+b*.11);return[l*.45+20,l*.75+40,l*.55+30];});}
 function pxWing(g,x,y,s,dir,flap,c,c2){g.fillStyle=c;for(let i=0;i<s;i++){const w=Math.max(1,s-i-Math.round(flap*i/s)),yy=y-i-Math.round(flap);g.fillRect(dir<0?x-w:x,yy,w,1);}g.fillStyle=c2;g.fillRect(dir<0?x-s:x,y-Math.round(flap),s,1);}
-function drawPetStage(g,k,lv,ax,ay,face,fr,hop){const im=IMG['pet_'+k];
- if(lv>=4){const D=IMG[lv>=5?'m_DragonYellow':'m_Dragon'];if(!D)return;const sc=lv>=5?1.6:1.1,w=Math.round(16*sc),col=face<0?2:3,row=fr%4;
+/* the last stage is its own sprite: a crimson dragon about the size of a person (30x26, four wing frames) */
+const PDRG=['...kwdk.........khk...........|..kwwwdk........khhk..........|.kwwwwddk......kHWhhk.........|.kWWwwwddk.....kWWWhhk........|..kwWWWWdk....kWWWWHhhkkk.....|..kwwwwwWWk...kWWWWklldddkk...|.kwwwwwwWWdk..kWWWHlrrreellk..|.kwwWWWWwwdk..kWWWHrrrreprmk..|.kWWwwwwwwWk..kWWWrrrrrrrrrk..|..kkwwwwWWddkkWWHlrrrrrmmmmk..|...kwwwWWwwdkkWWHryyrdddkkhk..|...kwwWWwwwdkkHWrryydkkk..k...|....kWkkwwwddkWkrryyk.........|.....k..kllwdlllryyyk.........|.......klrrrrrrrryyyk.........|k.....klrrrrrrrrryyk..........|lkk...krrrrrrrrrrrrk..........|rllk..krrrryyyyyyrdk..........|rrkkkklrrryyyyyyyyk...........|rdllllrrdrYYYYYYYk............|dkdrrrddkrrkkkkyyk............|k.kdddkkkrrk..krrk............|...kkk.klddk..kddlk...........|........kkk....kkk............|..............................|..............................','................khk...........|................khhk..........|...............kHkhhk.........|................kHHhhk........|.................kHHhhkkk.....|.kk...............kklldddkk...|kddkkkk..........kHlrrreellk..|.kwddddkk.......kWHrrrreprmk..|..kwwwwWWk.....kWWrrrrrrrrrk..|.kwWWWWwwdk....kHlrrrrrmmmmk..|kWWwwwwwwWdk..kWHryyrdddkkhk..|.kwwwwwWWwddkkHWrryydkkk..k...|..kkwwWWwwwdkkWWrryyk.........|..kwwWWwwwwwdlllryyyk.........|..kwWkkklrrrrrrrryyyk.........|k..kk.klrrrrrrrrryyk..........|lkk...krrrrrrrrrrrrk..........|rllk..krrrryyyyyyrdk..........|rrkkkklrrryyyyyyyyk...........|rdllllrrdrYYYYYYYk............|dkdrrrddkrrkkkkyyk............|k.kdddkkkrrk..krrk............|...kkk.klddk..kddlk...........|........kkk....kkk............|..............................|..............................','................khk...........|................khhk..........|...............kHkhhk.........|................kHHhhk........|.................kHHhhkkk.....|..................kklldddkk...|.................kHlrrreellk..|.................kHrrrreprmk..|................kkrrrrrrrrrk..|...............kHlrrrrrmmmmk..|...........k..kkHryyrdddkkhk..|....kkkkkkkHkkHkrryydkkk..k...|.kkkddddddkkkkkkrryyk.........|kddddwwWwwdddlllryyyk.........|.kwwwWWwwWwrrrrrryyyk.........|k.kwWWwwWwrrrrrrryyk..........|lkwWWwwwWrrrrrrrrrrk..........|rlWkkwwWrrryyyyyyrdWk.........|rrkkkkwWrryyyyyyyykk..........|rdllllWrdrYYYYYYYk............|dkdrrrddkrrkkkkyyk............|k.kdddkkkrrk..krrk............|...kkk.klddk..kddlk...........|........kkk....kkk............|..............................|..............................','................khk...........|................khhk..........|...............kHkhhk.........|................kHHhhk........|.................kHHhhkkk.....|.kk...............kklldddkk...|kddkkkk..........kHlrrreellk..|.kwddddkk.......kWHrrrreprmk..|..kwwwwWWk.....kWWrrrrrrrrrk..|.kwWWWWwwdk....kHlrrrrrmmmmk..|kWWwwwwwwWdk..kWHryyrdddkkhk..|.kwwwwwWWwddkkHWrryydkkk..k...|..kkwwWWwwwdkkWWrryyk.........|..kwwWWwwwwwdlllryyyk.........|..kwWkkklrrrrrrrryyyk.........|k..kk.klrrrrrrrrryyk..........|lkk...krrrrrrrrrrrrk..........|rllk..krrrryyyyyyrdk..........|rrkkkklrrryyyyyyyyk...........|rdllllrrdrYYYYYYYk............|dkdrrrddkrrkkkkyyk............|k.kdddkkkrrk..krrk............|...kkk.klddk..kddlk...........|........kkk....kkk............|..............................|..............................'],
+ PDRG_PAL={k:'#141b1b',r:'#d14b34',d:'#8a2a2a',l:'#f38c4c',y:'#ffd27a',Y:'#e6a84a',w:'#ffad5d',W:'#c4661e',h:'#fce2ca',H:'#c8966b',e:'#fff3c4',p:'#141b1b',m:'#5a1a1a'};
+function drgSheet(white){const k=white?'drgW':'drg';if(PDER[k])return PDER[k];const c=mkCanvas(120,26),g=c.getContext('2d');
+ PDRG.forEach((f,i)=>f.split('|').forEach((row,y)=>{for(let x=0;x<row.length;x++){const ch=row[x];if(ch==='.')continue;g.fillStyle=white?'#ffffff':PDRG_PAL[ch];g.fillRect(i*30+x,y,1,1);}}));return PDER[k]=c;}
+function drawDrg6(g,ax,ay,face,hop,o){o=o||{};const C=drgSheet(o.white),f=o.perch?2:[0,1,2,1][Math.floor((T+(o.ph||0))*9)%4],bob=o.perch?0:Math.round(Math.sin(T*4+(o.ph||0))*1.5)+3,x=Math.round(ax-15),y=Math.round(ay-23-hop-bob);
+ g.save();if(face<0){g.translate(Math.round(ax)*2,0);g.scale(-1,1);}g.drawImage(C,f*30,0,30,26,x,y,30,26);g.restore();
+ if(!o.white&&Math.floor(T*1.1)%4===0){g.globalAlpha=.55;g.fillStyle='#ffb347';g.fillRect(Math.round(ax+face*13),y+8-Math.round((T*24)%7),1,1);g.globalAlpha=1;}}
+function drawPetStage(g,k,lv,ax,ay,face,fr,hop,o){const im=IMG['pet_'+k];
+ if(lv>=6){drawDrg6(g,ax,ay,face,hop,o);return;}
+ if(lv>=4){const D=IMG[lv>=5?'m_DragonYellow':'m_Dragon'];if(!D)return;const sc=lv>=5?1.3:1.1,w=Math.round(16*sc),col=face<0?2:3,row=fr%4;
   if(lv>=5){const f=Math.sin(T*9)*2;pxWing(g,ax-3,ay-w+6,7,-1,f,'#c4661e','#ffb347');pxWing(g,ax+3,ay-w+6,7,1,f,'#c4661e','#ffb347');}
   g.drawImage(D,col*16,row*16,16,16,Math.round(ax-w/2),Math.round(ay-w+2-hop),w,w);
   if(lv>=5&&Math.floor(T*1.3)%5===0){g.globalAlpha=.6;g.fillStyle='#c9c2bb';g.fillRect(ax+face*9,ay-w+6-Math.round((T*20)%6),2,2);g.globalAlpha=1;}return;}
@@ -2766,7 +2802,7 @@ function drawPetStage(g,k,lv,ax,ay,face,fr,hop){const im=IMG['pet_'+k];
  if(lv>=2){g.fillStyle='#f6eddf';const hx=ax+(face<0?-3:2);g.fillRect(hx-2,top-1,1,2);g.fillRect(hx+1,top-1,1,2);g.fillStyle='#131b1b';g.fillRect(hx-2,top-2,1,1);g.fillRect(hx+1,top-2,1,1);}
  if(lv>=3){g.fillStyle='#3f8a2c';const tx=ax-face*(fw/2-1);for(let i=0;i<3;i++)g.fillRect(tx-face*i,ay-3-i,1,1+(i%2));}}
 drawPet=function(){if(!S.pet)return;const ax=P2(PET.x),ay=P2(PET.y),lv=petLv(),fr=PET.moving?Math.floor(PET.walk)%(lv>=4?4:2):(Math.sin(T*1.7)>.85?1:0),hop=PET.hop>0?Math.round(Math.sin(PET.hop/.4*Math.PI)*4):0;
- shadowAt(ax,ay,lv>=5?16:10);drawPetStage(bx,S.pet.k,lv,ax,ay,PET.face,fr,hop);
+ shadowAt(ax,ay,lv>=6?18:lv>=5?14:10);drawPetStage(bx,S.pet.k,lv,ax,ay,PET.face,fr,hop);
  if(PET.hop>0){const k=1-PET.hop/.6;bx.globalAlpha=1-k;rect('#ff6f91',ax-1,ay-20-k*8,3,2);bx.globalAlpha=1;}};
 function petPreview(){const c=mkCanvas(48,40),g=c.getContext('2d');g.imageSmoothingEnabled=false;const sv=bx;drawPetStage(g,S.pet.k,petLv(),24,36,1,0,0);return c.toDataURL();}
 /* ---- keep the training when switching pets ---- */
@@ -2775,8 +2811,9 @@ function petPreview(){const c=mkCanvas(48,40),g=c.getContext('2d');g.imageSmooth
 function sheetRengo(){if(!S.pet)return sheetHead('Nido de Rengo','Rengo entrena compañeros hasta que despiertan el dragón que llevan dentro.')+'<p class="sub" style="margin-top:10px">Todavía no tienes compañero. Adopta uno en el rincón de la mascota de tu casa y vuelve con él.</p>';
  const lv=petLv(),q=S.pet.q!=null?PETQ[S.pet.q]:null;
  let h=sheetHead(`${esc(S.pet.name)} · ${PSTAGE[lv]}`,'Rengo te da encargos de uno en uno. Con cada encargo cumplido, tu compañero aprende algo nuevo y se acerca un poco más a ser un dragón.');
- h+=`<div class="card" style="margin-top:6px"><img class="petprev" src="${petPreview()}" alt=""><div class="body"><div class="name">Etapa ${lv}/5</div>${lv?PETQ.slice(0,lv).map(x=>`<p class="sub irow"><b>${x.learn}:</b> ${x.ld}</p>`).join(''):'<p class="sub">Por ahora solo te acompaña.</p>'}</div></div>`;
- if(lv>=5){h+='<p class="sub" style="margin-top:10px">Ya es un dragón. Rengo dice que no le queda nada que enseñarle... y que le da un poco de envidia.</p>';return h;}
+ h+=`<div class="card" style="margin-top:6px"><img class="petprev" src="${petPreview()}" alt=""><div class="body"><div class="name">Etapa ${lv}/${PETMAX}</div>${lv?PETQ.slice(0,lv).map(x=>`<p class="sub irow"><b>${x.learn}:</b> ${x.ld}</p>`).join(''):'<p class="sub">Por ahora solo te acompaña.</p>'}</div></div>`;
+ if(lv>=PETMAX){h+=`<p class="sub" style="margin-top:10px">Ya es un dragón ancestral. Rengo dice que no le queda nada que enseñarle... y que le da muchísima envidia.</p>`;return h;}
+ if(lv>=5){const f=PETQ[5];h+=`<h3>Último encargo</h3><div class="card"><div class="body"><div class="name">${f.n}</div><p class="sub">${f.d}</p><p class="sub irow"><b>Aprenderá:</b> ${f.learn}. ${f.ld}</p><p class="sub">Rengo: «Esta lección no puedo dársela yo. Hay algo que le da más miedo que las simas y el fuego juntos. Cuando lo tenga delante, tendrá que mirarlo a la cara. Y tú tendrás que estar a su lado.»</p></div><span class="tag gold">En curso</span></div>`;return h;}
  if(!q){const n=PETQ[lv];h+=`<h3>Siguiente encargo</h3><div class="card"><div class="body"><div class="name">${n.n}</div><p class="sub">${n.d}</p><p class="sub irow"><b>Aprenderá:</b> ${n.learn}. ${n.ld}</p></div><button class="btn sm" data-a="petaccept">Aceptar</button></div>`;return h;}
  const ok=petReady(q),prog=q.give?Object.keys(q.give).map(k=>`${ITEMS[k].n} ${Math.min(inv(k),q.give[k])}/${q.give[k]}`).join(' · '):`${Math.min(S.pet.qp||0,petGoal(q))}/${petGoal(q)}`;
  h+=`<h3>Encargo en curso</h3><div class="card"><div class="body"><div class="name">${q.n}</div><p class="sub">${q.d}</p><p class="sub irow"><b>Progreso:</b> ${prog}</p>${q.ev==='harvest'?`<p class="sub">Solo cuenta si ${esc(S.pet.name)} te acompaña.</p>`:''}${q.ev&&q.ev!=='harvest'&&petLv()<3&&q.ev!=='runwin'?'':''}</div><button class="btn sm" data-a="petdone" ${ok?'':'disabled'}>${q.give?'Entregar':'Completar'}</button></div>`;
@@ -2793,16 +2830,389 @@ function petMorning(msgs){if(!S.pet)return;const lv=petLv(),nm=S.pet.name;if(lv<
  if(lv>=2&&!S.rain&&!S.farm.deco.molino){let k=0;const n=S.farm.n;for(let y=0;y<n&&k<6;y++)for(let x=0;x<n&&k<6;x++){const t=S.farm.tiles[y*10+x];if(t.c&&!t.w){t.w=true;k++;}}if(k)msgs.push({who:'narr',t:`${nm} ha regado ${k} cultivo${k>1?'s':''} y ha montado guardia contra los cuervos.`});}}
 /* ---- companion in the rifts ---- */
 function runPetInit(){if(!S.pet||!S.pet.on||petLv()<3)return;R.pet={x:R.p.x-24,y:R.p.y+14,face:1,walk:0,moving:false,cd:1.2};}
-function runPetTick(dt){const pt=R.pet;if(!pt)return;const p=R.p,tx=p.x-(p.face||1)*24,ty=p.y+12,d=dist(pt.x,pt.y,tx,ty);
+function runPetTick(dt){const pt=R.pet;if(!pt)return;const p=R.p,lv0=petLv(),tx=p.x-(p.face||1)*(lv0>=6?42:lv0>=5?32:24),ty=p.y+(lv0>=5?-6:12),d=dist(pt.x,pt.y,tx,ty);
  if(d>240){pt.x=tx;pt.y=ty;}else if(d>8){const s=Math.min(d,(90+d*2.2)*dt);pt.x+=(tx-pt.x)/d*s;pt.y+=(ty-pt.y)/d*s;pt.walk+=dt*9;pt.moving=true;if(Math.abs(tx-pt.x)>2)pt.face=tx<pt.x?-1:1;}else pt.moving=false;
  const lv=petLv();if(lv<4||R.cleared)return;pt.cd-=dt;if(pt.cd>0)return;
  let best=null,bd=1e9;for(const e of R.en){if(e.dead||e.spawn>0||e.inv)continue;const dd=dist(pt.x,pt.y,e.x,e.y);if(dd<bd){bd=dd;best=e;}}if(!best||bd>420){pt.cd=.3;return;}
- pt.cd=lv>=5?1:1.5;const a=Math.atan2(best.y-pt.y,best.x-pt.x),n=lv>=5?3:1;pt.face=Math.cos(a)<0?-1:1;
- for(let i=0;i<n;i++){const b=a+(i-(n-1)/2)*.28;R.ps.push({x:pt.x,y:pt.y-12,vx:Math.cos(b)*270,vy:Math.sin(b)*270,kind:'fire',r:5,col:'#ff9a4a',pierce:0,bounce:0,wall:0,hit:new Set(),life:1.4,t:0,ret:false,spd:270,dm:lv>=5?.55:.38,pet:1});}snd('fire',.5,1.2);}
-function drawRunPet(){const pt=R.pet;if(!pt||!S.pet)return;const ax=P2(pt.x),ay=P2(pt.y),lv=petLv(),fr=pt.moving?Math.floor(pt.walk)%(lv>=4?4:2):0;shadowAt(ax,ay,lv>=5?16:10);drawPetStage(bx,S.pet.k,lv,ax,ay,pt.face,fr,0);}
+ pt.cd=lv>=6?.9:lv>=5?1:1.5;const a=Math.atan2(best.y-pt.y,best.x-pt.x),n=lv>=6?5:lv>=5?3:1,sp=lv>=6?.22:.28;pt.face=Math.cos(a)<0?-1:1;
+ for(let i=0;i<n;i++){const b=a+(i-(n-1)/2)*sp;R.ps.push({x:pt.x,y:pt.y-(lv>=6?20:12),vx:Math.cos(b)*270,vy:Math.sin(b)*270,kind:'fire',r:5,col:'#ff9a4a',pierce:0,bounce:0,wall:0,hit:new Set(),life:1.4,t:0,ret:false,spd:270,dm:lv>=6?.7:lv>=5?.55:.38,pet:1});}snd('fire',.5,1.2);}
+function drawRunPet(){const pt=R.pet;if(!pt||!S.pet)return;const lv=petLv(),fr=pt.moving?Math.floor(pt.walk)%(lv>=4?4:2):0,j=pt.scared?(Math.floor(T*30)%2?1:-1)*(Math.sin(T*7)>-.3?1:0):0,ax=P2(pt.x)+j,ay=P2(pt.y);
+ shadowAt(P2(pt.x),ay,lv>=6?18:lv>=5?14:10);
+ if(pt.evo>0){const per=.05+.2*Math.min(1,pt.evo/1.6),odd=Math.floor(pt.evo/per)%2;whiteDraw(g=>drawPetStage(g,S.pet.k,odd?5:6,32,56,pt.face,0,0,{white:1}),64,64,ax-32,ay-56);return;}
+ drawPetStage(bx,S.pet.k,lv,ax,ay,pt.face,fr,0,{perch:pt.landed});
+ if(pt.scared&&Math.floor(T*2.2)%3===0){const k=(T*2.2)%1;bx.globalAlpha=1-k;rect('#9fd8f0',ax+pt.face*-8,ay-(lv>=6?26:20)+Math.round(k*6),1,2);bx.globalAlpha=1;}}
+/* draws something as a plain white silhouette (evolution flicker) */
+const WDRAW={c:null};
+function whiteDraw(fn,w,h,x,y){if(!WDRAW.c)WDRAW.c=mkCanvas(w,h);const c=WDRAW.c;if(c.width!==w||c.height!==h){c.width=w;c.height=h;}const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,w,h);fn(g);
+ g.globalCompositeOperation='source-atop';g.fillStyle='#ffffff';g.fillRect(0,0,w,h);g.globalCompositeOperation='source-over';bx.drawImage(c,Math.round(x),Math.round(y));}
 {const o=startRun;startRun=function(...a){o(...a);if(R&&scene==='run')runPetInit();};}
 {const o=ACT.endrun;ACT.endrun=()=>{const xp=R?R.xp||0:0,pet=R&&R.pet,kind=R&&R.ended,ab=R&&R.abyss;if(pet&&(kind==='win'||(ab&&kind==='retire')))petQuestEvent('runwin');const up=xp?grantXp(xp):0;o();
  if(up&&S.flags.metMav)setTimeout(()=>{const p=skPoints();toast(`¡Subes al nivel ${plvl()}! Tienes ${p} punto${p===1?'':'s'} de habilidad: visita a Mavilah.`,3800);},900);};}
+
+/* ================= THE FINALE: Cardo at the Heart of the Withering, the Season Clock, seasonal crops for evolutions ================= */
+Object.assign(ITEMS,{reloj:{n:'Reloj de las Estaciones',p:0,c:'#ffd27a',k:'key',d:'El reloj con el que Cardo mandaba en el cielo. Úsalo desde la mochila para elegir la estación de tu granja.'}});
+ICONS.reloj=[2,6];
+/* the clock icon is painted into the icon atlas at load, so icons.png stays as it was */
+const RELOJ_PX=['......abba......','......abba......','....aaabcaaa....','...abbbdebbba...','..abbdddeeecba..','.abbdfddeeegbba.','.abdfdddeegeeba.','.abdddddegeeeca.','.bdddddggeeeeeb.','.chhhhhggiiiiib.','.abhhhhgiiiiiba.','.abhhhhgiiiiiba.','.abchhhhiiiibca.','..abbhhhiiibca..','...abbchibbca...','....aaabbaaa....'],
+ RELOJ_PAL={a:'#131b1b',b:'#e6b84a',c:'#9a6a2e',d:'#7ec85a',e:'#f6d046',f:'#fff3c4',g:'#2a1e18',h:'#9fd8f0',i:'#f08a2c'};
+{const o=buildDerived;buildDerived=function(){o();try{const im=IMG.icons;if(!im||im.__reloj)return;const c=mkCanvas(im.width,im.height),g=c.getContext('2d');g.drawImage(im,0,0);
+ for(let y=0;y<16;y++)for(let x=0;x<16;x++){const k=RELOJ_PX[y][x];if(k!=='.'){g.fillStyle=RELOJ_PAL[k];g.fillRect(32+x,96+y,1,1);}}
+ c.__reloj=1;IMG.icons=c;const st=document.createElement('style');st.textContent=`.ico{background-image:url(${c.toDataURL()})!important}`;document.head.appendChild(st);}catch(e){console.warn(e);}};}
+BOSS.zarza={n:'Zarza Madre',hp:2600,r:26,spd:60,pats:['charge','ring','summon','aimed','spiral'],drop:'llave'};BSPR.zarza='GiantBamboo2';
+BOSS.cardo={n:'Cardo',hp:4500,r:20,spd:80,pats:['charge','ring','teleport','aimed','summon','spiral'],drop:'corazon'};
+/* stage 1 is a warm-up, stage 2 the real fight; stage 3 he cannot be hurt: crystals of light fire beams at him */
+const CF={p1:.2,p2:.8,beams:4,need:[6,7,8,9],plants:['brote','espinita','espora'],
+ pats:{1:['semillas','flor','semillas','brotes'],2:['espinas','semillas','raices','polen','flor','latigo','granizo','brotes'],3:['raices','espinas','granizo','polen','semillas']}};
+const setBossName=n=>{R.bossName=n;const el=$('#rBossName');if(el)el.textContent=n;};
+function eB(x,y,a,sp,dmg,k,o){const b=Object.assign({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:k==='spore'?8:k==='seed'?4:5,dmg,life:7,k},o||{});R.eb.push(b);return b;}
+function plantSpot(){const A=arena(),p=R.p;for(let k=0;k<40;k++){const x=rnd(A.x0+26,A.x1-26),y=rnd(A.y0+70,A.y1-50);if(inObsR(x,y,16)||dist(x,y,p.x,p.y)<100)continue;return[x,y];}return[rnd(A.x0+30,A.x1-30),A.y0+90];}
+
+/* ---- hooks into the run engine ---- */
+{const o=spawnBoss;spawnBoss=function(key,mult,guardian){if(key==='cardo'&&guardian&&!R.abyss)key='corazon';o(key,mult,guardian);if(key==='cardo'&&!R.abyss&&!guardian)cardoSetup(R.boss);};}
+{const o=updBoss;updBoss=function(b,dt){if(b.cardo){updCardo(b,dt);return;}o(b,dt);};}
+{const o=damage;damage=function(e,d,cr,silent){const c=e&&e.cardo;if(c&&!e.dead){if(e.inv||c.lock)return;if(c.st<3&&e.hp-d<=0){e.hp=0;e.flash=.15;cardoBreak(e);return;}}return o(e,d,cr,silent);};}
+{const o=kill;kill=function(e){o(e);const b=R&&R.boss;if(b&&b.cardo&&b.cardo.st===3&&!e.boss&&!b.dead)cardoKill(b);};}
+{const o=runHurtMod;runHurtMod=function(d){if(R&&R.mshield){R.mshield=0;R.p.inv=.6;snd('magic',.6,1.4);FT.push({x:R.p.x,y:R.p.y-40,t:'¡Escudo de Mavilah!',c:'#c99aff',life:.9,vy:-26});for(let i=0;i<12;i++)R.fx.push({x:R.p.x,y:R.p.y-10,vx:rnd(-90,90),vy:rnd(-90,90),life:.4,c:'#c99aff',s:3});return 0;}return o(d);};}
+{const o=nextRoom;nextRoom=function(){if(R&&R.room===0&&!R.abyss&&!R.evo&&R.storyBoss==='cardo'&&S.flags.cardoCk){R.room=R.rooms-1;R.ckp=S.flags.cardoCk;}
+ o();Object.assign(R,{lanes:[],rootfx:[],aps:[],crystal:null,beam:null,shock:null,cut:null});if(!(R.boss&&R.boss.cardo)){R.allies=null;R.drake=null;}if(R.pet)Object.assign(R.pet,{perch:null,landed:0,st:0,tg:null,evo:0,scared:0,roar:0,cx:null});};}
+{const o=startRun;startRun=function(region,opt){o(region,opt);
+ /* the last descent always takes your companion along, even if it was told to stay home */
+ if(R&&scene==='run'&&region==='raiz'&&!R.abyss&&!R.evo&&!S.bossDone.cardo&&S.pet&&!R.pet&&petLv()>=3)R.pet={x:R.p.x-24,y:R.p.y+14,face:1,walk:0,moving:false,cd:1.2};
+ if(R&&R.ckp&&scene==='run'){const n=3;if(R.pendingPerk)R.perkQueue+=n;else{R.perkQueue=n-1;R.pendingPerk=1;offerPerk(null,'Mejora inicial');}
+ setTimeout(()=>toast(R&&R.ckp===3?'La grieta te devuelve ante Cardo. Tus amigos te esperan. Elige tres mejoras.':'La grieta te lleva directamente ante Cardo. Elige tres mejoras.',3600),300);}};}
+{const o=endRun;endRun=function(kind){if(R&&!R.ended&&kind!=='win'&&R.boss&&R.boss.cardo&&!R.boss.dead){S.flags.cardoCk=R.boss.cardo.st>=3?3:1;}return o(kind);};}
+{const o=updateRun;updateRun=function(dt){if(R.cut){cutTick(dt);updCut(dt);return;}o(dt);if(R&&!R.ended)finaleTick(dt);};}
+
+/* ---- the fight ---- */
+function cardoSetup(b){const tot=b.maxHp;b.cardo={st:1,tot,pi:0,ac:1.2,pat:null,t:0,k:0,kills:0,beams:0,need:CF.need[0],lock:false,dmg0:b.dmg};
+ b.maxHp=b.hp=Math.round(tot*CF.p1);b.dmg*=.5;b.spd=60;b.sc=1.25;setBossName('Cardo');
+ const ck=S.flags.cardoCk||0;S.flags.cardoCk=Math.max(1,ck);save();
+ if(ck>=3){b.cardo.lock=true;b.inv=true;setTimeout(()=>{if(R&&!R.ended&&R.boss===b)cardoStage3(b,true);},650);}}
+function updCardo(b,dt){const c=b.cardo,p=R.p,A=arena();b.t+=dt;b.flash-=dt;if(b.slowT>0)b.slowT-=dt;
+ if(b.spawn>0){b.spawn-=dt;return;}
+ if(c.st<3)for(const k of ['poison','burn'])if(b[k]&&b[k].t>0){b[k].t-=dt;damage(b,b[k].dps*dt,false,true);if(c.lock||b.dead)return;}
+ if(c.lock)return;
+ b.face=p.x<b.x?-1:1;
+ if(c.st===3){updCardo3(b,dt);return;}
+ if(c.pat){if(cardoPat(b,dt)){c.pat=null;b.tele=0;c.ac=c.st===1?1.5:.75;}}
+ else{const tx=clamp(p.x+Math.sin(b.t*.8)*70,A.x0+40,A.x1-40),ty=clamp(p.y-160,A.y0+40,A.y1-200);moveTo(b,tx,ty,b.spd*dt*(b.slowT>0?.5:1));bound(b);
+  c.ac-=dt;if(c.ac<=0){const L=CF.pats[c.st];c.pat=L[c.pi++%L.length];c.t=.25;c.k=0;}}
+ if(!b.inv&&dist(b.x,b.y,p.x,p.y)<b.r+p.r-2)hurt(b.dmg);}
+/* every attack is a plant or the weather; returns true when finished */
+function cardoPat(b,dt){const c=b.cardo,p=R.p,A=arena(),hard=c.st>=2,d=b.dmg;c.t-=dt;
+ switch(c.pat){
+  case 'semillas':if(c.t<=0){const n=hard?5:3;for(let i=0;i<n;i++)eB(b.x,b.y,aim(b,p)+(i-(n-1)/2)*(hard?.2:.3),hard?165:110,d,'seed');snd('shot',.5,.7);c.k++;c.t=hard?.42:.7;if(c.k>=(hard?4:3))return true;}return false;
+  case 'flor':if(c.t<=0){if(c.k>=(hard?3:1))return true;const n=hard?14:10;for(let i=0;i<n;i++)eB(b.x,b.y,i/n*6.283+c.k*.22,hard?100:80,d,'petal',{curve:(c.k%2?1:-1)*(hard?.85:.55)});snd('magic',.45,1.3);c.k++;c.t=hard?.7:1;}return false;
+  case 'brotes':if(c.k===0){const alive=R.en.filter(e=>!e.dead&&!e.boss).length,n=Math.max(0,Math.min(hard?3:2,(hard?6:4)-alive));for(let i=0;i<n;i++){const[x,y]=plantSpot();spawnEnemy(pick(CF.plants),x,y);}
+    if(n){snd('dig',.6,.8);FT.push({x:b.x,y:b.y-40,t:pick(['¡Brotad!','¡Creced!','Mi jardín te saluda']),c:'#8fe060',life:1.1,vy:-16});}c.k=1;c.t=.8;}return c.t<=0;
+  case 'espinas':if(c.k===0){const a0=aim(b,p),offs=c.st===3?[-.45,-.2,.05,.3]:hard?[-.6,-.3,0,.3,.6]:[-.35,0,.35];for(const o of offs)R.lanes.push({x:b.x,y:b.y,a:a0+o+(c.st===3?rnd(-.1,.1):0),len:360,w:22,t:.9,max:.9,dmg:d*1.2});snd('dig',.7,.6);c.k=1;c.t=1.25;}return c.t<=0;
+  case 'raices':if(c.k<3&&c.t<=0){for(let i=0;i<3;i++){const x=clamp(p.x+(i?rnd(-75,75):0),A.x0+20,A.x1-20),y=clamp(p.y+(i?rnd(-75,75):0),A.y0+20,A.y1-20);R.marks.push({x,y,r:26,t:.95,max:.95,dmg:d*1.3,k:'root'});}snd('dig',.5,.7);c.k++;c.t=c.k>=3?1.1:.55;return false;}return c.k>=3&&c.t<=0;
+  case 'polen':if(c.k===0){const a0=aim(b,p);for(let i=0;i<4;i++)eB(b.x,b.y,a0+(i-1.5)*.32,rnd(52,70),d,'spore',{burst:1.4+i*.12});snd('magic',.5,.6);c.k=1;c.t=1.6;}return c.t<=0;
+  case 'latigo':{if(c.k>=(hard?2:1))return true;
+   if(!c.dash){if(!c.tel){c.tel=1;c.t=.85;}b.tele=1;b.wt=c.t;if(c.t>.35)b.ang=aim(b,p);if(c.t<=0){c.dash=1;c.tel=0;c.dl=0;c.drop=0;b.tele=0;}return false;}
+   const st=380*dt;b.x+=Math.cos(b.ang)*st;b.y+=Math.sin(b.ang)*st;c.dl+=st;c.drop+=st;if(c.drop>16){c.drop=0;eB(b.x,b.y,b.ang,0,d*.8,'thorn',{life:1.5});}
+   const ox=b.x,oy=b.y;bound(b);const wall=Math.abs(ox-b.x)+Math.abs(oy-b.y)>.5;if(wall)shake=Math.max(shake,4);if(c.dl>=300||wall){c.dash=0;c.k++;}return false;}
+  case 'granizo':if(c.k===0){for(let i=0;i<14;i++)R.marks.push({x:rnd(A.x0+20,A.x1-20),y:rnd(A.y0+20,A.y1-20),r:15,t:.85+rnd(0,.5),max:1.1,dmg:d*.9,k:'hail'});R.marks.push({x:p.x,y:p.y,r:15,t:1,max:1,dmg:d*.9,k:'hail'});
+    FT.push({x:b.x,y:b.y-40,t:'¡Granizo!',c:'#bfe8ff',life:1.1,vy:-16});snd('magic',.5,1.6);c.k=1;c.t=1.6;}return c.t<=0;}
+ return true;}
+/* stage changes */
+function cardoBreak(b){const c=b.cardo;c.pat=null;c.dash=0;c.tel=0;b.tele=0;R.eb=[];R.lanes=[];R.marks=[];
+ for(const e of R.en)if(!e.boss)e.dead=1;R.en=R.en.filter(e=>!e.dead);c.lock=true;b.inv=true;b.hp=0;snd('cancel');
+ if(c.st===1)cutRun([{wait:.6},{say:[{who:'cardo',t:'Vale, vale. Solo te estaba midiendo.'},{who:'cardo',t:'Ahora en serio. ¡Espinas, despertad!'}]},{fn:()=>cardoStage2(b)}]);
+ else cardoTwist(b);}
+function cardoStage2(b){const c=b.cardo;c.st=2;c.lock=false;b.inv=false;b.maxHp=b.hp=Math.round(c.tot*CF.p2);b.dmg=c.dmg0;b.spd=105;b.sc=1.35;c.pi=0;c.pat=null;c.ac=.9;b.flash=.3;shake=10;snd('boom',.7);
+ setBossName('Cardo, Señor de la Marchitez');for(let i=0;i<30;i++)R.fx.push({x:b.x,y:b.y,vx:rnd(-180,180),vy:rnd(-180,180),life:.7,c:pick(['#b28cff','#8fe060','#2a1a30']),s:4});R.p.inv=1;}
+function cardoTwist(b){const c=b.cardo,A=arena(),pt=R.pet&&S.pet?R.pet:null,pn=pt?S.pet.name:'';
+ const reveal=pt?[
+  {say:[{who:'rengo',t:`¡${pn}! ¡Arriba! ¡Que eres un dragón!`},{who:'narr',t:`${pn} no se mueve. Tiembla con la tripa contra el suelo, sin apartar los ojos de Cardo.`},{who:'cardo',t:'¿Y ese bicho? Esa forma de temblar...'},{who:'cardo',t:'¿Espina? ¿Eres tú?'}]},
+  {fn:()=>{pt.cower=1;snd('cancel',.5,.7);pt.face=b.x<pt.x?-1:1;}},{wait:.7},
+  {say:[{who:'narr',t:`${pn} se encoge al oír ese nombre.`},
+   {who:'cardo',t:'Era mía. La encontré de cría, poco después de que Rosa me echara. Yo quería un dragón como los de Rengo, así que le daba esencia de la grieta.'},
+   {who:'cardo',t:'Pero solo lloraba y se escondía. Le gritaba. La castigaba cada vez que no escupía fuego.'},
+   {who:'cardo',t:'Y una noche de helada la dejé atada junto a la grieta y no volví. No servía para nada.'},
+   {who:'rengo',t:'Así que fuiste tú. Por eso se escondía detrás de ti cada vez que alguien alzaba la voz.'},
+   {who:'mavilah',t:'La esencia no hace dragones, Cardo. Solo hace miedo.'},
+   {who:'yo',t:`${pn}, mírame. Ya no estás en esa grieta. Estás en casa. Conmigo.`}]},
+  {fn:()=>{pt.scared=0;pt.cower=0;pt.cx=180;pt.cy=A.y1-262;pt.face=b.x<pt.x?-1:1;}},{petwalk:1},
+  {say:[{who:'narr',t:`${pn} deja de temblar. Da un paso. Luego otro. Y se planta entre Cardo y tú.`}]},
+  {fn:()=>{pt.evo=1.6;snd('magic',.9,1.2);shake=4;}},{wait:1.7},
+  {fn:()=>{S.pet.lv=PETMAX;S.pet.q=null;S.pet.qp=0;S.flags.petFear=1;save();R.flash=.9;shake=12;snd('powerup');snd('fire',.9,.6);jing('level');pt.face=b.x<pt.x?-1:1;
+    for(let i=0;i<40;i++){const a=rnd(0,6.283),v=rnd(40,200);R.fx.push({x:pt.x,y:pt.y-24,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rnd(.5,.9),c:pick(['#ff7a45','#ffe066','#fff3c4','#d14b34']),s:4});}
+    FT.push({x:pt.x,y:pt.y-70,t:'¡Dragón ancestral!',c:'#ffd27a',life:2.2,vy:-10,big:1});}},{wait:1.2},
+  {say:[{who:'narr',t:`Último encargo de Rengo cumplido: Su mayor miedo. ${pn} ha aprendido: ${PETQ[5].learn}. ${PETQ[5].ld}`},
+   {who:'rengo',t:'¡Ahí está! ¡Ese es el dragón que llevaba dentro! Un dragón no se fuerza: se acompaña hasta que deja de tener miedo.'},
+   {who:'cardo',t:'No... Yo lo intenté todo.'},{who:'mavilah',t:'Todo menos quererla.'}]}]:[];
+ cutRun([{wait:.7},
+  {say:[{who:'cardo',t:'No... No pienso perder. Otra vez no.'}]},
+  {fn:()=>{c.absorb=1;shake=5;snd('magic',.9,.5);b.tx=180;b.ty=A.y0+100;}},{wait:1.8},
+  {say:[{who:'cardo',t:'¡Corazón! ¡Dámelo todo!'}]},
+  {fn:()=>{c.absorb=0;c.big=1;b.sc=1.5;b.flash=.5;shake=16;snd('boom',1);jing('lose');R.shock={t:0,x:b.x,y:b.y};const p=R.p;p.hp=1;p.ko=1;p.x=180;p.y=A.y1-215;R.flash=1;R.ps=[];
+    if(pt){pt.x=218;pt.y=A.y1-226;pt.scared=1;pt.face=-1;pt.cx=null;pt.moving=false;}}},{wait:1.4},
+  {say:[{who:'narr',t:'La onda te tira al suelo. Los brazos te pesan como si fueran de piedra.'},{who:'cardo',t:'¿Lo ves? La lluvia, la helada, la Marchitez... Todo me obedece. Rosa nunca se atrevió.'},{who:'cardo',t:'Quédate ahí. Mira cómo crece mi valle.'}]},{wait:.5},
+  {say:[{who:'gus',t:'¡Eh! ¡Tú, el de las espinas!'}]},
+  {fn:()=>{alliesEnter(false);snd('dig',.6);}},{walk:1},
+  {say:[{who:'gus',t:'Nadie toca a mi mejor cliente. Y menos con esas pintas.'},{who:'mavilah',t:'Levanta, brote. Mientras tengas a quién volver, nadie podrá borrarte.'},...(pt?[]:[{who:'rengo',t:'Los dragones no olvidan quién cuida el valle. Y yo tampoco.'}])]},
+  ...reveal,
+  {fn:()=>{const p=R.p;p.hp=p.maxHp;p.ko=0;snd('powerup');for(let i=0;i<24;i++)R.fx.push({x:p.x+rnd(-14,14),y:p.y+rnd(-20,6),vx:rnd(-30,30),vy:rnd(-90,-30),life:.8,c:pick(['#c99aff','#8fe060','#fff3c4']),s:3});}},{wait:.8},
+  {say:[{who:'cardo',t:pt?'¿Cinco contra uno? Muy bien. Que crezca el jardín.':'¿Cuatro contra uno? Muy bien. Que crezca el jardín.'},
+   {who:'narr',t:pt?`Cardo se envuelve en la Marchitez y nada puede herirle. Cada planta que derrotéis aviva la rabia de ${pn}. Cuando esté a tope, se posará en el suelo: corre a su lado para lanzar un ataque conjunto.`:'Cardo se envuelve en la Marchitez y nada puede herirle. Derrota a sus plantas: cuando brille un cristal de luz, cógelo para lanzarle un rayo.'}]},
+  {fn:()=>cardoStage3(b,false)}]);}
+function cardoStage3(b,quick){const c=b.cardo,A=arena();Object.assign(c,{st:3,lock:false,beams:0,kills:0,need:CF.need[0],pi:0,pat:null,ac:2.2,spawnT:.4,big:1,stun:0,win:0});
+ b.inv=true;b.maxHp=b.hp=CF.beams;b.sc=1.5;b.x=180;b.y=A.y0+72;b.dmg=c.dmg0*1.1;setBossName('Cardo, Corazón de la Marchitez');
+ b.tx=null;if(!R.allies)alliesEnter(true);R.p.ko=0;R.p.inv=1.5;S.flags.cardoCk=3;
+ if(S.pet&&R.pet){if(petLv()<PETMAX){S.pet.lv=PETMAX;S.pet.q=null;S.pet.qp=0;S.flags.petFear=1;}Object.assign(R.pet,{scared:0,cower:0,evo:0,perch:null,landed:0,st:0,cd:2,cx:null});}save();
+ if(quick)FT.push({x:R.p.x,y:R.p.y-60,t:'¡Gus, Mavilah y Rengo están contigo!',c:'#ffd27a',life:2.4,vy:-10,big:1});
+ if(R.pet&&S.pet){if(!S.flags.tipRage){S.flags.tipRage=1;setTimeout(()=>toast(`Derrota a las plantas para llenar la rabia de ${S.pet.name}. Cuando se pose, corre a su lado.`,4400),400);}}
+ else if(!S.flags.tipCrystal){S.flags.tipCrystal=1;setTimeout(()=>toast('Derrota a las plantas de Cardo. Cuando aparezca un cristal de luz, cógelo.',4200),400);}}
+function updCardo3(b,dt){const c=b.cardo,A=arena();b.y=A.y0+72+Math.sin(b.t*1.6)*5;b.x=180+Math.sin(b.t*.5)*30;
+ if(c.win)return;if(c.stun>0){c.stun-=dt;return;}
+ c.spawnT-=dt;const alive=R.en.filter(e=>!e.dead&&!e.boss).length;
+ if(c.spawnT<=0){c.spawnT=3.1;const n=Math.max(0,Math.min(3,6-alive));for(let i=0;i<n;i++){const[x,y]=plantSpot();spawnEnemy(pick(CF.plants),x,y);}if(n)snd('dig',.5,.8);}
+ if(c.pat){if(cardoPat(b,dt)){c.pat=null;c.ac=rnd(1.7,2.4);}}
+ else{c.ac-=dt;if(c.ac<=0){const L=CF.pats[3];c.pat=L[c.pi++%L.length];c.t=.25;c.k=0;}}}
+function cardoKill(b){const c=b.cardo,pt=R.pet&&S.pet?R.pet:null;
+ if(pt){if(pt.perch||R.beam)return;c.kills++;if(c.kills>=c.need)petPerch();return;}
+ c.kills++;if(c.kills>=c.need&&!R.crystal&&!R.beam)spawnCrystal();}
+/* full of rage, the dragon lands somewhere and waits for you: together you strike Cardo */
+function petPerch(){const A=arena(),p=R.p,pt=R.pet;let x=180,y=A.y1-120;for(let k=0;k<60;k++){x=rnd(A.x0+40,A.x1-40);y=rnd(A.y0+140,A.y1-40);if(!inRockR(x,y)&&dist(x,y,p.x,p.y)>110)break;}
+ pt.perch={x,y};pt.landed=0;pt.st=0;pt.tg=null;snd('fire',.8,.7);FT.push({x:pt.x,y:pt.y-60,t:`¡${S.pet.name} está a tope de rabia!`,c:'#ffb347',life:1.8,vy:-12,big:1});}
+const inRockR=(x,y)=>inObsR(x,y,22);
+function jointAttack(){const pt=R.pet,p=R.p,b=R.boss;pt.perch=null;pt.landed=0;pt.roar=1.15;pt.face=b.x<pt.x?-1:1;
+ R.beam={x0:pt.x+pt.face*24,y0:pt.y-30,px:p.x,py:p.y-18,t:0,hit:false,joint:1};snd('powerup');snd('fire',1,.6);shake=Math.max(shake,6);R.flash=.35;
+ FT.push({x:(pt.x+p.x)/2,y:Math.min(pt.y,p.y)-70,t:'¡Ataque conjunto!',c:'#ffd27a',life:1.6,vy:-14,big:1});}
+/* companion behaviour during the fight: frozen with fear first, then a dragon */
+function petScared(dt){const pt=R.pet,p=R.p,tx=p.x-(p.face||1)*20,ty=p.y-6,d=dist(pt.x,pt.y,tx,ty);pt.scared=1;
+ if(d>240){pt.x=tx;pt.y=ty;}else if(d>3){const s=Math.min(d,(110+d*2.5)*dt);pt.x+=(tx-pt.x)/d*s;pt.y+=(ty-pt.y)/d*s;pt.walk+=dt*9;pt.moving=true;}else pt.moving=false;
+ if(R.boss)pt.face=R.boss.x<pt.x?-1:1;}
+function petFinale(dt){const pt=R.pet,p=R.p,A=arena(),c=R.boss.cardo;pt.scared=0;if(pt.evo>0)return;
+ let tx,ty,sp=170;
+ if(pt.perch){tx=pt.perch.x;ty=pt.perch.y;sp=240;}
+ else if(pt.roar>0){pt.roar-=dt;tx=pt.x;ty=pt.y;}
+ else if(pt.st===1&&pt.tg&&!pt.tg.dead){tx=pt.tg.x;ty=pt.tg.y-8;sp=270;}
+ else{pt.st=0;tx=clamp(p.x-(p.face||1)*34,A.x0+24,A.x1-24);ty=clamp(p.y-22,A.y0+60,A.y1-16);}
+ const d=dist(pt.x,pt.y,tx,ty);pt.moving=d>3;if(d>2){const s=Math.min(d,sp*dt);pt.x+=(tx-pt.x)/d*s;pt.y+=(ty-pt.y)/d*s;pt.walk+=dt*9;if(Math.abs(tx-pt.x)>2)pt.face=tx<pt.x?-1:1;}
+ if(pt.perch){if(d<4&&!pt.landed){pt.landed=1;snd('dig',.7,.7);shake=Math.max(shake,3);for(let i=0;i<14;i++)R.fx.push({x:pt.x+rnd(-16,16),y:pt.y,vx:rnd(-70,70),vy:rnd(-50,-10),life:.5,c:pick(['#a07850','#7a5230','#ffb347']),s:3});}return;}
+ if(c.win||pt.roar>0)return;pt.cd-=dt;
+ if(pt.st===0){if(pt.cd<=0){const e=pickPlant();if(e){pt.st=1;pt.tg=e;}else pt.cd=.5;}return;}
+ const e=pt.tg;if(!e||e.dead){pt.st=0;pt.cd=.4;return;}
+ if(d<12){for(const o of R.en)if(!o.dead&&!o.boss&&dist(o.x,o.y,e.x,e.y)<56+o.r){o.burn={dps:o.maxHp*.12,t:2.5};damage(o,o.maxHp*.5,false);}
+  R.anims.push({k:'fx_explosion',fw:40,fh:40,n:9,x:e.x,y:e.y,t:0,fps:22});for(let i=0;i<18;i++)R.fx.push({x:pt.x+pt.face*20,y:pt.y-14,vx:rnd(-70,70),vy:rnd(40,180),life:.45,c:pick(['#ff7a45','#ffe066','#ff5a1f']),s:4});
+  snd('fire',.9,.8);pt.st=0;pt.cd=3.2;}}
+{const o=runPetTick;runPetTick=function(dt){const b=R.boss,c=b&&b.cardo;if(c&&R.pet&&S.pet){if(c.st<3){petScared(dt);return;}petFinale(dt);return;}o(dt);};}
+{const o=drawRunPet;drawRunPet=function(){const pt=R.pet,b=R.boss,c=b&&b.cardo;if(!pt||!S.pet){o();return;}
+ if(pt.perch&&pt.landed){const x=P2(pt.x),y=P2(pt.y);bx.globalAlpha=.22+.14*Math.sin(T*6);pxDisk(x,y,14,'#ffb347');bx.globalAlpha=.7;pxRing(x,y,12+Math.round(Math.sin(T*5)),'#ffe066');bx.globalAlpha=1;}
+ o();
+ if(c&&c.st===3&&!c.win&&!(pt.evo>0)){const ax=P2(pt.x),ay=P2(pt.y)-(pt.landed?32:36),k=pt.perch?1:Math.min(1,c.kills/c.need),w=22;
+  rect('#131b1b',ax-w/2-1,ay-1,w+2,4);rect('#4a1a10',ax-w/2,ay,w,2);rect(k>=1&&Math.floor(T*8)%2?'#ffe066':'#ff7a45',ax-w/2,ay,Math.round(w*k),2);
+  if(pt.perch&&pt.landed)label(ax,ay-9,'¡Ataque conjunto!',{s:11,c:'#ffd27a',a:.6+.4*Math.sin(T*5)});}};}
+function spawnCrystal(){const A=arena(),p=R.p;let x=180,y=A.y1-120;for(let k=0;k<50;k++){x=rnd(A.x0+30,A.x1-30);y=rnd(A.y0+120,A.y1-30);if(!inObsR(x,y,18)&&dist(x,y,p.x,p.y)>110)break;}
+ R.crystal={x,y,t:0};snd('magic',.9,1.5);FT.push({x,y:y-26,t:'¡Cristal de luz!',c:'#bff6ff',life:1.8,vy:-12,big:1});}
+function fireBeam(){const cr=R.crystal;R.crystal=null;R.beam={x0:cr.x,y0:cr.y-12,t:0,hit:false};snd('powerup');shake=Math.max(shake,4);}
+/* ---- allies ---- */
+const ALLY={gus:{k:'Lion',n:'Gus'},mavilah:{k:'NinjaMageBlack',n:'Mavilah'},rengo:{k:'Hunter',n:'Rengo'}};
+function alliesEnter(instant){const A=arena();R.allies=[{id:'gus',x:100,y:A.y1+50,hx:86,hy:A.y1-80,cx:128,cy:A.y1-185,cd:1.6},{id:'mavilah',x:180,y:A.y1+70,hx:150,hy:A.y1-34,cx:180,cy:A.y1-165,cd:5,follow:1},{id:'rengo',x:260,y:A.y1+50,hx:274,hy:A.y1-80,cx:232,cy:A.y1-185,cd:3}];
+ for(const a of R.allies){Object.assign(a,ALLY[a.id]);a.tx=instant?a.hx:a.cx;a.ty=instant?a.hy:a.cy;a.face=1;a.dir='up';a.walk=0;a.tag=4;if(instant){a.x=a.tx;a.y=a.ty;}}
+ R.drake=null;}
+function moveAllies(dt){let all=true;for(const a of R.allies){const d=dist(a.x,a.y,a.tx,a.ty);a.moving=d>3;if(a.tag>0)a.tag-=dt;
+  if(a.moving){const s=Math.min(d,85*dt);const dx=(a.tx-a.x)/d,dy=(a.ty-a.y)/d;a.x+=dx*s;a.y+=dy*s;a.walk+=dt*10;a.dir=Math.abs(dx)>Math.abs(dy)?'side':dy<0?'up':'down';if(Math.abs(dx)>.2)a.face=dx<0?-1:1;all=false;}else a.dir='up';}
+ const D=R.drake;if(D){D.t+=dt;const d=dist(D.x,D.y,D.tx,D.ty);if(d>2){const s=Math.min(d,(D.st===1?250:150)*dt);D.x+=(D.tx-D.x)/d*s;D.y+=(D.ty-D.y)/d*s;if(Math.abs(D.tx-D.x)>2)D.face=D.tx<D.x?-1:1;}}
+ return all;}
+function pickPlant(){const L=R.en.filter(e=>!e.dead&&!e.boss&&e.spawn<=0);return L.length?pick(L):null;}
+function allyTick(dt){const p=R.p,A=arena(),b=R.boss;
+ for(const a of R.allies){if(a.follow){a.tx=clamp(p.x-34,A.x0+16,A.x1-16);a.ty=clamp(p.y+30,A.y0+40,A.y1-10);}else{a.tx=a.hx+Math.sin(R.t*.7+a.hx)*18;a.ty=a.hy+Math.cos(R.t*.5+a.hx)*10;}
+  a.cd-=dt;if(a.cd>0)continue;
+  if(a.id==='gus'){const e=pickPlant();if(!e){a.cd=.5;continue;}R.aps.push({k:'hammer',x:a.x,y:a.y-14,tg:e,t:0});a.cd=2.5;a.face=e.x<a.x?-1:1;if(Math.random()<.35)FT.push({x:a.x,y:a.y-36,t:pick(['¡Pum!','¡Al yunque!','¡Toma martillazo!']),c:'#ffd27a',life:.9,vy:-20});snd('shot',.6,.6);}
+  else if(a.id==='mavilah'){a.cd=7;if(p.hp<p.maxHp*.95){const h=p.maxHp*.15;p.hp=Math.min(p.maxHp,p.hp+h);FT.push({x:p.x,y:p.y-44,t:'+'+Math.round(h),c:'#8fe060',life:.9,vy:-24});}else R.mshield=1;
+   snd('magic',.6,1.2);if(Math.random()<.4)FT.push({x:a.x,y:a.y-36,t:pick(['¡Aguanta!','Respira, brote.','Yo te cubro.']),c:'#c99aff',life:.9,vy:-20});for(let i=0;i<14;i++)R.fx.push({x:p.x+rnd(-12,12),y:p.y+rnd(-22,4),vx:rnd(-20,20),vy:rnd(-80,-20),life:.6,c:pick(['#c99aff','#8fe060']),s:3});}
+  else if(a.id==='rengo'){const e=pickPlant();if(!e){a.cd=.5;continue;}R.aps.push({k:'arrow',x:a.x,y:a.y-14,tg:e,t:0,a:0});a.cd=1.7;a.face=e.x<a.x?-1:1;snd('shot',.5,1.4);if(Math.random()<.25)FT.push({x:a.x,y:a.y-36,t:pick(['¡Ahí va!','¡Diana!','Ni se mueve.']),c:'#9fd8f0',life:.9,vy:-20});}}
+ const D=R.drake;if(!D)return;D.cd-=dt;const rg=R.allies.find(a=>a.id==='rengo');
+ if(D.st===0){D.tx=rg.x+16+Math.sin(D.t*2)*10;D.ty=rg.y-44+Math.cos(D.t*2.4)*6;if(D.cd<=0){const e=pickPlant();if(e){D.st=1;D.tg=e;}else D.cd=.6;}}
+ else if(D.st===1){const e=D.tg;if(!e||e.dead){D.st=0;D.cd=.4;return;}D.tx=e.x;D.ty=e.y-36;if(dist(D.x,D.y,D.tx,D.ty)<10){
+   for(const o of R.en)if(!o.dead&&!o.boss&&dist(o.x,o.y,e.x,e.y)<52+o.r){o.burn={dps:o.maxHp*.12,t:2.5};damage(o,o.maxHp*.5,false);}
+   R.anims.push({k:'fx_explosion',fw:40,fh:40,n:9,x:e.x,y:e.y,t:0,fps:22});for(let i=0;i<18;i++)R.fx.push({x:D.x,y:D.y+10,vx:rnd(-70,70),vy:rnd(40,180),life:.45,c:pick(['#ff7a45','#ffe066','#ff5a1f']),s:4});
+   snd('fire',.9,.8);if(Math.random()<.5)FT.push({x:rg.x,y:rg.y-36,t:pick(['¡Fuego, pequeña!','¡Ahora!','¡Así se hace!']),c:'#ff9a4a',life:.9,vy:-20});D.st=0;D.cd=4;}}}
+/* ---- per-frame extras after the normal run update ---- */
+function finaleTick(dt){const p=R.p,A=arena(),b=R.boss;
+ for(const e of R.eb){if(e.curve){const c=Math.cos(e.curve*dt),s=Math.sin(e.curve*dt),vx=e.vx*c-e.vy*s;e.vy=e.vx*s+e.vy*c;e.vx=vx;}
+  if(e.burst!=null){e.burst-=dt;if(e.burst<=0){e.dead=1;for(let i=0;i<8;i++)eB(e.x,e.y,i/8*6.283,120,e.dmg*.8,'seed');snd('dig',.35,1.4);}}}
+ if(R.eb.some(e=>e.dead))R.eb=R.eb.filter(e=>!e.dead);
+ if(R.lanes)for(const L of R.lanes){L.t-=dt;if(L.t<=0&&!L.hit){L.hit=1;const ex=L.x+Math.cos(L.a)*L.len,ey=L.y+Math.sin(L.a)*L.len;if(segDist(p.x,p.y,L.x,L.y,ex,ey)<L.w/2+p.r-2)hurt(L.dmg);snd('dig',.5,.9);shake=Math.max(shake,3);}}
+ if(R.lanes)R.lanes=R.lanes.filter(L=>L.t>-.45);if(R.rootfx){for(const f of R.rootfx)f.t+=dt;R.rootfx=R.rootfx.filter(f=>f.t<.45);}
+ if(R.shock){R.shock.t+=dt;if(R.shock.t>1)R.shock=null;}if(R.flash>0)R.flash-=dt*2;
+ if(!b||!b.cardo)return;const c=b.cardo;
+ if(R.allies){moveAllies(dt);if(c.st===3&&!c.win)allyTick(dt);}
+ for(const h of R.aps){h.t+=dt;const e=h.tg;if(!e||e.dead){h.tg=pickPlant();if(!h.tg)h.dead=1;continue;}const ar=h.k==='arrow',d=dist(h.x,h.y,e.x,e.y),s=(ar?460:300)*dt;h.a=Math.atan2(e.y-h.y,e.x-h.x);
+  if(d<e.r+6){h.dead=1;damage(e,ar?e.maxHp*.32+R.st.dmg:e.maxHp*.55+R.st.dmg*1.5,false);if(ar)snd('hit',.5,1.3);else{R.anims.push({k:'fx_smoke',fw:32,fh:32,n:6,x:e.x,y:e.y,t:0,fps:18});snd('hit');shake=Math.max(shake,2);}}else{h.x+=(e.x-h.x)/d*s;h.y+=(e.y-h.y)/d*s;}}
+ R.aps=R.aps.filter(h=>!h.dead);
+ if(R.crystal){R.crystal.t+=dt;if(!R.dying&&dist(p.x,p.y,R.crystal.x,R.crystal.y)<18)fireBeam();}
+ const pt=R.pet;if(pt&&pt.perch&&pt.landed&&!R.beam&&!R.dying&&dist(p.x,p.y,pt.x,pt.y)<30)jointAttack();
+ if(R.beam){const B=R.beam;B.t+=dt;if(!B.hit&&B.t>.35){B.hit=1;c.beams++;b.hp=CF.beams-c.beams;b.flash=.5;c.stun=1.6;shake=12;snd('boom',.9);R.anims.push({k:'fx_explosion',fw:40,fh:40,n:9,x:b.x,y:b.y,t:0,fps:20});
+   FT.push({x:b.x,y:b.y-50,t:c.beams>=CF.beams?'¡¡NOOO!!':B.joint?pick(['¡Aaargh!','¡Ese fuego...!','¡Espina, basta!']):pick(['¡Aaargh!','¡Esa luz...!','¡Basta!']),c:'#ffffff',life:1.4,vy:-16,big:1});R.eb=[];R.lanes=[];
+   if(c.beams>=CF.beams){c.win=1;c.lock=true;for(const a of R.allies)FT.push({x:a.x,y:a.y-38,t:a.id==='gus'?'¡Eso es!':a.id==='rengo'?'¡Bien hecho!':'Se acabó.',c:'#ffd27a',life:1.6,vy:-14});}
+   else{c.kills=0;c.need=CF.need[Math.min(c.beams,CF.need.length-1)];}}
+  if(B.t>1){R.beam=null;if(c.win){b.inv=false;b.hp=0;c.lock=false;delete b.cardo;kill(b);}}}}
+function segDist(px,py,x0,y0,x1,y1){const dx=x1-x0,dy=y1-y0,l=dx*dx+dy*dy,t=l?clamp(((px-x0)*dx+(py-y0)*dy)/l,0,1):0;return dist(px,py,x0+dx*t,y0+dy*t);}
+function markErupt(m){(R.rootfx=R.rootfx||[]).push({x:m.x,y:m.y,r:m.r,k:m.k,t:0});snd(m.k==='hail'?'pick':'dig',.4,m.k==='hail'?1.6:.7);for(let i=0;i<10;i++)R.fx.push({x:m.x,y:m.y,vx:rnd(-90,90),vy:rnd(-110,-20),life:.4,c:m.k==='hail'?pick(['#e8f8ff','#9ee6ff']):pick(['#7a5230','#a07850','#5a8a3a']),s:3});}
+/* ---- in-run cutscenes ---- */
+function cutRun(steps){R.cut={steps,i:0,t:null,waiting:0};R.p.moving=false;R.ps=[];R.queue=[];joy=null;}
+function updCut(dt){const C=R.cut;if(!C)return;
+ while(C.i<C.steps.length){const s=C.steps[C.i];
+  if(s.wait!=null){if(C.t==null)C.t=s.wait;C.t-=dt;if(C.t>0)return;C.t=null;C.i++;continue;}
+  if(s.say){if(!C.waiting){C.waiting=1;say(s.say,()=>{C.waiting=0;C.i++;});}return;}
+  if(s.walk){if(R.allies&&!R.allies.every(a=>!a.moving&&dist(a.x,a.y,a.tx,a.ty)<4))return;C.i++;continue;}
+  if(s.petwalk){const pt=R.pet;if(pt&&pt.cx!=null)return;C.i++;continue;}
+  if(s.fn){C.i++;s.fn();continue;}C.i++;}
+ if(R.cut===C)R.cut=null;}
+function cutTick(dt){R.t+=dt;const b=R.boss;
+ if(b){b.t+=dt;b.flash-=dt;const c=b.cardo;if(c&&c.absorb){for(let i=0;i<3;i++){const a=rnd(0,6.283),d=rnd(90,170);R.fx.push({x:b.x+Math.cos(a)*d,y:b.y+Math.sin(a)*d,vx:-Math.cos(a)*d*2.3,vy:-Math.sin(a)*d*2.3,life:.42,c:pick(['#b28cff','#6a3a8a','#8fe060','#2a1a30']),s:4});}shake=Math.max(shake,2);}}
+ if(R.allies)moveAllies(dt);if(R.shock){R.shock.t+=dt;if(R.shock.t>1)R.shock=null;}if(R.flash>0)R.flash-=dt*2;
+ if(b&&b.tx!=null){const d=dist(b.x,b.y,b.tx,b.ty);if(d>2){const s=Math.min(d,110*dt);b.x+=(b.tx-b.x)/d*s;b.y+=(b.ty-b.y)/d*s;}}
+ const pt=R.pet;if(pt){if(pt.cx!=null){const d=dist(pt.x,pt.y,pt.cx,pt.cy);if(d>2){const s=Math.min(d,60*dt);pt.x+=(pt.cx-pt.x)/d*s;pt.y+=(pt.cy-pt.y)/d*s;pt.walk+=dt*6;pt.moving=true;}else{pt.moving=false;pt.cx=null;}}
+  if(pt.evo>0){pt.evo=Math.max(0,pt.evo-dt);if(Math.random()<.5)R.fx.push({x:pt.x+rnd(-20,20),y:pt.y-rnd(0,40),vx:rnd(-20,20),vy:rnd(-70,-20),life:.5,c:pick(['#ffffff','#ffe066','#ffb347']),s:2});}}
+ for(const f of R.fx){f.life-=dt;f.x+=f.vx*dt;f.y+=f.vy*dt;f.vx*=.92;f.vy*=.92;}R.fx=R.fx.filter(f=>f.life>0);for(const a of R.anims)a.t+=dt;R.anims=R.anims.filter(a=>a.t*a.fps<a.n);
+ shake=Math.max(0,shake-dt*30);for(const f of FT){f.life-=dt;f.y+=f.vy*dt;}FT=FT.filter(f=>f.life>0);
+ const p=R.p;$('#rHpB').style.width=(p.hp/p.maxHp*100)+'%';$('#rHpT').textContent=`${Math.ceil(p.hp)}/${Math.round(p.maxHp)}`;if(b&&!b.dead)$('#rBossB').style.width=(Math.max(0,b.hp)/b.maxHp*100)+'%';}
+
+/* ================= DRAWING ================= */
+function drawCardoS(b){const c=b.cardo||{},im=IMG.b_Cardo;if(!im)return;const w=32,h=32,sc=b.sc||1.25,W=Math.round(w*sc),H=Math.round(h*sc),f=Math.floor(b.t*7)%4,ax=P2(b.x),ay=P2(b.y);
+ let al=b.alpha==null?1:b.alpha;if(b.spawn>0)al*=Math.max(0,1-b.spawn/.8);
+ if(b.tele){const lock=b.wt!=null&&b.wt<=.35,hw=10,L=150,o=Math.floor(T*24)%6;bx.save();bx.translate(ax,ay);bx.rotate(b.ang);bx.globalAlpha=lock?.24+.1*Math.sin(T*28):.1;bx.fillStyle='#5a8a3a';bx.fillRect(0,-hw,L,hw*2);bx.globalAlpha=lock?.95:.45;bx.fillStyle=lock?'#d8ff9a':'#8fe060';for(let x=0;x<L;x+=6){bx.fillRect(x+o,-hw,3,1);bx.fillRect(x+o,hw-1,3,1);}bx.restore();}
+ shadowAt(ax,ay+Math.round(H*.42)+(c.st===3?8:0),Math.round(W*.7),al*(c.st===3?.6:1));
+ if(c.st>=2||c.absorb){bx.globalAlpha=.16+.08*Math.sin(T*5);pxDisk(ax,ay,Math.round(W*.62),c.st===3?'#6a3a8a':'#b28cff');bx.globalAlpha=1;
+  for(let i=0;i<4;i++){const k=(T*.8+i/4)%1;bx.globalAlpha=(1-k)*.7;rect(i%2?'#b28cff':'#8fe060',ax+Math.round(Math.sin(i*2.1+T)*W*.35),ay-Math.round(H*.3)-k*16,1,2);}bx.globalAlpha=1;}
+ bx.globalAlpha=al;bx.drawImage(im,f*w,0,w,h,ax-Math.floor(W/2),ay-Math.floor(H/2),W,H);
+ if(b.flash>.04&&DER.Wb_Cardo){bx.globalAlpha=al*.55;bx.drawImage(DER.Wb_Cardo,f*w,0,w,h,ax-Math.floor(W/2),ay-Math.floor(H/2),W,H);}bx.globalAlpha=1;
+ if(c.st===3&&!c.win){const r=Math.round(W*.62)+Math.round(Math.sin(T*3)*1.5);bx.globalAlpha=.55+.2*Math.sin(T*4);pxRing(ax,ay,r,'#b28cff');pxRing(ax,ay,r+2,'#5a2a6a');bx.globalAlpha=1;
+  for(let i=0;i<10;i++){const a=i/10*6.283+T*.6,x=ax+Math.round(Math.cos(a)*(r+1)),y=ay+Math.round(Math.sin(a)*(r+1));rect('#2a3a1a',x-1,y-1,3,3);rect('#8fe060',x,y-2,1,1);}
+  if(c.stun>0){for(let i=0;i<3;i++){const a=T*6+i*2.1;rect('#ffe066',ax+Math.round(Math.cos(a)*10),ay-Math.round(H/2)-4+Math.round(Math.sin(a)*3),2,2);}}}}
+function drawAlly(a){drawChar(a.k,a.x,a.y+8,a.dir||'up',a.face||1,a.walk||0,!!a.moving);if(a.tag>0)label(P2(a.x),P2(a.y)-20,a.n,{s:11,c:'#ffd27a',a:Math.min(1,a.tag)});}
+function drawKO(p){const ax=P2(p.x),ay=P2(p.y);bx.save();bx.translate(ax,ay+2);bx.rotate(Math.PI/2);bx.translate(-ax,-ay-2);drawChar('Boy',p.x,p.y+8,'down',1,0,false,{noShadow:1});bx.restore();shadowAt(ax,ay+5,14);
+ for(let i=0;i<3;i++){const a=T*4+i*2.1;rect('#ffe066',ax-6+Math.round(Math.cos(a)*6),ay-6+Math.round(Math.sin(a)*2),1,1);}}
+function drawEB(b){const x=P2(b.x),y=P2(b.y);
+ switch(b.k){case 'seed':rect('#2a1a0e',x-2,y-2,5,5);rect('#c08040',x-1,y-1,3,3);rect('#ffd27a',x-1,y-1,1,1);rect('#8fe060',x,y-3,1,2);break;
+  case 'petal':{const a=T*8+b.life;bx.globalAlpha=.9;rect('#ff8fb0',x+Math.round(Math.cos(a)*1.5)-1,y+Math.round(Math.sin(a)*1.5)-1,3,2);rect('#ffd0e0',x,y,1,1);bx.globalAlpha=1;break;}
+  case 'spore':{const pu=Math.sin(T*10+b.life*3)>.4?1:0;bx.globalAlpha=.35;pxDisk(x,y,5+pu,'#b28cff');bx.globalAlpha=1;pxDisk(x,y,3,'#7a4fc0');rect('#e9d8ff',x-1,y-1,2,1);if(b.burst<.4&&Math.floor(T*20)%2)pxRing(x,y,5,'#ffffff');break;}
+  case 'thorn':{const k=Math.min(1,b.life/.4);bx.globalAlpha=k;rect('#1a2a12',x-1,y-4,3,5);rect('#5a8a3a',x,y-5,1,4);rect('#8fe060',x,y-6,1,1);bx.globalAlpha=1;break;}
+  default:pxDisk(x,y,2,'#ff5d73');}}
+function drawFinaleGround(){
+ if(R.lanes)for(const L of R.lanes){const ax=P2(L.x),ay=P2(L.y),len=Math.round(L.len/2),hw=Math.round(L.w/4);bx.save();bx.translate(ax,ay);bx.rotate(L.a);
+  if(L.t>0){const k=1-L.t/L.max,lock=L.t<.3;bx.globalAlpha=.08+.2*k;bx.fillStyle='#ff5d4a';bx.fillRect(0,-hw,len,hw*2);bx.globalAlpha=lock?.9:.45;bx.fillStyle=lock?'#ffd0c4':'#ff8a7a';const o=Math.floor(T*24)%6;for(let x=0;x<len;x+=6){bx.fillRect(x+o,-hw,3,1);bx.fillRect(x+o,hw-1,3,1);}}
+  else{const k=Math.max(0,1+L.t/.45);bx.globalAlpha=k;for(let x=8;x<len;x+=7){const h=4+((x*7)%5);bx.fillStyle='#1a2a12';bx.fillRect(x-1,-h,3,h+2);bx.fillStyle='#5a8a3a';bx.fillRect(x,-h+1,1,h);bx.fillStyle='#8fe060';bx.fillRect(x,-h,1,1);}}
+  bx.restore();bx.globalAlpha=1;}
+ if(R.rootfx)for(const f of R.rootfx){const x=P2(f.x),y=P2(f.y),k=1-f.t/.45,r=Math.round(f.r/2);bx.globalAlpha=k;
+  if(f.k==='hail'){for(let i=0;i<5;i++){const a=i*1.26;rect('#e8f8ff',x+Math.round(Math.cos(a)*r*.6),y+Math.round(Math.sin(a)*r*.5),2,2);}pxRing(x,y,Math.max(2,Math.round(r*.8)),'#9ee6ff');}
+  else for(let i=0;i<7;i++){const a=i*.9,d=r*.55,h=5+(i%3)*2,px=x+Math.round(Math.cos(a)*d),py=y+Math.round(Math.sin(a)*d*.6);rect('#3a2414',px-1,py-h,3,h+1);rect('#a07850',px,py-h+1,1,h-1);}
+  bx.globalAlpha=1;}
+ if(R.crystal){const x=P2(R.crystal.x),y=P2(R.crystal.y);bx.globalAlpha=.25+.15*Math.sin(T*6);pxDisk(x,y+2,9,'#bff6ff');bx.globalAlpha=1;}}
+function drawCrystal(){const C=R.crystal;if(!C)return;const x=P2(C.x),y=P2(C.y)-8+Math.round(Math.sin(T*3)*2);shadowAt(x,P2(C.y)+2,10);
+ rect('#131b1b',x-4,y-7,9,13);rect('#7fe0ff',x-3,y-6,7,11);rect('#bff6ff',x-2,y-5,3,8);rect('#ffffff',x-1,y-4,1,3);rect('#3aa0c8',x+2,y-3,1,6);
+ for(let i=0;i<4;i++){const a=T*2.5+i*1.57,d=9+Math.sin(T*4+i)*2;rect(i%2?'#ffffff':'#bff6ff',x+Math.round(Math.cos(a)*d),y+Math.round(Math.sin(a)*d*.6),1,1);}
+ label(x,y-16,'¡Cógelo!',{s:11,c:'#bff6ff',a:.6+.4*Math.sin(T*5)});}
+function drawFinaleFx(){
+ if(R.aps)for(const h of R.aps){if(h.k==='arrow')rotBlit(IMG.p_Arrow,0,0,13,5,P2(h.x),P2(h.y),h.a||0);else rotBlit(IMG.icons,0,112,16,16,P2(h.x),P2(h.y),h.t*14);}
+ const D=R.drake;if(D){const im=IMG.m_Dragon;if(im){const ax=P2(D.x),ay=P2(D.y),fr=Math.floor(D.t*8)%4,bob=Math.round(Math.sin(D.t*5)*2);shadowAt(ax,ay+20,10,.4);bx.drawImage(im,(D.face<0?2:3)*16,fr*16,16,16,ax-14,ay-14+bob,28,28);}}
+ if(R.beam){const B=R.beam,b=R.boss;if(b){const k=B.t<.2?B.t/.2:B.t>.75?Math.max(0,(1-B.t)/.25):1,x0=P2(B.x0),y0=P2(B.y0),x1=P2(b.x),y1=P2(b.y);
+  const ray=(ax,ay,C)=>{for(const[w,cl,al] of C){bx.globalAlpha=al*k;bx.strokeStyle=cl;bx.lineWidth=w;bx.lineCap='round';bx.beginPath();bx.moveTo(ax,ay);bx.lineTo(x1,y1);bx.stroke();}bx.globalAlpha=.5*k;pxDisk(ax,ay,6,'#ffffff');bx.globalAlpha=1;};
+  if(B.joint){ray(P2(B.px),P2(B.py),[[6,'#7fe0ff',.25],[3,'#bff6ff',.6],[1,'#ffffff',1]]);ray(x0,y0,[[12,'#ff5a1f',.25],[7,'#ffb347',.6],[3,'#fff3c4',1]]);bx.globalAlpha=.55*k;pxDisk(x1,y1,13,'#ffb347');bx.globalAlpha=1;}
+  else{ray(x0,y0,[[9,'#7fe0ff',.25],[5,'#bff6ff',.6],[2,'#ffffff',1]]);bx.globalAlpha=.5*k;pxDisk(x1,y1,10,'#bff6ff');bx.globalAlpha=1;}}}
+ if(R.shock){const S_=R.shock,r=Math.round(S_.t*190),x=P2(S_.x),y=P2(S_.y);bx.globalAlpha=Math.max(0,1-S_.t);pxRing(x,y,r,'#b28cff');pxRing(x,y,Math.max(1,r-3),'#e9d8ff');bx.globalAlpha=1;}
+ if(R.mshield){const p=R.p;bx.globalAlpha=.4+.15*Math.sin(T*5);pxRing(P2(p.x),P2(p.y)-8,11,'#c99aff');bx.globalAlpha=1;}
+ if(R.flash>0){bx.globalAlpha=Math.min(.8,R.flash);bx.fillStyle='#f2e8ff';bx.fillRect(CX,CY,BW,BH);bx.globalAlpha=1;}}
+
+/* ================= THE SEASON CLOCK ================= */
+ACT.reloj=()=>{if(!inv('reloj'))return;closeSheet();const nat=natSeason(),cur=season();
+ openOv(`<h2>Reloj de las Estaciones</h2><p class="sub">Gira la aguja y el cielo de tu granja obedece. Los cultivos que no sean de la estación elegida se marchitan${S.farm.deco.invernadero?', salvo los del invernadero':''}.</p>
+ <div class="list" style="margin:10px 0">${SEASONS.map((n,i)=>`<button class="btn ${S.seasonPick===i?'pri':''}" data-a="relojset" data-v="${i}">${n}${S.seasonPick===i?' · ahora':''}</button>`).join('')}
+ <button class="btn alt" data-a="relojset" data-v="-1">Seguir el calendario (${SEASONS[nat].toLowerCase()})${S.seasonPick==null?' · ahora':''}</button></div><button class="btn alt" data-a="closeov">Cerrar</button>`);};
+ACT.relojset=v=>{v=+v;const pick_=v<0?null:v,target=pick_==null?natSeason():pick_;if(pick_===S.seasonPick&&target===season()){closeOv();return;}
+ const gh=S.farm.deco.invernadero,n=S.farm.n,lost=[];if(!gh)for(let y=0;y<n;y++)for(let x=0;x<n;x++){const t=S.farm.tiles[y*10+x];if(t.c&&!CROPS[t.c.id].se.includes(target))lost.push(t);}
+ if(lost.length&&ACT.relojset.arm!==v){ACT.relojset.arm=v;openOv(`<h2>¿Pasar a ${SEASONS[target].toLowerCase()}?</h2><p class="sub">${lost.length} ${lost.length===1?'cultivo se marchitará porque no es':'cultivos se marchitarán porque no son'} de esa estación.</p><div class="row"><button class="btn warn" data-a="relojset" data-v="${v}">Cambiar igualmente</button><button class="btn alt" data-a="closeov">Mejor no</button></div>`);return;}
+ ACT.relojset.arm=null;for(const t of lost)t.c=null;S.seasonPick=pick_;closeOv();snd('magic');jing('secret');
+ toast(pick_==null?`El reloj vuelve a seguir el calendario: ${SEASONS[target].toLowerCase()}.`:`Tu granja pasa a ${SEASONS[target].toLowerCase()}.${lost.length?` Se han marchitado ${lost.length} cultivos.`:''}`,3400);refreshAll();save();};
+
+/* ================= EVOLUTIONS NEED THE HARVEST OF A GIVEN SEASON ================= */
+const EVOCROP={honda:{nabo:12,patata:6},arco:{fresa:8,uva:8},semillera:{maiz:10,melon:3},baston:{tomate:12,calabaza:3},ballesta:{escarcha:10,berenjena:6},hoz:{uva:10,escarcha:6},raiz:{fresa:5,maiz:5,calabaza:3,escarcha:5}};
+for(const t in EVOCROP)if(EVO[t])Object.assign(EVO[t].cost.in,EVOCROP[t]);
+function evoCropNote(X,t){const C=EVOCROP[t];if(!C)return'';const se=[...new Set(Object.keys(C).map(k=>CROPS[k].se[0]))].sort();
+ return `<p class="sub">Necesita cosecha de ${se.map(i=>SEASONS[i].toLowerCase()).join(se.length>2?', ':' y ').replace(/, ([^,]*)$/,' y $1')}: ${Object.keys(C).map(k=>`${CROPS[k].n.toLowerCase()} (${SEASONS[CROPS[k].se[0]].toLowerCase()})`).join(', ')}.</p>`;}
+
+/* ================= THE COMPANION'S FEAR: foreshadowed before the reveal ================= */
+{const base=BOSSTALK.cardo;Object.defineProperty(BOSSTALK,'cardo',{configurable:true,get(){return S&&S.pet&&petLv()>=3?[...base.slice(0,2),{who:'narr',t:`${S.pet.name} se esconde detrás de ti. Tiembla. Nunca le habías visto tener miedo de nada.`},...base.slice(2)]:base;}});}
+{const o=OUTRO.zarza;OUTRO.zarza=()=>{const L=o();if(S.pet&&S.pet.on&&petLv()>=3)L.push({who:'narr',t:`${S.pet.name} no le ha quitado ojo a Cardo en ningún momento. Y sigue temblando, aunque ya se haya ido.`});return L;};}
+{const o=OUTRO.cardo;OUTRO.cardo=()=>{const L=o();if(S.pet&&S.flags.petFear){const n=S.pet.name;L.splice(L.length-3,0,
+  {who:'narr',t:`${n} se acerca a Cardo despacio. Ya no tiembla.`},{who:'cardo',t:'Espina... No. Ya no te llamas así, ¿verdad?'},
+  {who:'cardo',t:`${n}. Te queda mejor.`},{who:'cardo',t:'A ti no te pido que me perdones. No me lo he ganado.'},{who:'cardo',t:`{name}: cuida de ${n}. Mejor de lo que lo hice yo.`},{who:'narr',t:`${n} le mira un momento. Luego vuelve a tu lado.`});}return L;};}
+
+/* ================= THE HEART KEY: hidden relics in the three wild areas, Gus reforges Rosa's key, the last rift asks for it and a grown dragon ================= */
+Object.assign(ITEMS,{
+ ascua:{n:'Ascua eterna',p:0,c:'#ff8a3a',k:'key',d:'Una brasa que no se apaga nunca. Dicen que salió del primer fuego de la Gran Forja.'},
+ rocio:{n:'Rocío de luna',p:0,c:'#bff6ff',k:'key',d:'Una gota de luz del Bosque Susurrante. Solo cae donde las voces mienten.'},
+ escamab:{n:'Escama de Brasa',p:0,c:'#ffd27a',k:'key',d:'Una escama roja y dorada, grande como una mano. Rengo juraría que es de Brasa, su primera dragona.'},
+ llavec:{n:'Llave del Corazón',p:0,c:'#ff5d73',k:'key',d:'Gus la forjó con la llave de raíz de Rosa y tres reliquias del valle. Abre la puerta del Corazón de la Marchitez.'}});
+Object.assign(ICONS,{ascua:[3,6],rocio:[4,6],escamab:[5,6],llavec:[6,6]});
+/* icons are painted into free cells of the atlas at load (icons.png stays the same file) */
+const KEYICONS={
+ ascua:[['................','........a.......','.......aia......','.......aiea.....','......aiefa.....','....aaaieiaaa...','...abbcdedcbba..','..abccdeeedccba.','..abcddefeddcba.','..abccdeeedccba.','..abbccdddccbba.','...abbccdccbba..','....aabbbbbaa...','......aaaaa.....','................','................'],{a:'#131b1b',b:'#3a2420',c:'#5a3a30',d:'#ff6b3a',e:'#ffb347',f:'#fff3c4',i:'#ff9a4a'}],
+ rocio:[['................','.......aa.......','......abba......','......abba......','.....abccba.....','.....abccba.....','....abcccdba....','...abcccccdba...','...abccecccdba..','..abccefcccdba..','..abceefccccba..','..abcceccccba...','...abccccccba...','....abbccbba....','.....aaaaaa.....','................'],{a:'#131b1b',b:'#3a6aa0',c:'#9fd8f0',d:'#e8f8ff',e:'#ffffff',f:'#fff3c4'}],
+ escamab:[['................','...aaaaaaaaaa...','..abbbbbbbbbba..','..abccccccccba..','..abcddddddcba..','..abcdeeeedcba..','..abcdeffedcba..','...abcdeedcba...','...abcdeedcba...','....abcddcba....','....abcddcba....','.....abccba.....','......abba......','.......aa.......','................','................'],{a:'#131b1b',b:'#8a2a2a',c:'#d14b34',d:'#f38c4c',e:'#ffd27a',f:'#fff3c4'}],
+ llavec:[['..aaa...aaa.....','.abbba.abbba....','abcfcbabccdba...','abffccbccccdba..','abfcccccccdba...','.abcccccccdba...','..abcccccdba....','...abcccdba.....','....abcdba......','.....agha.......','.....agha.......','.....aghaaaa....','.....aghhhhha...','.....aghaaaa....','.....aghhha.....','.....aaaaa......'],{a:'#131b1b',b:'#7a1f3a',c:'#e2405a',d:'#9a2a44',f:'#ffb0c0',g:'#f6d046',h:'#9a6a2e'}]};
+{const o=buildDerived;buildDerived=function(){o();try{const im=IMG.icons;if(!im||im.__keys)return;let c=im;if(!(im instanceof HTMLCanvasElement)){c=mkCanvas(im.width,im.height);c.getContext('2d').drawImage(im,0,0);}const g=c.getContext('2d');
+ for(const k in KEYICONS){const[px,pal]=KEYICONS[k],[cx,cy]=ICONS[k];g.clearRect(cx*16,cy*16,16,16);for(let y=0;y<16;y++)for(let x=0;x<16;x++){const ch=px[y][x];if(ch!=='.'){g.fillStyle=pal[ch];g.fillRect(cx*16+x,cy*16+y,1,1);}}}
+ c.__keys=1;c.__reloj=im.__reloj||c.__reloj;IMG.icons=c;const st=document.createElement('style');st.textContent=`.ico{background-image:url(${c.toDataURL()})!important}`;document.head.appendChild(st);}catch(e){console.warn(e);}};}
+
+/* ---- where the relics hide: two of each, off the beaten path ---- */
+const HIDDEN={
+ canon:{'21,4':'ascua','16,44':'ascua'},          /* beside the lava behind the forge · behind a cracked rock near the entrance */
+ susurro:{'3,12':'rocio','14,33':'rocio'},        /* down the two wrong paths, right before the whispers */
+ riscos:{'22,20':'escamab','23,3':'escamab'}};    /* far corner past bridge II · far corner of Rengo's camp */
+const HIDTXT={ascua:'Entre las piedras brilla una brasa que no quema. Late despacio, como un corazón pequeño.',rocio:'Sobre una hoja tiembla una gota de luz. No cae. Parece que te estaba esperando.',escamab:'Medio enterrada en la roca asoma una escama enorme, roja y dorada. Todavía está tibia.'};
+const HIDC={ascua:['#ff6b3a','#ffb347','#fff3c4'],rocio:['#bff6ff','#ffffff','#9fd8f0'],escamab:['#ffd27a','#f38c4c','#fff3c4']};
+const KEYREQ={llave:1,ascua:2,rocio:2,escamab:2,hierro:8};
+const hidS=id=>{const s=areaS(id);if(!s.hd)s.hd={};return s.hd;};
+const relicOf=k=>{let n=0,t=0;for(const id in HIDDEN)for(const p in HIDDEN[id])if(HIDDEN[id][p]===k){t++;if(hidS(id)[p])n++;}return[n,t];};
+const keyNeeded=()=>!!S&&S.ch>=10&&!S.bossDone.cardo&&!inv('llavec');
+const finalReady=()=>!!inv('llavec')&&petLv()>=5;
+function takeHidden(id,key){const k=HIDDEN[id][key],s=hidS(id);if(s[key])return;s[key]=1;addI(k);const[x,y]=key.split(',').map(Number);
+ jing('secret');for(let i=0;i<18;i++)FP.push({x:(x+.5)*TS,y:(y+.3)*TS,vx:rnd(-60,60),vy:rnd(-150,-50),life:rnd(.5,1),c:pick(HIDC[k])});
+ const[n,t]=relicOf(k);say([{who:'narr',t:HIDTXT[k]},{who:'narr',t:`Consigues: ${ITEMS[k].n} (${n}/${t}).${n<t?' Quizá haya otra escondida por aquí.':''}${keyNeeded()?'':' Seguro que Gus sabe qué hacer con esto.'}`}],()=>{refreshAll();save();});}
+{const o=areaSpots;areaSpots=function(L){o(L);const M=WORLD[P.map];if(!M||M.interior||!HIDDEN[M.id])return;const H=HIDDEN[M.id],s=hidS(M.id);
+ for(const key in H){if(s[key])continue;const[x,y]=key.split(',').map(Number),X=(x+.5)*TS,Y=(y+.5)*TS;if(dist(P.x,P.y,X,Y)>2.2*TS)continue;
+  L.push({x:X,y:Y+4,r:26,label:'Recoger',sub:'algo brilla',ic:H[key],fn:()=>takeHidden(M.id,key)});}};}
+/* a faint glint, only when you are close; in the forest the dark hides it unless your lantern reaches */
+function drawGlint(x,y,k,al){const C=HIDC[k],tw=.5+.5*Math.sin(T*4+x),r=1+Math.round(tw*2);bx.globalAlpha=al*(.35+.3*tw);pxDisk(x,y,4,C[0]);bx.globalAlpha=al;
+ rect(C[0],x-1,y-1,3,3);rect(C[2],x,y,1,1);bx.globalAlpha=al*tw;rect(C[1],x-r-1,y,r,1);rect(C[1],x+2,y,r,1);rect(C[1],x,y-r-1,1,r);rect(C[1],x,y+2,1,r);
+ if(Math.sin(T*2.3+y)>.7){bx.globalAlpha=al;rect('#ffffff',x+3,y-4,1,1);}bx.globalAlpha=1;}
+{const o=drawAreaCast;drawAreaCast=function(M,add,vis){o(M,add,vis);const H=HIDDEN[M.id];if(!H||M.interior)return;const s=hidS(M.id);
+ for(const key in H){if(s[key])continue;const[x,y]=key.split(',').map(Number),X=(x+.5)*TS,Y=(y+.5)*TS,d=dist(P.x,P.y,X,Y);if(d>3.6*TS)continue;
+  const al=Math.min(1,(3.6*TS-d)/(1.4*TS));add(Y-3,()=>drawGlint(P2(X),P2(Y)+1,H[key],al));}};}
+/* your companion sniffs when one is near (once per visit to each spot) */
+const SNIFF={};
+{const o=updWorld;updWorld=function(dt){o(dt);try{if(!S||!S.pet||!S.pet.on||CINE.on)return;const M=WORLD[P.map];if(!M||!M.area||M.interior||!HIDDEN[M.id])return;const H=HIDDEN[M.id],s=hidS(M.id);
+ for(const key in H){if(s[key])continue;const id=M.id+key;const[x,y]=key.split(',').map(Number),d=dist(PET.x,PET.y,(x+.5)*TS,(y+.5)*TS);
+  if(d<4.5*TS&&!SNIFF[id]){SNIFF[id]=1;PET.hop=.6;snd('pick',.6,1.5);toast(`${S.pet.name} olfatea el aire. Aquí cerca hay algo escondido.`,2600);}
+  else if(d>8*TS)SNIFF[id]=0;}}catch(e){}};}
+
+/* ---- Gus reforges the key ---- */
+function keyCard(){const hint={ascua:'en el desfiladero: junto a la lava, detrás de mi forja, y tras una roca agrietada cerca de la entrada',rocio:'en el bosque: al final de los caminos que no debes tomar, justo antes de los susurros',escamab:'en los riscos: en el rincón más alejado del campamento de Rengo, y al otro lado del puente II'};
+ const rows=['ascua','rocio','escamab'].map(k=>{const[n,t]=relicOf(k);return `<p class="sub irow"><b>${ITEMS[k].n} ${Math.min(inv(k),2)}/2:</b> ${n>=t&&inv(k)>=2?'¡ya las tienes!':hint[k]+'.'}</p>`;}).join('');
+ return `<h3>Encargo especial</h3><div class="card"><span class="wic">${ic('llavec','l')}</span><div class="body"><div class="name">Llave del Corazón</div><p class="sub">«La llave de Rosa sola no abre esa puerta. Tráeme dos de cada reliquia y te la reforjo. Brillan poco: tendrás que acercarte. Tu bicho tiene buen olfato.»</p>${rows}${costHTML(KEYREQ)}</div><button class="btn pri sm" data-a="forgekey" ${canPay(KEYREQ)?'':'disabled'}>Forjar</button></div>`;}
+{const o=sheetGus;sheetGus=function(){const h=o();if(!keyNeeded())return h;const i=h.indexOf('<div class="tabs">');return i<0?h+keyCard():h.slice(0,i)+keyCard()+h.slice(i);};}
+ACT.forgekey=()=>{if(!keyNeeded()||!canPay(KEYREQ))return;take(KEYREQ);addI('llavec');closeSheet();snd('hit');shake=6;setTimeout(()=>{snd('hit');shake=6;},320);setTimeout(()=>{snd('boom',.6,1.2);shake=9;jing('secret');},640);
+ setTimeout(()=>say([{who:'gus',t:'Una ascua que no se apaga, rocío que no cae y la escama de una dragona. Y la llave de Rosa como alma. ¡Al yunque!'},{who:'narr',t:'Gus golpea tres veces. A la tercera, la llave late como un corazón.'},
+  {who:'gus',t:'Ahí la tienes: la Llave del Corazón. Abrirá lo que haya bajo la cumbre.'},{who:'gus',t:'Y si ese Cardo se pone tonto, dale un abrazo de mi parte. Con el martillo.'},{who:'narr',t:'Has conseguido la Llave del Corazón.'}],()=>{refreshAll();save();}),900);refreshAll();save();};
+
+/* ---- the last rift asks for the key and a grown dragon ---- */
+function finalNeeds(){const L=[];if(!inv('llavec')){const r=['ascua','rocio','escamab'].map(k=>`${ITEMS[k].n.toLowerCase()} ${Math.min(inv(k),2)}/2`).join(', ');L.push(`forja la Llave del Corazón con Gus (${r})`);}
+ if(petLv()<5)L.push(S.pet?`entrena a ${S.pet.name} con Rengo hasta que sea un Dragón (etapa ${petLv()}/5)`:'adopta un compañero y entrénalo con Rengo hasta que sea un Dragón');return L;}
+{const o=objective;objective=function(){const r=o();if(S.ch===10&&S.stage==='rift'&&!S.bossDone.cardo&&!finalReady())return{t:r.t,d:'Antes de bajar al Corazón: '+finalNeeds().join(' y ')+'.'};return r;};}
+{const o=ACT.run;ACT.run=id=>{if(id==='raiz'&&!S.bossDone.cardo&&!finalReady()){closeSheet();const L=[{who:'narr',t:'Al fondo de la grieta, la puerta del Corazón está sellada con espinas negras que laten.'}];
+  if(!inv('llavec'))L.push({who:'narr',t:'La llave de raíz entra en la cerradura, pero no gira. Gus sabrá reforjarla.'});
+  if(petLv()<5)L.push({who:'narr',t:S.pet?`${S.pet.name} gime y se esconde detrás de ti. Todavía no está preparado: Rengo puede ayudarte a entrenarle.`:'Algo te dice que ahí abajo vas a necesitar un compañero. Uno con alas.'});
+  say(L);return;}o(id);};}
+{const o=sheetGrieta;sheetGrieta=function(){let h=o();if(S.bossDone.cardo||finalReady())return h;
+ const ok=(b,t)=>`<span style="color:${b?'#8fe060':'#ff8a7a'}">${b?'✔':'✘'} ${t}</span>`,req=`<p class="sub">${ok(!!inv('llavec'),'Llave del Corazón')} · ${ok(petLv()>=5,S.pet?`${esc(S.pet.name)} en etapa Dragón`:'Un compañero dragón')}</p>`;
+ h=h.replace(`<p class="sub">Jefe: ${BOSS.cardo.n}</p>`,`<p class="sub">Jefe: ${BOSS.cardo.n}</p>${req}`);
+ return h.replace(/<button class="btn[^"]*" data-a="run" data-v="raiz"[^>]*>Bajar<\/button>/,'<button class="btn alt" data-a="run" data-v="raiz">Sellada</button>');};}
 
 
 /* ================= BALANCE: longer rifts (9 rooms + replays) and tougher regions for all the new power ================= */
@@ -2812,7 +3222,7 @@ function drawRunPet(){const pt=R.pet;if(!pt||!S.pet)return;const ax=P2(pt.x),ay=
 
 /* ================= BOOT ================= */
 let booted=false;
-function migrate(s){if(!s.pos)s.pos={map:'farm',x:12*TS,y:8.7*TS};if(!s.evo)s.evo={done:{},active:null};if(s.pet===undefined)s.pet=null;if(s.wm==null)s.wm=Math.max(0,...(s.weapons||[]).map(w=>w.lvl||0));if(!s.farm.wt)s.farm.wt=[];if(!s.farm.vo){s.farm.vo=[];let back=0;for(const t of s.farm.tiles)if(t.o){s.inv[t.o]=(s.inv[t.o]||0)+1;t.o=null;back++;}if(back){s.flags=s.flags||{};s.flags.voBack=back;}}for(const k in NPCS)if(!s.npc[k])s.npc[k]={p:0,t:0,g:0};migrateStory(s);s.v=Math.max(s.v||0,4);return s;}
+function migrate(s){if(!s.pos)s.pos={map:'farm',x:12*TS,y:8.7*TS};if(!s.evo)s.evo={done:{},active:null};if(s.pet===undefined)s.pet=null;if(s.wm==null)s.wm=Math.max(0,...(s.weapons||[]).map(w=>w.lvl||0));if(!s.farm.wt)s.farm.wt=[];if(!s.farm.vo){s.farm.vo=[];let back=0;for(const t of s.farm.tiles)if(t.o){s.inv[t.o]=(s.inv[t.o]||0)+1;t.o=null;back++;}if(back){s.flags=s.flags||{};s.flags.voBack=back;}}for(const k in NPCS)if(!s.npc[k])s.npc[k]={p:0,t:0,g:0};migrateStory(s);migrateStory5(s);s.v=Math.max(s.v||0,5);return s;}
 function placePlayerFromSave(){const p=S.pos||{map:'farm',x:12*TS,y:8.7*TS};P.map=WORLD[p.map]?p.map:'farm';P.x=p.x;P.y=p.y;P.dx=0;P.dy=1;placeNPCs();
  const o={x:P.x,y:P.y};pushOutRects(o,8,solids());P.x=o.x;P.y=o.y;updCam(1,true);petTo();}
 ACT.newgame=()=>{const nm=($('#pname').value||'').trim()||'Millán';S=freshState(nm);startGame(true);};
@@ -2821,6 +3231,7 @@ ACT.credits=()=>openOv(`<h2>Créditos</h2><p>Gráficos, música y efectos de son
 function startGame(isNew){$('#title').hidden=true;scene='world';placePlayerFromSave();showUI();MODE={type:'seed',id:'nabo'};if(!availableSeeds().includes('nabo'))MODE={type:'auto'};refreshAll();
  if(isNew){save();say([{who:'narr',t:'La carta llegó un martes, con olor a tierra mojada. Era de tu abuela Rosa.'},{who:'rosa',t:'{name}: si lees esto, la granja es tuya. Está gris, como todo el valle. No es culpa tuya. Quizá un poco mía.'},{who:'rosa',t:'Planta algo. Lo que sea. La tierra recuerda a quien la cuida.'},{who:'narr',t:'Valle de Brezo. Diez años después de la Marchitez.'},{who:'tobias',t:'¿Tú eres quien hereda lo de Rosa? Tienes su misma cara de no rendirte. Soy Tobías, el herrero del pueblo.'},{who:'tobias',t:'Toma su vieja honda. Si te quedas aquí, la vas a necesitar.'},{who:'tobias',t:'Lo primero es la tierra. Arrastra el dedo por la pantalla para caminar. Ponte frente a una casilla del huerto y pulsa el botón redondo: limpias, labras, plantas o riegas.'},{who:'tobias',t:'Mantén el botón pulsado mientras caminas para hacerlo en fila. Las semillas se eligen en el cofre de abajo a la izquierda y se pagan al plantar. Para cosechar, basta con pasar por encima.'},{who:'tobias',t:'De noche entra en casa a dormir: lo regado crece. El pueblo está al este, siguiendo el camino. Cosecha 5 cultivos y hablamos.'}]);}
  else{toast(`Hola de nuevo, ${S.name}. Día ${dayIn()} de ${SEASONS[season()].toLowerCase()}.`);if(S.flags.storyNews){delete S.flags.storyNews;save();setTimeout(()=>say([{who:'narr',t:'El valle ha cambiado desde tu última visita: hay caminos nuevos, gente nueva... y alguien rondando tu granja de noche.'},...CH[3].intro()],()=>{refreshAll();save();}),900);}
+  if(S.flags.news5){delete S.flags.news5;save();setTimeout(()=>say([{who:'narr',t:'La historia del valle ha cambiado un poco: Nilo ha desaparecido en los Riscos del Dragón, al norte de tu granja. Darío te ha dado su garfio.'},{who:'narr',t:'El jardín de Cardo tendrá que esperar.'}],()=>{refreshAll();save();}),1100);}
   if(S.flags.voBack){delete S.flags.voBack;save();setTimeout(()=>toast('Aspersores, espantapájaros y gólems ahora van en las esquinas entre casillas. Los tuyos están en la mochila para recolocarlos.',5200),2800);}}}
 async function boot(){try{document.fonts&&document.fonts.load("700 16px RDig","0123456789");}catch(e){}resize();buildWorld();requestAnimationFrame(loop);setIcons();
  try{await loadAssets(f=>{$('#loadB').style.width=Math.round(f*100)+'%';});}catch(e){console.error(e);}

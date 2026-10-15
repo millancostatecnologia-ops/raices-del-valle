@@ -1879,13 +1879,17 @@ function zoneOf(M,y){const Z=AREA[M.id].zones;if(!Z)return null;for(const k in Z
 function bridgesS(){const s=areaS('riscos');if(!s.br)s.br={...AREA.riscos.bridges0};return s.br;}
 const rockGone=(M,x,y)=>!!areaS(M.id).rk[x+','+y];
 const gateOpen=(M,x,y)=>!!areaS(M.id).sv[zoneOf(M,y+1)];
+/* TEMPORARY passage: gates and iron boulder let you through without touching the saved puzzle state (set to 0 to restore) */
+const CANON_BYPASS=1;
+const gatePass=(M,x,y)=>(CANON_BYPASS&&M.id==='canon')||gateOpen(M,x,y);
+const ironGone=s=>!!s.sv.K||!!CANON_BYPASS;
 const brazDone=()=>!!areaS('susurro').sv.braz;
 function areaSolids(M){if(M.interior)return[];const s=areaS(M.id),out=[];
  for(const o of M.o){const X=o.x*TS,Y=o.y*TS;
   if(o.c==='R'&&!s.rk[o.x+','+o.y])out.push({x:X,y:Y,w:TS,h:TS});
-  else if(o.c==='G'&&!gateOpen(M,o.x,o.y))out.push({x:X,y:Y,w:TS,h:TS});
+  else if(o.c==='G'&&!gatePass(M,o.x,o.y))out.push({x:X,y:Y,w:TS,h:TS});
   else if(o.c==='C')out.push({x:X+5,y:Y+12,w:TS-10,h:14});
-  else if(o.c==='K'&&!s.sv.K)out.push({x:X,y:Y,w:TS,h:TS});}
+  else if(o.c==='K'&&!ironGone(s))out.push({x:X,y:Y,w:TS,h:TS});}
  for(const[x,y] of aBlocks(M))out.push({x:x*TS,y:y*TS,w:TS,h:TS});
  if(M.id==='susurro'){if(!inv('farol'))for(let x=0;x<M.w;x++)if(aT(M,x,6)===AT.FOG)out.push({x:x*TS,y:6*TS,w:TS,h:TS});
   if(!brazDone())for(let x=0;x<M.w;x++)if(aT(M,x,43)===AT.BAR)out.push({x:x*TS,y:43*TS,w:TS,h:TS});}
@@ -1915,7 +1919,7 @@ ACT.areareset=z=>{const M=WORLD.canon,s=areaS('canon');if(s.sv[z])return;const Z
  snd('magic',.6);toast('Los bloques vuelven a su sitio.');save();};
 /* tile walkability for the reset helpers (blocks and solid props count as walls) */
 function tileWalk(M,x,y,bs){const t=aT(M,x,y);if(t!==AT.G&&t!==AT.P)return false;if(bs.has(x+','+y))return false;const o=aObjAt(M,x,y),s=areaS(M.id);
- if(o){if(o.c==='R')return!!s.rk[x+','+y];if(o.c==='G')return gateOpen(M,x,y);if(o.c==='K')return!!s.sv.K;if('rCS^*PHtgMY12'.includes(o.c))return false;}return true;}
+ if(o){if(o.c==='R')return!!s.rk[x+','+y];if(o.c==='G')return gatePass(M,x,y);if(o.c==='K')return ironGone(s);if('rCS^*PHtgMY12'.includes(o.c))return false;}return true;}
 function zoneLever(M,z){return M.o.find(o=>o.c==='r'&&zoneOf(M,o.y)===z);}
 function leverReach(M,z){const L=zoneLever(M,z);if(!L)return true;const bs=new Set(aBlocks(M).map(b=>b[0]+','+b[1])),Z=AREA.canon.zones[z];
  const sx=Math.floor(P.x/TS),sy=Math.floor(P.y/TS),seen=new Set([sx+','+sy]),q=[[sx,sy]];
@@ -1934,7 +1938,7 @@ function beamTrace(M){const E=AREA.canon.eye,mr=mirS(),s=areaS('canon');let x=E.
   if((t!==AT.G&&t!==AT.P&&t!==AT.LAVA)||(o&&'RGCSr^P*HY'.includes(o.c)&&!(o.c==='R'&&s.rk[x+','+y]))){pts.push(edge);return{pts,hit:false,used};}
   if(o&&o.c==='M'){pts.push([x+.5,y+.5]);used.push(o);[dx,dy]=mr[x+','+y]==='/'?[-dy,-dx]:[dy,dx];}}
  return{pts,hit:false,used};}
-function updBeam(dt){if(!S||P.map!=='canon'){BEAM.res=null;return;}const s=areaS('canon');if(s.sv.K){BEAM.res=null;BEAM.heat=0;return;}
+function updBeam(dt){if(!S||P.map!=='canon'||CANON_BYPASS){BEAM.res=null;return;}const s=areaS('canon');if(s.sv.K){BEAM.res=null;BEAM.heat=0;return;}
  BEAM.res=beamTrace(WORLD.canon);
  if(BEAM.res.hit&&!CINE.on){BEAM.heat+=dt;BEAM.snd-=dt;if(BEAM.snd<=0){BEAM.snd=.26;snd('fire',.3+BEAM.heat*.25,.8+BEAM.heat*.3);}
   if(Math.random()<.5)FP.push({x:13*TS+rnd(-14,14),y:11.9*TS,vx:rnd(-50,50),vy:rnd(-120,-40),life:rnd(.2,.5),c:pick(['#ffd06a','#ff9a4a','#ff5a1f'])});
@@ -1974,7 +1978,7 @@ function areaSpots(L){const M=WORLD[P.map],A=AREA[M.id],s=areaS(M.id);
    case'1':case'2':L.push({x:X,y:Y+6,r:26,label:'Palanca',sub:'puentes',fn:()=>pullLever(o.c)});break;
    case'*':{const i=A.braz.findIndex(b=>b[0]===o.x&&b[1]===o.y);if(!brazDone()&&!s.lit.includes(i))L.push({x:X,y:Y+8,r:26,label:'Encender',sub:'brasero',fn:()=>lightBrazier(i)});break;}
    case'M':if(!s.sv.K){const g=A.mirrors[key][1];L.push({x:X,y:Y+8,r:40,label:'Girar',sub:GEMN[g],fn:()=>rotateMirror(o)});}break;
-   case'K':if(!s.sv.K&&o.x===12)L.push({x:X+TS/2,y:Y+TS+8,r:40,label:'Roca',sub:'de hierro',fn:()=>say([{who:'narr',t:'Una roca de hierro macizo tapona el paso a la Gran Forja. El mazo rebota sin dejarle ni un rasguño.'},{who:'narr',t:'Tendría que fundirse. Y en la pared de la derecha hay algo que escupe fuego...'}])});break;
+   case'K':if(!ironGone(s)&&o.x===12)L.push({x:X+TS/2,y:Y+TS+8,r:40,label:'Roca',sub:'de hierro',fn:()=>say([{who:'narr',t:'Una roca de hierro macizo tapona el paso a la Gran Forja. El mazo rebota sin dejarle ni un rasguño.'},{who:'narr',t:'Tendría que fundirse. Y en la pared de la derecha hay algo que escupe fuego...'}])});break;
    case'Y':L.push({x:X-6,y:Y+TS*.7,r:30,label:'Mirar',sub:'Ojo de la Forja',fn:()=>say([{who:'narr',t:s.sv.K?'El Ojo de la Forja dormita. Su fuego ya hizo lo que tenía que hacer.':'Una máscara de hierro empotrada en la roca. Por la boca le sale un rayo de fuego, fino como un hilo y caliente como el genio de Gus.'},...(s.sv.K?[]:[{who:'narr',t:'Los espejos de bronce lo desvían. Si el rayo llegara hasta la roca de hierro...'}])])});break;}}
  /* walled in by your own blocks? offer the reset right where you stand */
  if(M.id==='canon'){const z=zoneOf(M,Math.floor(P.y/TS));if(z&&!s.sv[z]&&!leverReach(M,z))L.push({x:P.x,y:P.y+4,r:60,label:'Reiniciar',sub:'bloques',fn:()=>ACT.areareset(z)});}
@@ -2047,7 +2051,7 @@ function drawArea(){const M=WORLD[P.map],A=AREA[M.id];if(M.interior){drawInterio
  for(const o of M.o){const X=o.x*16,Y=o.y*16,cx=X+8,by=Y+16,key=o.x+','+o.y;if(!vis(cx,by,40))continue;
   switch(o.c){
    case'R':if(!s.rk[key])add((o.y+1)*TS-1,()=>drawRockTile(X,Y,o));break;
-   case'G':add((o.y+1)*TS-2,()=>drawGate(X,Y,gateOpen(M,o.x,o.y)));break;
+   case'G':add((o.y+1)*TS-2,()=>drawGate(X,Y,gatePass(M,o.x,o.y)));break;
    case'r':add((o.y+1)*TS-4,()=>drawLeverS(cx,by-2,!!s.sv[zoneOf(M,o.y)],'#c94f4f'));break;
    case'1':case'2':add((o.y+1)*TS-4,()=>{drawLeverS(cx,by-2,LEVA.c===o.c&&LEVA.t<.4?1:(bridgesS()[AREA.riscos.levers[o.c][0]]?1:0),'#f2b632');label(cx,by-22,o.c==='1'?'I':'II',{s:10,c:'#fff3c4'});});break;
    case'H':add((o.y+1)*TS-6,()=>drawPost(cx,by-3));break;
@@ -2060,7 +2064,7 @@ function drawArea(){const M=WORLD[P.map],A=AREA[M.id];if(M.interior){drawInterio
    case't':add((o.y+1)*TS-2,()=>{shadowAt(cx,by-2,18);sprite('tree_dead',cx,by);});break;
    case'g':add((o.y+1)*TS-2,()=>drawGrave(cx,by-2,o.x));break;
    case'M':add((o.y+1)*TS-6,()=>drawMirror(cx,by,key));break;
-   case'K':if(!s.sv.K&&o.x===12)add((o.y+1)*TS-1,()=>drawIronBoulder(X+16,by));break;
+   case'K':if(!ironGone(s)&&o.x===12)add((o.y+1)*TS-1,()=>drawIronBoulder(X+16,by));break;
    case'Y':add((o.y+1)*TS+2,()=>drawEye(X,Y,!!s.sv.K));break;}}
  for(const b of BANIM)b.t+=1/60;for(let i=BANIM.length-1;i>=0;i--)if(BANIM[i].t>.2)BANIM.splice(i,1);
  for(const[bx_,by_] of aBlocks(M)){const an=BANIM.find(a=>a.x1===bx_&&a.y1===by_),k=an?Math.min(1,an.t/.18):1,fx=an?an.x0+(bx_-an.x0)*k:bx_,fy=an?an.y0+(by_-an.y0)*k:by_;

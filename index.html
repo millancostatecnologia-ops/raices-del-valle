@@ -922,7 +922,7 @@ function updWorld(dt){
   if(keys.a||keys.arrowleft)mx-=1;if(keys.d||keys.arrowright)mx+=1;if(keys.w||keys.arrowup)my-=1;if(keys.s||keys.arrowdown)my+=1;const ml=Math.hypot(mx,my);if(ml>1){mx/=ml;my/=ml;}}
  P.moving=Math.hypot(mx,my)>.08;
  if(P.moving){const sp=118;P.x+=mx*sp*dt;P.y+=my*sp*dt;P.walk+=dt*11*Math.hypot(mx,my);if(Math.abs(mx)>Math.abs(my)){P.dx=Math.sign(mx);P.dy=0;}else{P.dx=0;P.dy=Math.sign(my);}if(Math.abs(mx)>.15)P.face=mx<0?-1:1;}
- if(!HOOK.on)pushOutRects(P,8,rects);areaPush(dt);updHook(dt);
+ if(!HOOK.on)pushOutRects(P,8,rects);areaPush(dt);updHook(dt);if(shake>0)shake=Math.max(0,shake-dt*30);
  const mw=M.w*TS,mh=M.h*TS;
  if(P.map==='farm'&&P.x>mw-12&&P.y>14*TS&&P.y<17*TS){goMap('town',1.2*TS,11*TS,1,0);return;}
  if(P.map==='town'&&P.x<12&&P.y>9.8*TS&&P.y<12.2*TS){goMap('farm',20.6*TS,15.6*TS,-1,0);return;}

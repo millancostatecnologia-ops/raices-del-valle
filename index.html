@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-180.png">
 <style>[hidden]{display:none!important}html,body{margin:0}</style>
-<script>window.BUILD_ID="972e105ed2";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
+<script>window.BUILD_ID="5614d1834c";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
 <script src="bundle.js?v=76c7ee24"></script>
 <title>Raíces del Valle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4776,7 +4776,7 @@ function a2Draw(M,add,vis){const A=AREA[M.id];if(!A)return;const s2=aS2(M.id);
    case'q':{const I=A.items&&A.items[key];if(I&&!s2.it[key]&&(!I.cond||I.cond()))add((o.y+1)*TS-6,()=>{icon(I.k,cx,by-2+Math.round(Math.sin(T*3+o.x))) ;if(Math.sin(T*4+o.y)>.6)rect('#ffffff',cx+5,by-14,1,1);});break;}
    case'U':{const G=A.ngather;if(G&&isNight()&&s2.g[key]!==S.day){NL.push([(o.x+.5)*TS,(o.y+.3)*TS,22,.8]);add((o.y+1)*TS-5,()=>drawMoonLily(cx,by-3,o));}break;}
    case'J':{const G=A.dgather;if(G&&s2.g[key]!==S.day)add((o.y+1)*TS-5,()=>drawWildHoney(cx,by,isDayT()));break;}
-   case'3':case'4':case'5':case'6':if(A.sluice)add((o.y+1)*TS-4,()=>{const L=A.sluice.levers[o.c],fl=floodS(M.id);drawLeverS(cx,by-2,fl[L[0]]?0:1,'#5fb0a4');label(cx,by-22,A.sluice.tag[o.c],{s:10,c:'#e9f6ff'});});break;
+   case'3':case'4':case'5':case'6':if(A.sluice)add((o.y+1)*TS-4,()=>{const L=A.sluice.levers[o.c],fl=floodS(M.id);drawLeverS(cx,by-2,fl[L[0]]?0:1,'#5fb0a4');label(cx,by-33,A.sluice.tag[o.c],{s:10,c:'#e9f6ff'});});break;
    case'e':if(A.rails)add((o.y+1)*TS-4,()=>{const i=railLever(M,o);drawLeverS(cx,by-2,LEVA.c==='r'+i&&LEVA.t<.4?1:0,'#f2b632');label(cx,by-22,['I','II','III'][i],{s:10,c:'#fff3c4'});});break;
    case'A':if(A.rails&&!CART.on&&!s2.done.rails)add((o.y+1)*TS-4,()=>drawCart(cx,by-6));break;
    case'M':if(A.mirrors2)add((o.y+1)*TS-6,()=>drawMirror2(M,cx,by,key));break;
@@ -5684,7 +5684,7 @@ function spawnerAI(e,dt){if(!v27Tick(e,dt))return;const p=R.p,D=EN[e.type],mine=
   for(let i=0;i<n;i++){const a=rnd(0,6.283),x=clamp(e.x+Math.cos(a)*24,A.x0+12,A.x1-12),y=clamp(e.y+Math.sin(a)*16+8,A.y0+12,A.y1-12);spawnEnemy(minionOf(),x,y,{small:1,quick:1});const m=R.en[R.en.length-1];m.mom=e;m.minion=1;}
   R.anims.push({k:'fx_smoke',fw:32,fh:32,n:6,x:e.x,y:e.y,t:0,fps:16});for(let i=0;i<10;i++)R.fx.push({x:e.x,y:e.y,vx:rnd(-90,90),vy:rnd(-110,-20),life:.4,c:i%2?'#6b4a2e':'#a07850',s:3});}}
  /* it does not bite, but it is in the way */
- const d=dist(p.x,p.y,e.x,e.y),m=e.r+p.r-2;if(d<m&&d>.01){const k=(m-d)/d;p.x+=(p.x-e.x)*k;p.y+=(p.y-e.y)*k;bound(p);}}
+ const d=dist(p.x,p.y,e.x,e.y),m=e.r+p.r-2;if(d<m){if(d<=.01){p.y+=m;bound(p);}else{const k=(m-d)/d;p.x+=(p.x-e.x)*k;p.y+=(p.y-e.y)*k;bound(p);}}}
 /* each shooter has its own shot: fast thorns, slow big wisps, sticky webs... */
 const PSTYLE={espinita:{k:'needle',v:1.6,m:.85,r:4},brasero:{k:'ember',v:1},espiritu:{k:'wisp',v:.6,m:1.3,r:8},arana:{k:'web',v:.72,m:1.15,r:7},espora:{k:'spore2',v:.85,r:6},ojo:{k:'eyebolt',v:1.4,m:.9,r:4}};
 /* guardians too: each attack has its own shot, so you can read it */
@@ -5818,7 +5818,7 @@ ACT.guia=()=>{const q=$('#qPanel');if(q)q.hidden=true;openSheet('guia');snd('men
 function newMark(ax,ay){const y=Math.round(ay+Math.sin(T*4)*2);for(let i=0;i<5;i++){rect('#131b1b',ax-5+i,y-6+i,11-2*i,1+(i===4?1:0));}rect('#131b1b',ax-6,y-7,13,1);for(let i=0;i<4;i++)rect(i===0?'#fff3b0':'#ffd75e',ax-4+i,y-6+i,9-2*i,1);rect('#131b1b',ax-2,y-11,5,5);rect('#ffd75e',ax-1,y-10,3,3);if(Math.sin(T*6)>.3){rect('#ffffff',ax+5,y-12,1,1);rect('#ffffff',ax-6,y-3,1,1);}}
 /* drawn after the weather and the withering, so they keep their colour */
 const MARKQ=[];
-function guideMarks(map,add){if(!S||CINE.on||scene!=='world')return;for(const g of GUIDE){if(!g.mark||g.mark.map!==map||gvS()[g.id]||!g.on())continue;const[x,y]=g.mark.at();add(1e6,()=>{const bx0=P2(x),by0=P2(y);MARKQ.push(()=>newMark(bx0-CX,by0-CY));});}}
+function guideMarks(map,add){return;if(!S||CINE.on||scene!=='world')return;for(const g of GUIDE){if(!g.mark||g.mark.map!==map||gvS()[g.id]||!g.on())continue;const[x,y]=g.mark.at();add(1e6,()=>{const bx0=P2(x),by0=P2(y);MARKQ.push(()=>newMark(bx0-CX,by0-CY));});}}
 {const o=drawWorld;drawWorld=function(){MARKQ.length=0;o();};}
 {const o=drawWeather;drawWeather=function(){o();if(scene==='world')for(const f of MARKQ)f();MARKQ.length=0;};}
 {const o=drawExitSigns;drawExitSigns=function(add){o(add);if(S)guideMarks(P.map,add);};}
@@ -5897,6 +5897,50 @@ function migrate27(s){if((s.v||0)>=8)return;const f=s.flags=s.flags||{};
  LINES.rengo.forEach(a=>{for(let i=0;i<a.length;i++)if(/Nilo/.test(a[i]))a[i]='Los huevos que quedan necesitan calor y paciencia. Como los compañeros.';});
  if(h3)HEV.rengo[3]=()=>h3().map(l=>/Nilo/.test(l.t)?{...l,t:'De ese huevo salió la pequeña que duerme junto a la hoguera. Así que, en cierto modo, Brasa sigue aquí.'}:l);
  try{return o(id);}finally{LINES.rengo.forEach((a,i)=>{a.length=0;a.push(...keep[i]);});if(h3)HEV.rengo[3]=h3;}};}
+
+/* ================= v27b ================= */
+/* ---------- the burrow stays put; nobody hides inside a rock or a wall ---------- */
+EN.madriguera.fly=1;/* out of the crowd-pushing: it is a hole in the ground */
+{const o=spawnerAI;spawnerAI=function(e,dt){if(e.ax==null){e.ax=e.x;e.ay=e.y;}e.x=e.ax;e.y=e.ay;o(e,dt);e.x=e.ax;e.y=e.ay;};}
+/* shots do not shove the lantern or the burrow around (they would end up inside rocks, out of reach) */
+{const o=hitEnemy;hitEnemy=function(e,s){if(e&&(e.type==='farolillo'||e.type==='madriguera')){const x=e.x,y=e.y;o(e,s);e.x=x;e.y=y;return;}return o(e,s);};}
+/* minions only pop out where there is floor */
+{const o=spawnEnemy;spawnEnemy=function(type,x,y,opt={}){if(R&&opt.small&&opt.quick&&inObsR(x,y,12)){const A=arena();for(let k=0;k<16;k++){const a=k*.785+rnd(0,.4),d=18+k*3,nx=clamp(x+Math.cos(a)*d,A.x0+12,A.x1-12),ny=clamp(y+Math.sin(a)*d,A.y0+12,A.y1-12);if(!inObsR(nx,ny,12)){x=nx;y=ny;break;}}}return o(type,x,y,opt);};}
+/* lanterns float to open floor and do not aim from above a rock */
+function freeNear(x,y,r){if(!inObsR(x,y,r))return[x,y];const A=arena();for(let d=12;d<220;d+=8)for(let k=0;k<12;k++){const a=k/12*6.283,nx=clamp(x+Math.cos(a)*d,A.x0+r,A.x1-r),ny=clamp(y+Math.sin(a)*d,A.y0+r,A.y1-r);if(!inObsR(nx,ny,r))return[nx,ny];}return[x,y];}
+{const o=laserAI;laserAI=function(e,dt){if(!e.las&&e.spawn<=0){if(e.wx!=null&&inObsR(e.wx,e.wy,e.r+4)){[e.wx,e.wy]=freeNear(e.wx,e.wy,e.r+4);}
+  if(inObsR(e.x,e.y,e.r)){const[fx,fy]=freeNear(e.x,e.y,e.r+4);e.wx=fx;e.wy=fy;e.st=3;moveTo(e,fx,fy,90*dt);if(e.cd<.3)e.cd=.3;}}o(e,dt);};}
+/* safety net: an enemy that stays inside a rock or outside the room is brought back to open floor */
+{const o=updateRun;updateRun=function(dt){o(dt);if(!R||R.ended||!R.en)return;const A=arena();
+ for(const e of R.en){if(e.dead||e.boss||e.spawn>0)continue;
+  if(e.x<A.x0||e.x>A.x1||e.y<A.y0||e.y>A.y1){bound(e);if(e.ax!=null){e.ax=e.x;e.ay=e.y;}}
+  if(inObsR(e.x,e.y,4)){e.stuckT=(e.stuckT||0)+dt;if(e.stuckT>1.2){const[fx,fy]=freeNear(e.x,e.y,(e.r||10)+2);e.x=fx;e.y=fy;if(e.ax!=null){e.ax=fx;e.ay=fy;}e.stuckT=0;}}else e.stuckT=0;}};}
+
+/* ---------- Templo Hundido: every lever says which gates it moves ---------- */
+const SLC={u:'#4f9be8',v:'#5fc06a',w:'#f0a040'},SLCN={u:'azul',v:'verde',w:'naranja'},SLROW={u:18,v:12,w:6},SLFX={};
+{const H=AREA.hundido,S_=H.sluice;S_.n={u:'Canal bajo',v:'Canal medio',w:'Canal alto'};
+ const sub=c=>S_.levers[c].map(k=>S_.n[k].toLowerCase()+' ('+SLCN[k]+')').join(' y ');
+ for(const c in S_.levers)S_.lbl[c]=sub(c);
+ H.signs['18,21']='«Tres canales, tres compuertas, cuatro palancas. Cada palanca lleva los banderines de los canales que mueve: azul el bajo, verde el medio, naranja el alto. Si la compuerta de un canal está cerrada, el canal se llena; si está abierta, se vacía. Cada vez que tiras de una palanca, sus compuertas cambian».';}
+pullSluice=function(M,c){const A=AREA[M.id],S_=A.sluice,fl=floodS(M.id),L=S_.levers[c];for(const k of L){fl[k]=fl[k]?0:1;SLFX[k]=T;}snd('dig',.8,.7);shake=5;setTimeout(()=>snd('magic',.4,.5),200);
+ toast(`Palanca ${S_.tag[c]}: `+L.map(k=>`${S_.n[k].toLowerCase()} (${SLCN[k]}) ${fl[k]?'se llena':'se vacía'}`).join(' · '),3600);
+ const o={x:P.x,y:P.y};pushOutRects(o,8,[...M.static,...areaSolids(M)]);P.x=o.x;P.y=o.y;save();};
+function drawSluiceHints(M,add){const A=AREA[M.id],S_=A.sluice,fl=floodS(M.id);
+ /* the channels: a coloured kerb along each one, coloured water when full, a gate at each end */
+ add(-1e7+4,()=>{for(const k of ['u','v','w']){const y=SLROW[k]*16,c=SLC[k],full=!!fl[k];
+   bx.globalAlpha=full?.24:.1;rect(c,16,y,M.w*16-32,16);bx.globalAlpha=.85;for(let x=18;x<M.w*16-18;x+=8){rect(c,x,y-1,4,1);rect(c,x+4,y+16,4,1);}bx.globalAlpha=1;
+   const f=SLFX[k]!=null?T-SLFX[k]:9;if(f<1.4){const k2=1-f/1.4;bx.globalAlpha=.45*k2;rect('#ffffff',16,y+2,M.w*16-32,12);bx.globalAlpha=k2;const sx=16+Math.round((M.w*16-32)*(f/1.4));rect(c,sx-6,y+1,12,14);bx.globalAlpha=1;}}});
+ for(const k of ['u','v','w'])for(const gx of [0,M.w-1]){const y=SLROW[k];add((y+1)*TS-1,()=>{const X=gx*16,Y=y*16,c=SLC[k],open=!fl[k];
+   rect('#131b1b',X+2,Y-6,3,22);rect('#131b1b',X+11,Y-6,3,22);rect('#5a4a3a',X+3,Y-5,1,20);rect('#5a4a3a',X+12,Y-5,1,20);
+   const by0=open?Y-4:Y+4;rect('#131b1b',X+4,by0,8,10);rect('#8a5a34',X+5,by0+1,6,8);rect('#6b4428',X+5,by0+4,6,1);
+   rect('#131b1b',X+2,Y-11,8,6);rect(c,X+3,Y-10,6,4);rect('#ffffff',X+3,Y-10,2,1);
+   if(open){for(let i=0;i<3;i++){const q=(T*2+i/3)%1;bx.globalAlpha=1-q;rect('#9fd8f0',X+5+i*2,Y+6+Math.round(q*8),1,2);}bx.globalAlpha=1;}
+   label(gx?X-12:X+30,Y+12,{u:'bajo',v:'medio',w:'alto'}[k],{s:9,c:c});});}
+ /* the levers: one banner per gate they move */
+ for(const o of M.o){if(!'3456'.includes(o.c))continue;const L=S_.levers[o.c],cx=o.x*16+8,by=o.y*16+16;add((o.y+1)*TS-3,()=>{const n=L.length,x0=cx-Math.round((n*7-1)/2);
+   rect('#131b1b',cx-1,by-22,2,10);for(let i=0;i<n;i++){const x=x0+i*7;rect('#131b1b',x-1,by-29,8,8);rect(SLC[L[i]],x,by-28,6,6);rect('#ffffff',x,by-28,2,1);}});}}
+{const o=drawAreaCast;drawAreaCast=function(M,add,vis){o(M,add,vis);if(M.id==='hundido'&&AREA.hundido.sluice)drawSluiceHints(M,add);};}
+{const o=onMapEnter;onMapEnter=function(m){o(m);if(!S||m!=='hundido'||S.flags.slHint)return;S.flags.slHint=1;setTimeout(()=>{if(CINE.on||P.map!=='hundido')return;say([{who:'narr',t:'Tres canales inundados cruzan la sala, cada uno con su color: azul el bajo, verde el medio, naranja el alto.'},{who:'narr',t:'Las palancas llevan banderines de esos colores: son las compuertas que mueve cada una. Abrir una compuerta vacía su canal; cerrarla, lo llena.'}],()=>save());},900);};}
 
 
 /* ================= BOOT ================= */

@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-180.png">
 <style>[hidden]{display:none!important}html,body{margin:0}</style>
-<script>window.BUILD_ID="9315026be3";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
+<script>window.BUILD_ID="972e105ed2";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
 <script src="bundle.js?v=76c7ee24"></script>
 <title>Raíces del Valle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1247,13 +1247,15 @@ function sheetBaul(){let h=sheetHead('Baúl de armas','Elige qué llevar a la gr
  h+='<div class="list" style="margin-top:6px">';
  S.weapons.forEach((x,i)=>{const X=WEAPONS[x.t],ev=evoDone(x.t);h+=`<div class="card"><span class="wic">${ic('w_'+x.t,'l')}</span><div class="body"><div class="name rar${x.rar}">${wName(x)}</div><p class="sub">${ev?EVO[x.t].d:X.d}</p><p class="sub">Daño ${wDmg(x).toFixed(1)} · ${X.rate} disparos/s · ${RAR[x.rar].n}</p>${x.aff.map(a=>`<div class="aff">${AFF[a.k].n(a.v)}</div>`).join('')}${ev?'<span class="tag gold">Evolucionada</span>':''}</div>${i===S.eq?'<span class="tag gold">Equipada</span>':`<button class="btn sm" data-a="equip" data-v="${i}">Equipar</button>`}</div>`;});
  return h+'</div><p class="sub" style="margin-top:10px">Las armas nuevas se forjan con Tobías, en el pueblo.</p>';}
-function sheetMascota(){let h=sheetHead(S.pet?S.pet.name:'Una mascota',S.pet?'Tu compañía en la granja y en el pueblo. A la grieta no entra: te espera en casa.':'Elige un animal para que viva contigo. Te seguirá por la granja y el pueblo.');
+function sheetMascota(){let h=sheetHead(S.pet?S.pet.name:'Un compañero',S.pet?'Tu compañía en la granja y en el pueblo. Es tu compañero para siempre.':'Elige un animal para que viva contigo. Te seguirá por la granja y el pueblo. Elige con calma: será tu compañero para siempre y no podrás cambiarlo.');
  if(S.pet){const P_=PETS[S.pet.k];h+=`<div class="card" style="margin-top:6px"><img class="portrait" src="${asrc('pf_'+S.pet.k)}" alt=""><div class="body"><div class="name">${esc(S.pet.name)}</div><p class="sub">${P_.n}</p><div class="row" style="margin-top:6px"><input id="petn" maxlength="14" value="${esc(S.pet.name)}" aria-label="Nombre de la mascota" style="flex:1;min-width:0"><button class="btn alt sm" data-a="petname">Renombrar</button></div></div></div>
-  <div class="row" style="margin-top:10px"><button class="btn" data-a="petpat">Acariciar</button><button class="btn alt" data-a="pettoggle">${S.pet.on?'Que se quede en casa':'Que me acompañe'}</button></div><h3>Cambiar de mascota</h3>`;}
- h+='<div class="petgrid">';for(const k in PETS){if(S.pet&&S.pet.k===k)continue;h+=`<div class="pettile"><img class="petf" src="${asrc('pf_'+k)}" alt=""><b>${PETS[k].n}</b><button class="btn alt sm" data-a="adopt" data-v="${k}">${S.pet?'Cambiar':'Adoptar'}</button></div>`;}
+  <div class="row" style="margin-top:10px"><button class="btn" data-a="petpat">Acariciar</button><button class="btn alt" data-a="pettoggle">${S.pet.on?'Que se quede en casa':'Que me acompañe'}</button></div>`;return h;}
+ h+='<div class="petgrid">';for(const k in PETS){h+=`<div class="pettile"><img class="petf" src="${asrc('pf_'+k)}" alt=""><b>${PETS[k].n}</b><button class="btn alt sm" data-a="adopt" data-v="${k}">Adoptar</button></div>`;}
  return h+'</div>';}
-ACT.adopt=k=>{const old=S.pet;S.pet={k,name:PETS[k].def,on:true};petTo();PET.hop=.6;snd('powerup');refreshAll();save();
- say(old?[{who:'narr',t:`${old.name} se va a vivir con Lía, que promete cuidarle muy bien. ${PETS[k].def} llega a casa.`}]:[{who:'narr',t:`${PETS[k].def} olisquea cada rincón de la casa y decide que este es su sitio.`},{who:'narr',t:'Puedes cambiarle el nombre aquí, en su rincón.'}]);};
+ACT.adopt=k=>{if(S.pet||!PETS[k])return;closeSheet();
+ say([{who:'narr',t:`${PETS[k].n}. Si lo adoptas, será tu compañero para siempre: no podrás cambiarlo por otro.`,choices:[{t:`Adoptar a ${PETS[k].def}`,fn:()=>adoptPet(k)},{t:'Mirar los demás',fn:()=>setTimeout(()=>openSheet('mascota'),60)}]}]);};
+function adoptPet(k){if(S.pet)return;S.pet={k,name:PETS[k].def,on:true};petTo();PET.hop=.6;snd('powerup');jing('level');refreshAll();save();
+ say([{who:'narr',t:`${PETS[k].def} olisquea cada rincón de la casa y decide que este es su sitio.`},{who:'narr',t:'Puedes cambiarle el nombre aquí, en su rincón.'}]);}
 ACT.petname=()=>{const v=($('#petn').value||'').trim().slice(0,14);if(!v||!S.pet)return;S.pet.name=v;toast(`Ahora se llama ${v}.`);refreshAll();save();};
 ACT.pettoggle=()=>{if(!S.pet)return;S.pet.on=!S.pet.on;petTo();toast(S.pet.on?`${S.pet.name} te acompañará.`:`${S.pet.name} te esperará en casa.`);refreshAll();save();};
 ACT.petpat=()=>{if(!S.pet)return;PET.hop=.6;snd('pick',.8,1.3);toast(pick([`${S.pet.name} cierra los ojos, feliz.`,`${S.pet.name} se acurruca contra tu mano.`,`${S.pet.name} da un saltito de alegría.`]));};
@@ -1917,7 +1919,7 @@ const AMAPS={"canon": ["##########################", "##########################
 /* generated by maps2.py: the routes and temples added for the four seasons (see legend there and in o_areas.js) */
 Object.assign(AMAPS,{"canteras": ["########################", "####.....QQQQQQ.....####", "####.....QQQQQQ.....####", "####.^...QQQQQQ...^.####", "####......,,,.......####", "####......,,,.......####", "####..S...,,,....O..####", "####.P....,,,.......####", ",,,,,,,,,,,,,###########", ",,,,,,,,,,,,,###########", "##########,,,###########", "##########,,,ooo.QQQQ.##", "###.......,,,ooo.QQQQ.##", "###.......,,,ooo.QQQQ.##", "###.......,,,ooo......##", "###.......,,mooo......##", "###.......,,,ooo......##", "###.......,,,ooo...k..##", "###.......,,,ooo.....C##", "###.......,,,ooo......##", "##########,,,ooo########", "##########,,,###########", "####......,,,......#####", "####...J..,,,......#####", "####......,,,...O..#####", "#C..R.....,,,......#####", "#...R.....,,,......#####", "####......,,,......#####", "####..k...,,,......#####", "####......,,,......#####", "##########,,,......#####", "##########,,S###########", "##########,,,###########", "##########,,,###########"],
  "yunque": ["#####################", "############.....####", "############C.V..####", "############.....####", "##############|######", "#...................#", "#...###....###..###.#", "#...###....###..###.#", "#...###....###..###.#", "#...###.........###.#", "#...###.............#", "#...###.............#", "#...###.............#", "#...................#", "#...................#", "#...................#", "#...####............#", "#...####............#", "#...................#", "#..A..e.e.e......S..#", "#...................#", "#########...#########"],
- "marisma": ["TTTTTTTTTTT.,,.TTTTTTTTTTTTT", "TTTTTTTTTTT.,,.TTTTTTTTTTTTT", "TTTTTTTTTTT.,,.TTTTTTTTTTTTT", "TTTTTTTTTTT....TTTTTTTTTTTTT", "TTT.QQQQ............O....TTT", "TTT.QQQQ.S.............P.TTT", "TTT.............~~~~~...kTTT", "TTT....~~~~~....~~~~~....TTT", "TTT....~~~~~;;;.~~~~~....TTT", "...;;;.~~~~~;;;......;;;.TTT", "...;;;m.....;;;......;;;.TTT", "TTT;;;....U.;;;......;;;.TTT", "TTT..~~~~......U.~~~~~~..TTT", "TTT..~~~~;;;;;...~~~~~~.....", "TTT..~~~~;;;;;...~~~~~~.....", "TTT......;;;;;........U..TTT", "TTT.C....................TTT", "TT~~~~~~~~;;;;;;~~~~~~~~~~TT", "TT~~~~~~~~;;;;;;~~~~~~~~~~TT", "TTyyyyyyyy;;;;;;yyyyyyyyyyTT", "TTyy0yyyyy;;;;;;yyyyyyyyyyTT", "TTyyyyyyyy;;;;;;yyyyyyy0yyTT", "TTyyyyyyyy;;;;;;yyyyyyyyyyTT", "TTyyyyy0yy;;;;;;yyyyyyyyCyTT", "TTyyyyyyyy;;;;;;yyyyyyyyyyTT", "TTT~~~~~~~;;;;;;~~~~~~~~~TTT", "TTT~~~~~~~~~h~~~~~~~~~~~~TTT", "TTT~~~~~~~~~~~~~~~~~~~~~~TTT", "TTTT~~~~~~~~~~~~~~~~~~~~TTTT", "TTTT~~~~~~~~~~~~~~~~~~~~TTTT", "TTTT~~~~~..QQQQQQ..~~~~~TTTT", "TTTT~~~~~..QQQQQQ..~~~~~TTTT", "TTTT~~~~~..........~~~~~TTTT", "TTTT~~~~~.^.h...C..~~~~~TTTT", "TTTT~~~~~..........~~~~~TTTT", "TTTTTTTTTTTTTTTTTTTTTTTTTTTT"],
+ "marisma": ["TTTTTTTTTTT.,,.TTTTTTTTTTTTT", "TTTTTTTTTTT.,,.TTTTTTTTTTTTT", "TTTTTTTTTTT.,,.TTTTTTTTTTTTT", "TTTTTTTTTTT....TTTTTTTTTTTTT", "TTT.QQQQ............O....TTT", "TTT.QQQQ.S.............P.TTT", "TTT.............~~~~~...kTTT", "TTT....~~~~~....~~~~~....TTT", "TTT....~~~~~;;;.~~~~~....TTT", "...;;;.~~~~~;;;......;;;.TTT", "...;;;m.....;;;......;;;.TTT", "TTT;;;....U.;;;......;;;.TTT", "TTT..~~~~......U.~~~~~~..TTT", "TTT..~~~~;;;;;...~~~~~~.....", "TTT..~~~~;;;;;...~~~~~~.....", "TTT......;;;;;........U..TTT", "TTT.C.............O......TTT", "TT~~~~~~~~;;;;;;~~~~~~~~~~TT", "TT~~~~~~~~;;;;;;~~~~~~~~~~TT", "TTyyyyyyyy;;;;;;yyyyyyyyyyTT", "TTyy0yyyyy;;;;;;yyyyyyyyyyTT", "TTyyyyyyyy;;;;;;yyyyyyy0yyTT", "TTyyyyyyyy;;;;;;yyyyyyyyyyTT", "TTyyyyy0yy;;;;;;yyyyyyyyCyTT", "TTyyyyyyyy;;;;;;yyyyyyyyyyTT", "TTT~~~~~~~;;;;;;~~~~~~~~~TTT", "TTT~~~~~~~~~h~~~~~~~~~~~~TTT", "TTT~~~~~~~~~~~~~~~~~~~~~~TTT", "TTTT~~~~~~~~~~~~~~~~~~~~TTTT", "TTTT~~~~~~~~~~~~~~~~~~~~TTTT", "TTTT~~~~~..QQQQQQ..~~~~~TTTT", "TTTT~~~~~..QQQQQQ..~~~~~TTTT", "TTTT~~~~~..........~~~~~TTTT", "TTTT~~~~~.^.h...C..~~~~~TTTT", "TTTT~~~~~..........~~~~~TTTT", "TTTTTTTTTTTTTTTTTTTTTTTTTTTT"],
  "hundido": ["######################", "######################", "#.........V..........#", "#..C.................#", "#########XXXX#########", "#....................#", "#wwwwwwwwwwwwwwwwwwww#", "#~~....~~~~~~~~......#", "#~~....~~~~~~~~......#", "#~~....~~~~~~~~.6....#", "#~~....~~~~~~~~......#", "#~~....~~~~~~~~......#", "#vvvvvvvvvvvvvvvvvvvv#", "##........##........##", "##..5.....##........##", "##........##........##", "##........##........##", "##........##........##", "#uuuuuuuuuuuuuuuuuuuu#", "#..u.................#", "#...3............4...#", "#.................S..#", "#....................#", "##########..##########"],
  "altozano": ["TTTTTTTTTTTTT,,,,TTTTTTTTTTTTT", "T............,,,,............T", "T............,,,,............T", "T..QQQQQQ....,,,,....QQQQQQ..T", "T..QQQQQQ....,,,,....QQQQQQ..T", "T..QQQQQQ....,,,,S...QQQQQQ..T", "T..QQQQQQ....,,,,....QQQQQQ..T", "T............,,,,............T", "T............,,,,............T", "T..%......%..,,,,..%......%..T", "T............,,,,............T", "T............,,,,............T", "T..,,,,,,,,,,,,,,,,,,,,,,,,..T", "T..,,,,,,,,,,,,,,,,,,,,,P,,..T", "T............,,,,............T", "T........QQQQ,,,,.QQQQ.......T", "T......%.QQQQ,,,,.QQQQ...k...T", "T........QQQQ,,,,.QQQQ.......T", "T............,,,,............T", "T............,N,,............T", "T...QQQQQQ...,,,,......%.....T", "T...QQQQQQ...,,,,............T", "T...QQQQQQ..S,,,,............T", "T............,,,,............T", "T............,,,,.........J..T", "T.C..........,,,,............T", "T............................T", "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"],
  "lago": ["############################", "######...QQQQQQQQQQ........#", "######...QQQQQQQQQQ........#", "###I##...QQQQQQQQQQ........#", "#..........................#", "#..........................#", "############....############", "##iii0iiiiiiiiiiiiiiii0iii##", "##iiiiiiiiiiiiiii0iiiiiiii##", "##iiiiiiiiiiiiiiiiiiiiiiii##", "##iiiiiiiiiiiiiiiiiiiiii0i##", "##iiiiii0iiiiiiiiiiiiiiiii##", "##iiiiiiiiii0iiiiiiiiiiiii##", "##iiii0iiiiiiiiiiiiiiiii0i##", "##iiiiiiiiiiiiiiiiiiiiiiii##", "##iiiiiiii0iiii0iiiiii0i0i##", "##iiiiiiiiiiii0iiiiiiiiiii##", "##iiiiiiiiiii0iiiiiiiiiiii##", "##iiiiiiiiiiiiiiiiiiiiiiii##", "##iiiiiiiiiii0iiiiiiiiiiii##", "##iiiiiiiii0i0ii0iiiiiiiii##", "##ii0iiiiiii0iii0iiiiiiiii##", "##iiiii0ii0iiiiiiiiiiiiiii##", "##iiiii0iiiiiiiiiiiiiiiii0##", "##iiiii0iiiiiiiiiiiiiiiiii##", "##iiiiiiiiiiiiiiiiiiiiiiii##", "#..........................#", "#..........................#", "#...QQQQQQ.................#", "#...QQQQQQ.................#", ",,..QQQQQQ.....O........P..#", ",,.........................#", "#..........S...............#", "#..........................#", "#..k.......................#", "#........................C.#", "#..........................#", "############################"],
@@ -2127,7 +2129,7 @@ function areaSpots(L){const M=WORLD[P.map],A=AREA[M.id],s=areaS(M.id);
  if(M.id==='susurro'){if(!inv('farol')&&P.y<7.6*TS&&P.y>5*TS)L.push({x:P.x,y:6.9*TS,r:40,label:'Niebla',fn:()=>say([{who:'narr',t:'La niebla es tan espesa que no ves ni tus propias botas. Dentro se oyen susurros.'},{who:'narr',t:'Sin una luz especial, aquí te perderías para siempre.'}])});
   if(!brazDone()&&P.y>41.5*TS&&P.y<43.2*TS&&P.x>7.5*TS&&P.x<16.5*TS)L.push({x:12*TS,y:42.6*TS,r:60,label:'Barrera',fn:()=>say([{who:'narr',t:'Una cortina de luz violeta corta el paso. Cuando la tocas, oyes una risa muy lejana.'}])});}
  if(M.id==='riscos'){const t=hookTarget(M);if(t)L.push({x:P.x,y:P.y,r:6,label:inv('garfio')?'Garfio':'Sima',ic:inv('garfio')?'garfio':null,fn:()=>hookGo(t)});
-  if(S.flags.metRengo)L.push({x:12.5*TS,y:5*TS,r:30,label:'Nido',sub:'entrenar mascota',ic:'huevod',fn:()=>openSheet('rengo')});}
+  if(rengoKnown())L.push({x:12.5*TS,y:5*TS,r:30,label:'Nido',sub:'entrenar mascota',ic:'huevod',fn:()=>openSheet('rengo')});}
  for(const id in NP){const n=NP[id];if(n.map!==P.map)continue;L.push({x:n.x,y:n.y,r:32,label:'Hablar',ic:'heart',sub:npcName(id),npc:id,fn:()=>talk(id)});}}
 function smashRock(M,o){if(!inv('mazo')){say([{who:'narr',t:'Una roca enorme y agrietada tapa el paso. Con un buen mazo, quizá...'}]);return;}
  const s=areaS(M.id),q=[[o.x,o.y]],seen=new Set();while(q.length){const[x,y]=q.pop(),k=x+','+y;if(seen.has(k))continue;seen.add(k);s.rk[k]=1;
@@ -2430,7 +2432,7 @@ function cineMavilah(){if(S.flags.metMav)return;
 function cineRengo(){if(S.flags.metRengo)return;taxiS().ren=1;
  const hasPet=!!S.pet;
  cine([{say:[{who:'narr',t:'En lo alto del risco, entre tiendas de piel y una hoguera, duermen dos dragones enormes.'}]},{cam:[12,5],spd:2},
-  {say:[{who:'nilo',t:'¡{name}! ¡Mira! ¡Dragones de verdad!'},{who:'rengo',t:'El chaval casi se cae a una sima persiguiendo a esta pequeña. Le cogí del cuello de la camisa. Literalmente.'},{who:'rengo',t:'Soy Rengo. Domador de dragones. El último, creo.'},{who:'rengo',t:'Cuando llegó la Marchitez, los dragones se fueron del valle. Yo me quedé a cuidar los huevos que dejaron. Tres han eclosionado. Faltan muchos.'},
+  {say:S.flags.rengoMet?[{who:'nilo',t:'¡{name}! ¡Mira! ¡Dragones de verdad!'},{who:'rengo',t:'Tranquilidad: el chaval está entero. Casi se cae a una sima persiguiendo a esta pequeña. Le cogí del cuello de la camisa. Literalmente.'},{who:'rengo',t:'Ha subido sin garfio, por las rocas. O es muy valiente o muy tonto. Me recuerda a alguien.'},{who:'nilo',t:'¿Volvemos? Mi madre me va a matar. Bueno, primero me va a abrazar y luego me va a matar.'}]:[{who:'nilo',t:'¡{name}! ¡Mira! ¡Dragones de verdad!'},{who:'rengo',t:'El chaval casi se cae a una sima persiguiendo a esta pequeña. Le cogí del cuello de la camisa. Literalmente.'},{who:'rengo',t:'Soy Rengo. Domador de dragones. El último, creo.'},{who:'rengo',t:'Cuando llegó la Marchitez, los dragones se fueron del valle. Yo me quedé a cuidar los huevos que dejaron. Tres han eclosionado. Faltan muchos.'},
    hasPet?{who:'rengo',t:`Ese animal tuyo... ${S.pet.name}, ¿no? Tiene buena mirada. Con paciencia, cualquier compañero fiel puede despertar el dragón que lleva dentro.`}:{who:'rengo',t:'¿No tienes compañero? Adopta uno en tu casa y tráemelo. Los dragones no se eligen: se crían.'},
    {who:'rengo',t:'Si quieres, lo entreno. Encargo a encargo. Ya verás cómo cambia.'},{who:'nilo',t:'¿Volvemos? Mi madre me va a matar. Bueno, primero me va a abrazar y luego me va a matar.'}]},{cam:'P',spd:3},
   {fn:()=>{reachDone('metRengo');}}],()=>{},'rengo');}
@@ -2518,7 +2520,7 @@ Object.assign(NPCS,{
  cardo:{n:'Cardo',role:'El rival',kind:'amigo',love:['tomate','fresa','tarta'],like:['uva','berenjena','palomitas','sopa'],hate:['lirio'],avail:()=>!!S.bossDone.cardo},
  gus:{n:'Gus',role:'Herrero Legendario',kind:'mentor',love:['brasa','asada','guiso'],like:['hierro','cobre','colmillo','tortilla'],hate:['lirio'],avail:()=>S.ch>=3||!!S.flags.metGus,home:{map:'gusin',sp:[7.5,5.6],fixed:1}},
  mavilah:{n:'Mavilah',role:'Hechicera Olvidada',kind:'misterio',love:['lirio','escarcha','miel'],like:['savia','ceniza','uva','tarta'],hate:['colmillo'],avail:()=>S.ch>=5||!!S.flags.metMav,home:{map:'mavin',sp:[6,5.2],fixed:1}},
- rengo:{n:'Rengo',role:'Domador de Dragones',kind:'mentor',love:['asada','calabaza','colmillo'],like:['huevo','maiz','escama','guiso'],hate:['nabo'],avail:()=>S.ch>=8||!!S.flags.metRengo,home:{map:'riscos',sp:[15.5,6.6]}},
+ rengo:{n:'Rengo',role:'Domador de Dragones',kind:'mentor',love:['asada','calabaza','colmillo'],like:['huevo','maiz','escama','guiso'],hate:['nabo'],avail:()=>S.ch>=8||rengoKnown(),home:{map:'riscos',sp:[15.5,6.6]}},
  paloma:{n:'Paloma',role:'Cuidadora de pájaros',kind:'amiga',love:['maiz','fresa','miel'],like:['palomitas','uva','huevo'],hate:['brasa'],avail:()=>!!S.flags.taxi},
 });
 /* progressive arrivals: Darío comes with the rift, Eira watches from chapter II, Nilo goes missing in VIII */
@@ -2741,7 +2743,7 @@ function cineNiloMissing(done){
  cine([ST('town',12,11.2,0,1),{a:'vera',k:'SorcererBlack',at:[13.4,12.4],dir:'side',f:-1},{a:'tobias',k:'Master',at:[10.5,11.6],dir:'down'},
   {say:[{who:'narr',t:'Esa tarde, en la plaza del pueblo, cae granizo durante un minuto. Luego sale el sol como si nada.'},{who:'tobias',t:'Granizo en un día así. En cuarenta años de forja no lo había visto.'},{who:'vera',t:'Cardo hacía eso de crío: decía que las nubes le hacían caso. Nadie le creía.'}]},
   {a:'dario',k:'Inspector',at:[21.4,10.6],dir:'side',f:-1},{cam:[16,11],nowait:1,spd:2.4},{mv:'dario',to:[13.6,11.1],spd:100},{cam:'P',spd:3},{emote:'P',e:'!'},
-  {say:[{who:'dario',t:'¡Nilo! ¿Alguien ha visto a Nilo?'},{who:'dario',t:'Su madre dice que no ha dormido en casa. Ha dejado una nota: "Me boi a ver los dragones de los Riscos. No os preocupeis. Nilo."'},{who:'dario',t:'Los Riscos del Dragón están al norte de tu granja. Hay simas que no he cruzado nunca. Yo dibujo esos mapas desde el borde.'},{who:'dario',t:'Toma. Es un garfio. Lo compré hace diez años para cruzar las simas... y nunca me atreví.',fn:()=>{if(!inv('garfio'))addI('garfio');}},{who:'narr',t:'Has conseguido el Garfio de Darío.'},{who:'tobias',t:'Esos riscos los conozco de oídas. Las palancas de los puentes las puso un domador hace siglos. Dicen que tienen truco.'},{who:'vera',t:'Yo vigilaré la grieta de Cardo, por si vuelve a asomar. Ve. Tráelo de vuelta.'}]},
+  {say:[{who:'dario',t:'¡Nilo! ¿Alguien ha visto a Nilo?'},{who:'dario',t:'Su madre dice que no ha dormido en casa. Ha dejado una nota: "Me boi a ver los dragones de los Riscos. No os preocupeis. Nilo."'},{who:'dario',t:'Los Riscos del Dragón están al norte de tu granja. Hay simas que no he cruzado nunca. Yo dibujo esos mapas desde el borde.'},...(inv('garfio')?[{who:'dario',t:'Tú ya tienes garfio, ¿verdad? Rengo vive en lo más alto. Si Nilo ha subido, estará con él... o colgando de algún sitio.'}]:[{who:'dario',t:'Toma. Es un garfio. Lo compré hace diez años para cruzar las simas... y nunca me atreví.',fn:()=>{if(!inv('garfio'))addI('garfio');}},{who:'narr',t:'Has conseguido el Garfio de Darío.'}]),{who:'tobias',t:'Esos riscos los conozco de oídas. Las palancas de los puentes las puso un domador hace siglos. Dicen que tienen truco.'},{who:'vera',t:'Yo vigilaré la grieta de Cardo, por si vuelve a asomar. Ve. Tráelo de vuelta.'}]},
   {rm:'dario'},{rm:'vera'},{rm:'tobias'}],()=>{placeNPCs();done&&done();},'nilo0');}
 /* VII → VIII: Nilo comes home */
 function cineNiloBack(){
@@ -5133,7 +5135,7 @@ const MG={
   win(){S.flags.cartOk=1;S.gold+=0;cartTrip('to');save();}},
  /* ---- fireflies over the marsh (night) ---- */
  luciernagas:{t:'Luciérnagas',h:'Toca las luciérnagas para meterlas en el frasco. Doce antes de que acabe el tiempo.',wt:'¡Frasco lleno!',lt:'Se han escapado',
-  init(st){st.f=[];for(let i=0;i<9;i++)st.f.push(this.mk());st.left=28;},mk(){return{x:30+Math.random()*300,y:60+Math.random()*380,a:Math.random()*7,s:30+Math.random()*40,ph:Math.random()*7};},
+  init(st){st.f=[];for(let i=0;i<9;i++)st.f.push(this.mk());st.left=16;},mk(){return{x:30+Math.random()*300,y:60+Math.random()*380,a:Math.random()*7,s:30+Math.random()*40,ph:Math.random()*7};},
   hud:st=>`${st.score}/12 · ${Math.ceil(st.left)}s`,
   down(st,x,y){for(let i=0;i<st.f.length;i++){const f=st.f[i];if(Math.hypot(f.x-x,f.y-y)<26&&Math.sin(T*3+f.ph)>-.3){st.score++;snd('pick',.6,1.4);st.f[i]=this.mk();if(st.score>=12)miniEnd(true);return;}}},
   upd(st,dt){st.left-=dt;if(st.left<=0){miniEnd(false,`${st.score} de 12.`);return;}for(const f of st.f){f.a+=(Math.random()-.5)*dt*4;f.x+=Math.cos(f.a)*f.s*dt;f.y+=Math.sin(f.a)*f.s*dt;if(f.x<20||f.x>340)f.a=Math.PI-f.a;if(f.y<40||f.y>460)f.a=-f.a;f.x=Math.max(20,Math.min(340,f.x));f.y=Math.max(40,Math.min(460,f.y));}},
@@ -5285,6 +5287,7 @@ const HPH=[
  {n:'Segunda planta',need:{},in:{vigas:6,madera:60,piedra:40,hierro:12},gold:3000,fx:'Los vecinos vienen de visita y, si te casas, hay sitio para dos. +20 de energía máxima.',hint:'Del roble plateado caído junto al Lago Espejo salen las mejores vigas.',mE:20},
  {n:'Desván y veleta',need:{veleta:1},in:{madera:40,cobre:10},gold:5000,fx:'Lo que Rosa guardó en el desván.',hint:'Tobías tiene una veleta a medio forjar. Para acabarla necesita a su maestro.'}];
 const hph=()=>S&&S.farm?S.farm.ph||0:0;
+const obrasAt=()=>({x:doorX()+(hph()>=4?-64:64),y:HOUSE.y+18});
 const HLOOK=[0,1,1,2,2,3,3];
 function syncHouse(){if(!S||!S.farm||S.farm.ph==null)return;S.farm.house=HLOOK[hph()];BENCH.x=hph()>=4?14.1:9;BENCH.y=hph()>=4?8.3:7.45;}
 const phCost=i=>{const P_=HPH[i];return{...P_.in,...P_.need};};
@@ -5320,7 +5323,7 @@ ACT.hbuild=i=>{i=+i;if(i!==hph()||!phReady(i))return;const P_=HPH[i];S.gold-=P_.
  cine([ST('farm',doorX()/TS,(HOUSE.y+40)/TS,0,-1),...steps],()=>{if(i===5&&S.bossDone.cardo)addP('cardo',20);refreshAll();save();},'house');jing('level');};
 /* where to repair: Rosa's plans by the front door and on the kitchen wall */
 {const o=interactables;interactables=function(){const L=o();if(!S)return L;
- if(P.map==='farm'&&MODE.type!=='deco'&&MODE.type!=='dpick'){L.push({x:doorX()+40,y:HOUSE.y+14,r:22,label:'Obras',sub:'casa',ic:'martillo',fn:()=>openSheet('casa')});
+ if(P.map==='farm'&&MODE.type!=='deco'&&MODE.type!=='dpick'){{const ob=obrasAt();L.push({x:ob.x,y:ob.y+4,r:26,label:'Obras',sub:'casa',ic:'martillo',fn:()=>openSheet('casa')});}
   if(!S.flags.shed)L.push({x:SHED.x*TS,y:(SHED.y+.3)*TS,r:30,label:'Cobertizo',sub:'buscar',fn:searchShed});}
  if(P.map==='home')L.push({x:4.5*TS,y:2.9*TS,r:22,label:'Planos',sub:'de Rosa',ic:'pagina',fn:()=>openSheet('casa')});
  return L;};}
@@ -5439,7 +5442,7 @@ function migrateRedesign(s){if((s.v||0)>=7)return;if(s.ch===2&&s.stage==='prep')
 const SKN=[null,'Olfato','Excavar','Alas','Fuego','Dragón'];
 function needsFor(id){const L=[],n=RPH[id];
  if(hph()<n)L.push(`arregla tu casa: ${HPH[hph()].n.toLowerCase()} (Obras, junto a la puerta)`);
- const sk={pantano:2,cumbre:4,raiz:5}[id];if(sk&&petLv()<sk)L.push(S.pet?`que ${S.pet.name} aprenda ${SKN[sk]} (cartas de Rengo)`:`un compañero que aprenda ${SKN[sk]}`);
+ const sk={pantano:2,cumbre:4,raiz:5}[id];if(sk&&petLv()<sk)L.push(S.pet?`que ${S.pet.name} aprenda ${SKN[sk]} (Rengo, en los Riscos)`:`un compañero que aprenda ${SKN[sk]}`);
  const H_=RTEMPLE[id]&&AREA[RTEMPLE[id]].hazard;if(H_&&!gearOk(H_))L.push(`${H_.need} de rareza ${RARN[H_.rar]} (Gus)`);
  if(id==='pantano'&&!summerNow()&&!aS2('marisma').done.temple)L.push('esperar al verano, cuando baja el agua');
  if(id==='espinas'&&!inv('lente'))L.push('la lente de Ofelia (Altozano), que se entrega en la feria de otoño');
@@ -5476,23 +5479,25 @@ Object.assign(PETQ[2],{learn:'Alas',ld:'Planea con el viento y te lleva con él.
 Object.assign(PETQ[3],{learn:'Fuego',ld:'Quema zarzas y enciende braseros. En las grietas escupe bolas de fuego a los enemigos.'});
 Object.assign(PETQ[4],{learn:'Dragón',ld:'Su aliento rompe el hielo más grueso. En las grietas, aliento de fuego en abanico.',goal:80,d:'Que tu compañero derrote a 80 enemigos en las grietas.'});
 const RENGOCH=[3,4,6,8,9];/* chapter from which each letter arrives */
-const rengoReady=()=>S&&S.pet&&S.flags.taxi&&petLv()<5&&S.ch>=RENGOCH[petLv()];
+const rengoReady=()=>S&&S.pet&&S.flags.taxi&&!rengoKnown()&&petLv()<5&&S.ch>=RENGOCH[petLv()];
 function rengoLetter(){if(!rengoReady())return null;const lv=petLv(),q=S.pet.q;if(q==null&&!(S.flags.rl||{})[lv])return lv;return null;}
-const RLET=['«No nos conocemos. Me llamo Rengo y crío dragones en los Riscos. Paloma dice que tienes un compañero con buena mirada. Si quieres, le enseño cosas. Por carta, de momento: a los Riscos no sube cualquiera.»',
+const RLET=['«No nos conocemos. Me llamo Rengo y crío dragones en lo alto de los Riscos, al norte de tu granja. Paloma dice que tienes un compañero con buena mirada: me gustaría conocerlo. Pero a mi nido no se sube andando: hay simas que solo se cruzan con un garfio de domador. El mío se rompió hace años y los trozos acabaron rodando por el valle. La garra se quedó en la Senda de las Canteras; la cuerda se la llevaron los del circo del Altozano; y la anilla, la última vez que la vi, colgaba del telescopio del Observatorio. Encuéntralos y que Tobías te forje un garfio nuevo. Te espero arriba.»',
  '«Tu compañero ya huele lo que hay bajo tierra. Ahora toca que aprenda a cavar. Paseadle por el huerto: la tierra trabajada enseña mucho.»',
  '«Un dragón empieza por las alas. Necesito brasas y escamas para que le salga el fuego de dentro, y luego que planee. En otoño, el viento de los Riscos os llevará lejos.»',
  '«Ya planea. Ahora, al fuego. Llévale a las grietas contigo: el fuego se aprende delante del peligro, no delante de una chimenea.»',
  '«Último paso antes de que sea un dragón de verdad. Que pelee a tu lado. Mucho. Un dragón no se hace: se gana.»'];
 {const o=sheetMascota;sheetMascota=function(){let h=o();if(!S.pet||!S.flags.taxi)return h;const lv=petLv(),q=S.pet.q!=null?PETQ[S.pet.q]:null;
  let c='<h3>Cartas de Rengo</h3>';
- if(lv>=5){c+=`<p class="sub">«Ya no te hacen falta mis cartas. Si algún día subes a los Riscos, tráeme a ese dragón: tengo algo que enseñaros a los dos.»</p>`;}
+ if(rengoKnown()){c='<h3>Rengo</h3>'+rengoNestHTML();}
+ else if(lv===0&&q==null&&(S.flags.hookQ||rengoReady())){c+=hookQuestHTML();}
+ else if(lv>=5){c+=`<p class="sub">«Ya no te hacen falta mis cartas. Si algún día subes a los Riscos, tráeme a ese dragón: tengo algo que enseñaros a los dos.»</p>`;}
  else if(!rengoReady()&&q==null){c+='<p class="sub">Rengo escribe cuando ve a tu compañero preparado. Paloma traerá la próxima carta más adelante.</p>';}
  else if(q==null){const n=PETQ[lv];c+=`<div class="card"><div class="body"><p class="sub">${RLET[lv]}</p><div class="name">${n.n}</div><p class="sub">${n.d}</p><p class="sub irow"><b>Aprenderá:</b> ${n.learn}. ${n.ld}</p></div><button class="btn sm" data-a="petaccept2">Aceptar</button></div>`;}
  else{const ok=petReady(q),prog=q.give?Object.keys(q.give).map(k=>`${ITEMS[k].n} ${Math.min(inv(k),q.give[k])}/${q.give[k]}`).join(' · '):`${Math.min(S.pet.qp||0,petGoal(q))}/${petGoal(q)}`;
   c+=`<div class="card"><div class="body"><div class="name">${q.n}</div><p class="sub">${q.d}</p><p class="sub irow"><b>Progreso:</b> ${prog}</p></div><button class="btn sm" data-a="petdone" ${ok?'':'disabled'}>${q.give?'Enviar':'Completar'}</button></div>`;}
  const i=h.indexOf('<h3>Cambiar de mascota</h3>');return i<0?h+c:h.slice(0,i)+c+h.slice(i);};}
 ACT.petaccept2=()=>{if(!S.pet||S.pet.q!=null||!rengoReady())return;S.flags.rl=S.flags.rl||{};S.flags.rl[petLv()]=1;S.pet.q=petLv();S.pet.qp=0;snd('menu');toast('Encargo aceptado. Paloma llevará la respuesta.',2600);refreshAll();if(curTab)openSheet(curTab);save();};
-{const o=ACT.petaccept;ACT.petaccept=()=>{if(S.pet&&!(S.flags.metRengo||rengoReady())){return;}if(S.pet&&petLv()<5&&S.ch<RENGOCH[petLv()]){say([{who:'rengo',t:'Todavía no. Un compañero se cría despacio. Ya te escribiré.'}]);return;}o();};}
+{const o=ACT.petaccept;ACT.petaccept=()=>{if(S.pet&&!(rengoKnown()||rengoReady())){return;}if(S.pet&&petLv()<5&&S.ch<RENGOCH[petLv()]){closeSheet();say([{who:'rengo',t:'Todavía no. Un compañero se cría despacio. Vuelve más adelante: cuando esté listo, Paloma te traerá una nota mía.'}]);return;}o();};}
 /* a bird at the window in the morning when a new letter has arrived */
 {const o=sleep;sleep=function(){const msgs=o();try{const lv=rengoLetter();if(lv!=null&&!(S.flags.rlb||{})[lv]){S.flags.rlb=S.flags.rlb||{};S.flags.rlb[lv]=1;msgs.push({who:'narr',t:lv===0?'Un pájaro de Paloma golpea la ventana con el pico. Trae una carta de alguien llamado Rengo, «domador de dragones».':'Un pájaro de Paloma deja otra carta de Rengo en la ventana.'},{who:'narr',t:`La carta está en el rincón de ${S.pet.name}, en casa.`});}}catch(e){}return msgs;};}
 
@@ -5541,13 +5546,13 @@ function questList(){const L=[];if(!S)return L;
  const o=objective();L.push({c:'Historia',t:o.t,d:o.d,ready:!!o.ready});
  if(typeof keyNeeded==='function'&&keyNeeded()){const ok=canPay(KEYREQ),r=['ascua','rocio','escamab'].map(k=>`${ITEMS[k].n.toLowerCase()} ${Math.min(inv(k),2)}/2`).join(', ');
   L.push({c:'Llave',t:'La Llave del Corazón',d:ok?'Ya lo tienes todo: llévaselo a Gus, a la Gran Forja.':`Busca las reliquias escondidas del desfiladero, el bosque y los riscos (${r}) y llévaselas a Gus con la llave de raíz.`,ready:ok});}
- if(S.flags.metRengo){const lv=petLv();
+ if(rengoKnown()){const lv=petLv();
   if(!S.pet)L.push({c:'Mascota',t:'Un compañero',d:'Adopta una mascota en el rincón de tu casa y llévasela a Rengo, a los Riscos.'});
   else if(lv>=PETMAX){}
   else if(lv>=5)L.push({c:'Mascota',t:PETQ[5].n,d:`${PETQ[5].d} Rengo dice que el momento llegará solo.`});
   else if(S.pet.q!=null){const q=PETQ[S.pet.q],ok=petReady(q),prog=q.give?Object.keys(q.give).map(k=>`${ITEMS[k].n.toLowerCase()} ${Math.min(inv(k),q.give[k])}/${q.give[k]}`).join(', '):`${Math.min(S.pet.qp||0,petGoal(q))}/${petGoal(q)}`;
    L.push({c:'Mascota',t:q.n,d:ok?`¡Cumplido! Ve a ver a Rengo al nido de los Riscos.`:`${q.d} (${prog})`,ready:ok});}
-  else L.push({c:'Mascota',t:'Nuevo encargo de Rengo',d:`Rengo tiene un encargo para ${S.pet.name} en el nido de los Riscos: ${PETQ[lv].n}.`});}
+  else if(lv<5&&S.ch>=RENGOCH[lv])L.push({c:'Mascota',t:'Nuevo encargo de Rengo',d:`Rengo tiene un encargo para ${S.pet.name} en el nido de los Riscos: ${PETQ[lv].n}.`});}
  const a=S.evo&&S.evo.active;if(a)L.push({c:'Evolución',t:EVO[a.t].n,d:a.ready?'El Crisol Ancestral de la Gran Forja de Gus arde: la prueba te espera.':`Derrota a ${EVOK} enemigos con ${WEAPONS[a.t].n.toLowerCase()} equipada (${a.k}/${EVOK}).`,ready:!!a.ready});
  if(typeof townQuests==='function')L.push(...townQuests());
  return L;}
@@ -5606,6 +5611,292 @@ envOf=function(M){const se=season(),vit=vitality();let atlas=['spring','summer',
  bx.globalCompositeOperation='multiply';bx.globalAlpha=w*.24;bx.fillStyle='#8f84a8';bx.fillRect(0,0,BW,BH);bx.restore();
  const n=Math.round(w*22);for(let i=0;i<n;i++){const hx=hash(i*17+3),hy=hash(i*11+7),px=Math.floor(((hx*BW+Math.sin(T*.6+i)*14-CX*.1)%BW+BW)%BW),py=Math.floor(((hy*BH-T*(9+hx*8)-CY*.1)%BH+BH)%BH);
   bx.globalAlpha=.35+.3*Math.sin(T*2+i);rect(i%4?'#b8b2c4':'#8a7aa8',px,py,i%5?1:2,1);}bx.globalAlpha=1;};}
+
+/* ================= v27: closed post, a works sign you can see, new enemies, a pet for good, a guide to the valley, Rengo's hook ================= */
+function rengoKnown(){return !!(S&&S.flags&&(S.flags.metRengo||S.flags.rengoMet));}
+
+/* ---------- 1. The Torre del Correo stays closed until Paloma reaches the valley ---------- */
+function correoOpen(){return !!(S&&S.flags&&S.flags.taxi);}
+const CORREO_CLOSED=()=>[{who:'narr',t:'Un árbol caído y una valla de tablas cortan el camino. Un cartel medio borrado: «Torre del Correo. Cerrada desde la Marchitez».'},{who:'narr',t:'Quizá algún día vuelva alguien a ocuparse del correo del valle.'}];
+const CBAR={town:()=>({x:3.4*TS,y:(WORLD.town.h-2.95)*TS,w:2.8*TS,h:.85*TS}),marisma:()=>({x:25.9*TS,y:12.7*TS,w:.8*TS,h:2.3*TS})};
+{const o=solids;solids=function(){const L=o();if(S&&!correoOpen()&&CBAR[P.map])L.push(CBAR[P.map]());return L;};}
+{const o=interactables;interactables=function(){const L=o();if(S&&!correoOpen()&&CBAR[P.map]){const b=CBAR[P.map]();L.push({x:b.x+b.w/2,y:P.map==='town'?b.y-6:b.y+b.h/2,r:34,label:'Camino cortado',sub:'Torre del Correo',fn:()=>say(CORREO_CLOSED())});}return L;};}
+function drawCorreoBar(add){if(!S||correoOpen()||!CBAR[P.map])return;const b=CBAR[P.map]();
+ if(P.map==='town')add(b.y+b.h,()=>{const x0=P2(b.x),y=P2(b.y+b.h),w=Math.round(b.w/2);
+  /* a fallen trunk across the path, with a plank fence behind */
+  for(let i=0;i<3;i++){rect('#131b1b',x0+2+i*Math.round(w/2.6),y-15,3,13);rect('#8a5a34',x0+3+i*Math.round(w/2.6),y-14,1,11);}
+  rect('#131b1b',x0,y-13,w,3);rect('#b8834e',x0+1,y-12,w-2,1);
+  rect('#131b1b',x0-2,y-7,w+4,7);rect('#6b4a2e',x0-1,y-6,w+2,5);rect('#8a6440',x0-1,y-6,w+2,1);for(let i=4;i<w;i+=7)rect('#4a321e',x0+i,y-5,1,3);
+  rect('#131b1b',x0+w+1,y-7,4,7);rect('#c9a26b',x0+w+2,y-6,2,5);rect('#8a5a34',x0+w+2,y-5,1,1);
+  label(x0+Math.round(w/2),y-20,'Cerrado',{s:10});});
+ else add(b.y+b.h,()=>{const x=P2(b.x),y0=P2(b.y),h=Math.round(b.h/2);
+  rect('#131b1b',x+1,y0-8,4,h+8);rect('#8a5a34',x+2,y0-7,2,h+6);for(let k=0;k<h;k+=5){rect('#131b1b',x-1,y0+k-6,8,3);rect('#b8834e',x,y0+k-5,6,1);}
+  rect('#131b1b',x-4,y0-14,14,8);rect('#efe6cf',x-3,y0-13,12,6);rect('#c43a3a',x-1,y0-11,8,1);rect('#c43a3a',x-1,y0-9,8,1);
+  label(x+3,y0-18,'Cerrado',{s:10});});}
+/* whatever way round the trees you try, the path does not let you through */
+{const o=areaExit;areaExit=function(){if(S&&!correoOpen()){const mh=WORLD[P.map]?WORLD[P.map].h*TS:0;
+  if(P.map==='town'&&P.y>mh-16&&P.x>3*TS&&P.x<6*TS){P.y=mh-16;return false;}
+  if(P.map==='marisma'&&P.x>26.8*TS&&P.y>12.4*TS&&P.y<14.8*TS){P.x=26.8*TS;return false;}}return o();};}
+/* the town's south-west sign says why */
+{const o=drawExitSigns;drawExitSigns=function(add){o(add);drawCorreoBar(add);};}
+{const o=drawAreaCast;drawAreaCast=function(M,add,vis){o(M,add,vis);if(M.id==='marisma')drawCorreoBar(add);};}
+
+/* ---------- 2. The works sign by the front door ---------- */
+{const o=drawExitSigns;drawExitSigns=function(add){o(add);if(!S||P.map!=='farm')return;const ob=obrasAt(),p=hph(),ready=p<6&&phReady(p);
+ add(ob.y,()=>{const x=P2(ob.x),y=P2(ob.y);shadowAt(x,y+1,18);
+  rect('#131b1b',x-8,y-15,3,15);rect('#131b1b',x+5,y-15,3,15);rect('#8a5a34',x-7,y-14,1,14);rect('#8a5a34',x+6,y-14,1,14);
+  rect('#131b1b',x-11,y-25,22,13);rect('#b8834e',x-10,y-24,20,11);rect('#8a5a34',x-10,y-14,20,1);rect('#d39a62',x-10,y-24,20,1);
+  rect('#dfeefa',x-8,y-22,16,7);rect('#5a86c8',x-7,y-21,6,1);rect('#5a86c8',x-7,y-19,9,1);rect('#5a86c8',x-7,y-17,4,1);rect('#5a86c8',x+3,y-21,3,4);rect('#c43a3a',x+4,y-23,1,2);
+  /* Rosa's hammer leaning on the sign */
+  rect('#131b1b',x+8,y-11,2,10);rect('#c9a26b',x+8,y-10,1,8);rect('#131b1b',x+6,y-13,6,3);rect('#9aa0a8',x+7,y-12,4,1);
+  label(x,y-29,p>=6?'Planos':'Obras',{s:10});
+  if(ready&&scene==='world'){const cx=x,cy=y;MARKQ.push(()=>{const X=cx-CX,by=cy-CY-37+Math.round(Math.sin(T*4)*1.5);bx.globalAlpha=.35+.25*Math.sin(T*5);pxDisk(X,by-7,9,'#ffd75e');bx.globalAlpha=1;icon('martillo',X,by);});}});};}
+
+/* ---------- 3. New enemies and enemy shots that look and move differently ---------- */
+Object.assign(EN,{
+ farolillo:{hp:38,spd:26,r:10,ai:'laser',dmg:16,fire:3.4,gold:5,fly:1},
+ madriguera:{hp:72,spd:0,r:14,ai:'spawner',dmg:0,fire:3.8,gold:7}});
+Object.assign(ESPR,{farolillo:'LanternRed'});Object.assign(ESPR2,{farolillo:'LanternRed'});
+for(const[k,L] of [['minas',['farolillo']],['pantano',['madriguera']],['espinas',['farolillo','madriguera']],['cumbre',['farolillo','madriguera']],['raiz',['farolillo','madriguera']],['abismo',['farolillo','madriguera']]])
+ if(REG[k])for(const t of L)if(!REG[k].en.includes(t))REG[k].en.push(t);
+const LAS={track:.8,lock:.45,show:.28};
+/* at most one burrow per room (never in the first), at most two lanterns */
+{const o=spawnEnemy;spawnEnemy=function(type,x,y,opt={}){if(R&&!opt.small&&(type==='madriguera'||type==='farolillo')){const n=R.en.filter(e=>!e.dead&&e.type===type).length;
+  if((type==='madriguera'&&(n>=1||(R.room||0)<2))||(type==='farolillo'&&n>=2)){const alt=REG[R.region].en.filter(k=>k!=='madriguera'&&k!=='farolillo');if(alt.length)type=pick(alt);}}
+ return o(type,x,y,opt);};}
+function v27Tick(e,dt){if(e.spawn>0){e.spawn-=dt;return false;}if(e.frozen>0){e.frozen-=dt;return false;}e.t+=dt;e.cd-=dt;e.flash-=dt;if(e.slowT>0)e.slowT-=dt;
+ for(const k of ['poison','burn'])if(e[k]&&e[k].t>0){e[k].t-=dt;damage(e,e[k].dps*dt,false,true);if(e.dead)return false;}return true;}
+function beamFrom(e){return[e.x,e.y-12];}
+function beamEnd(x,y,a){const A=arena(),c=Math.cos(a),s=Math.sin(a);let d=14;while(d<560){const nx=x+c*d,ny=y+s*d;if(nx<A.x0||nx>A.x1||ny<A.y0||ny>A.y1||inObsR(nx,ny,1))break;d+=4;}return[x+c*d,y+s*d];}
+function turnTo(a,b,max){let d=Math.atan2(Math.sin(b-a),Math.cos(b-a));return a+clamp(d,-max,max);}
+function laserAI(e,dt){if(!v27Tick(e,dt))return;const p=R.p,D=EN[e.type],spd=e.spd*(e.slowT>0?.5:1),[ox,oy]=beamFrom(e),L=e.las;
+ if(!L){if(e.st<=0||dist(e.x,e.y,e.wx,e.wy)<6){const A=arena();e.wx=rnd(A.x0+30,A.x1-30);e.wy=rnd(A.y0+30,A.y1-170);e.st=3;}e.st-=dt;moveTo(e,e.wx,e.wy,spd*dt);
+  if(e.cd<=0){e.las={t:0,a:Math.atan2(p.y-8-oy,p.x-ox)};snd('magic',.3,1.7);}}
+ else{L.t+=dt;if(L.t<LAS.track)L.a=turnTo(L.a,Math.atan2(p.y-8-oy,p.x-ox),dt*2.4);
+  if(L.t>=LAS.track+LAS.lock&&!L.fired){L.fired=1;const[ex,ey]=beamEnd(ox,oy,L.a);(R.beams=R.beams||[]).push({x0:ox,y0:oy,x1:ex,y1:ey,t:LAS.show});snd('fire',.8,1.7);shake=Math.max(shake,2);
+   if(segDist(p.x,p.y-8,ox,oy,ex,ey)<10)hurt(e.dmg);}
+  if(L.t>=LAS.track+LAS.lock+.25){e.las=null;e.cd=D.fire*rnd(.85,1.15);}}
+ e.face=p.x<e.x?-1:1;bound(e);if(dist(e.x,e.y,p.x,p.y)<e.r+p.r-2)hurt(e.dmg*.6);}
+function minionOf(){const L=REG[R.region].en.filter(k=>EN[k]&&['chase','erratic'].includes(EN[k].ai));return L.length?pick(L):'brote';}
+function spawnerAI(e,dt){if(!v27Tick(e,dt))return;const p=R.p,D=EN[e.type],mine=()=>R.en.filter(o=>!o.dead&&o.mom===e).length;
+ if(e.cd<=0&&!e.brew){if(mine()<4){e.brew=.75;snd('dig',.5,.7);}else e.cd=1;}
+ if(e.brew){e.brew-=dt;if(e.brew<=0){e.brew=0;e.cd=D.fire*rnd(.85,1.15);const n=Math.min(2,4-mine());const A=arena();
+  for(let i=0;i<n;i++){const a=rnd(0,6.283),x=clamp(e.x+Math.cos(a)*24,A.x0+12,A.x1-12),y=clamp(e.y+Math.sin(a)*16+8,A.y0+12,A.y1-12);spawnEnemy(minionOf(),x,y,{small:1,quick:1});const m=R.en[R.en.length-1];m.mom=e;m.minion=1;}
+  R.anims.push({k:'fx_smoke',fw:32,fh:32,n:6,x:e.x,y:e.y,t:0,fps:16});for(let i=0;i<10;i++)R.fx.push({x:e.x,y:e.y,vx:rnd(-90,90),vy:rnd(-110,-20),life:.4,c:i%2?'#6b4a2e':'#a07850',s:3});}}
+ /* it does not bite, but it is in the way */
+ const d=dist(p.x,p.y,e.x,e.y),m=e.r+p.r-2;if(d<m&&d>.01){const k=(m-d)/d;p.x+=(p.x-e.x)*k;p.y+=(p.y-e.y)*k;bound(p);}}
+/* each shooter has its own shot: fast thorns, slow big wisps, sticky webs... */
+const PSTYLE={espinita:{k:'needle',v:1.6,m:.85,r:4},brasero:{k:'ember',v:1},espiritu:{k:'wisp',v:.6,m:1.3,r:8},arana:{k:'web',v:.72,m:1.15,r:7},espora:{k:'spore2',v:.85,r:6},ojo:{k:'eyebolt',v:1.4,m:.9,r:4}};
+/* guardians too: each attack has its own shot, so you can read it */
+const BPSTYLE={ring:{k:'orb',v:.85,m:1.1,r:7},charge:{k:'orb',v:.85,m:1.1,r:7},spiral:{k:'ember',v:1},aimed:{k:'bolt',v:1.25,m:.9,r:4},teleport:{k:'bolt',v:1.2,m:.9,r:4},burrow:{k:'rock',v:1,r:6}};
+let SHOOTER=null,BOSSPAT=null;
+{const o=updBoss;updBoss=function(b,dt){if(b.cardo)return o(b,dt);BOSSPAT=b.pat;try{return o(b,dt);}finally{BOSSPAT=null;}};}
+{const o=bullet;bullet=function(x,y,a,sp,dmg){const st=SHOOTER?PSTYLE[SHOOTER.type]:BOSSPAT?BPSTYLE[BOSSPAT]:null;if(!st||!R)return o(x,y,a,sp,dmg);
+ R.eb.push({x,y,vx:Math.cos(a)*sp*st.v,vy:Math.sin(a)*sp*st.v,r:st.r||5,dmg:(dmg||10*R.dmgMul)*(st.m||1),life:7/st.v,k:st.k});};}
+{const o=updEnemy;updEnemy=function(e,dt){const D=EN[e.type];if(D&&D.ai==='laser'){laserAI(e,dt);return;}if(D&&D.ai==='spawner'){spawnerAI(e,dt);return;}
+ SHOOTER=e;try{o(e,dt);}finally{SHOOTER=null;}};}
+/* minions are cheap: a coin, no materials */
+{const o=kill;kill=function(e){if(!e||!e.minion||!R)return o(e);const g=R.loot.gold,it={...R.loot.items};o(e);R.loot.gold=g+1;R.loot.items=it;};}
+{const o=updateRun;updateRun=function(dt){o(dt);if(R&&R.beams&&R.beams.length){for(const b of R.beams)b.t-=dt;R.beams=R.beams.filter(b=>b.t>0);}};}
+{const o=nextRoom;nextRoom=function(){o();if(R)R.beams=[];};}
+function pxEll(cx,cy,w,h,c){bx.fillStyle=c;cx=Math.round(cx);cy=Math.round(cy);for(let y=-h;y<=h;y++){const k=Math.round(w*Math.sqrt(Math.max(0,1-(y*y)/(h*h))));bx.fillRect(cx-k,cy+y,k*2+1,1);}}
+function drawBurrow(e){const ax=P2(e.x),ay=P2(e.y),al=e.spawn>0?Math.max(0,1-e.spawn/.6):1,acc=REG[R.region]?REG[R.region].acc:'#8fe060',sc=e.elite?1.25:1,bw=e.brew>0?Math.sin((.75-e.brew)*34):0;
+ const W=Math.round(13*sc),H=Math.round(7*sc);shadowAt(ax,ay+6,Math.round(26*sc),al);bx.globalAlpha=al;
+ if(e.elite)pxEll(ax,ay+1,W+3,H+3,'#ffd23f');
+ pxEll(ax,ay+1,W+1,H+1,'#131b1b');pxEll(ax,ay+1,W,H,'#5a3a22');pxEll(ax-1,ay,W-2,H-2,'#7a5230');pxEll(ax-3,ay-2,W-6,H-4,'#9a7048');
+ for(let i=0;i<5;i++){const a=i*1.26+.4;rect('#4a2e1a',ax+Math.round(Math.cos(a)*(W-3)),ay+1+Math.round(Math.sin(a)*(H-2)),2,1);}
+ const hw=Math.max(3,Math.round(5*sc+bw)),hh=Math.max(2,Math.round(3*sc+bw*.5));pxEll(ax,ay+2,hw+1,hh+1,'#2a1a10');pxEll(ax,ay+2,hw,hh,'#0b0705');
+ const blink=Math.floor(T*1.3+e.seed)%5===0;if(!blink){rect(acc,ax-3,ay+1,2,1);rect(acc,ax+2,ay+1,2,1);if(e.brew>0){rect('#ffffff',ax-3,ay+1,1,1);rect('#ffffff',ax+2,ay+1,1,1);}}
+ if(e.brew>0){for(let i=0;i<3;i++){const k=(T*3+i/3)%1;rect('#a07850',ax+Math.round(Math.sin(i*2.1+T*7)*W*.6),ay-2-Math.round(k*6),1,1);}}
+ if(e.flash>0){bx.globalAlpha=al*.7;pxEll(ax,ay+1,W,H,'#ffffff');}
+ bx.globalAlpha=1;if(e.slowT>0)rect('#9ee6ff',ax-1,ay-H-4,3,1);if(e.poison&&e.poison.t>0)rect('#8fd16a',ax+3,ay-H-4,2,2);if(e.burn&&e.burn.t>0)rect('#ff9a4a',ax-5,ay-H-4,2,2);
+ if(e.hp<e.maxHp&&e.spawn<=0){rect('#131b1b',ax-9,ay+H+4,18,3);rect('#e8405a',ax-8,ay+H+5,Math.max(1,Math.round(16*clamp(e.hp/e.maxHp,0,1))),1);}}
+{const o=drawEnemyS;drawEnemyS=function(e){if(e.type==='madriguera'){drawBurrow(e);return;}
+ if(e.type==='farolillo'&&e.las&&e.spawn<=0){const ax=P2(e.x),ay=P2(e.y)-6,k=Math.min(1,e.las.t/(LAS.track+LAS.lock));bx.globalAlpha=.2+.35*k+(e.las.t>LAS.track?.2*Math.sin(T*40):0);pxDisk(ax,ay,4+Math.round(k*3),'#ff8a5a');bx.globalAlpha=1;}
+ o(e);};}
+function dotLine(x0,y0,x1,y1,c,step,w){const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0));bx.fillStyle=c;for(let i=0;i<=n;i+=step){const t=n?i/n:0;bx.fillRect(Math.round(x0+(x1-x0)*t),Math.round(y0+(y1-y0)*t),w,w);}}
+function drawLaserAims(){if(!R)return;for(const e of R.en){const L=e.las;if(!L||e.dead||L.fired)continue;const[ox,oy]=beamFrom(e),[ex,ey]=beamEnd(ox,oy,L.a),lock=L.t>=LAS.track;
+ const x0=P2(ox),y0=P2(oy),x1=P2(ex),y1=P2(ey),o=Math.floor(T*30)%4;
+ const len=Math.hypot(x1-x0,y1-y0),k=Math.min(1,L.t/LAS.track);
+ bx.save();bx.translate(x0,y0);bx.rotate(L.a);
+ if(!lock){bx.globalAlpha=.12+.2*k;bx.fillStyle='#ff5d4a';bx.fillRect(0,-2,len,4);bx.globalAlpha=.5+.4*k;bx.fillStyle='#ff8a7a';for(let x=o;x<len;x+=4)bx.fillRect(x,-.5,2,1);}
+ else{const on=Math.floor(T*18)%2;bx.globalAlpha=on?.5:.3;bx.fillStyle='#ff3a2a';bx.fillRect(0,-2.5,len,5);bx.globalAlpha=.95;bx.fillStyle=on?'#ffffff':'#ffd0c4';bx.fillRect(0,-.5,len,1);}
+ bx.restore();if(lock){bx.globalAlpha=.8;pxRing(x1,y1,3,'#ffe0d6');}
+ bx.globalAlpha=1;}}
+function drawBeams(){if(!R||!R.beams)return;for(const b of R.beams){const k=b.t/LAS.show,x0=P2(b.x0),y0=P2(b.y0),x1=P2(b.x1),y1=P2(b.y1),a=Math.atan2(y1-y0,x1-x0),len=Math.hypot(x1-x0,y1-y0);
+ bx.save();bx.translate(x0,y0);bx.rotate(a);bx.globalAlpha=.55*k;bx.fillStyle='#ff5d4a';bx.fillRect(0,-3,len,6);bx.globalAlpha=.9*k;bx.fillStyle='#ffb08a';bx.fillRect(0,-2,len,4);bx.globalAlpha=k;bx.fillStyle='#ffffff';bx.fillRect(0,-1,len,2);bx.restore();
+ bx.globalAlpha=k;pxDisk(x1,y1,3,'#fff3c4');pxDisk(x0,y0,3,'#ffd0c4');bx.globalAlpha=1;}}
+{const o=drawFinaleGround;drawFinaleGround=function(){o();drawLaserAims();};}
+{const o=drawFinaleFx;drawFinaleFx=function(){o();drawBeams();};}
+{const o=drawEB;drawEB=function(b){const x=P2(b.x),y=P2(b.y),a=Math.atan2(b.vy,b.vx);
+ switch(b.k){
+  case 'needle':bx.save();bx.translate(x,y);bx.rotate(a);bx.fillStyle='#131b1b';bx.fillRect(-5,-1.5,10,3);bx.fillStyle='#8fd14a';bx.fillRect(-4,-.5,7,1);bx.fillStyle='#f4ffd0';bx.fillRect(3,-.5,2,1);bx.restore();return;
+  case 'ember':{bx.globalAlpha=.45;pxDisk(x-Math.round(Math.cos(a)*3),y-Math.round(Math.sin(a)*3),2,'#ff7a45');bx.globalAlpha=1;pxDisk(x,y,3,'#131b1b');pxDisk(x,y,2,'#ff6a2a');rect('#ffe066',x-1,y-1,2,2);if(Math.floor(T*20+b.life*7)%3===0)rect('#ffe066',x+Math.round(rnd(-3,3)),y-3,1,1);return;}
+  case 'wisp':{const pu=Math.sin(T*8+b.life*3);bx.globalAlpha=.3;pxDisk(x,y,6+Math.round(pu),'#9f8cff');bx.globalAlpha=1;pxDisk(x,y,4,'#131b1b');pxDisk(x,y,3,'#6a58e0');pxDisk(x-1,y-1,1,'#d8d0ff');rect('#ffffff',x-1,y-2,1,1);return;}
+  case 'web':{pxDisk(x,y,4,'#131b1b');pxDisk(x,y,3,'#e9e9f2');rect('#a8a8bc',x-3,y,7,1);rect('#a8a8bc',x,y-3,1,7);rect('#c8c8d8',x-2,y-2,1,1);rect('#c8c8d8',x+2,y+2,1,1);return;}
+  case 'eyebolt':bx.save();bx.translate(x,y);bx.rotate(a);bx.fillStyle='#131b1b';bx.fillRect(-6,-2,11,4);bx.fillStyle='#d6336c';bx.fillRect(-5,-1,9,2);bx.fillStyle='#ffc0de';bx.fillRect(1,-1,3,2);bx.restore();return;
+  case 'orb':{const pu=Math.sin(T*10+b.life*3)>.2?1:0;bx.globalAlpha=.35;pxDisk(x,y,6+pu,R.abyss?'#b07cff':'#ff5d73');bx.globalAlpha=1;pxDisk(x,y,4,'#131b1b');pxDisk(x,y,3,R.abyss?'#7a3fc0':'#c8203a');pxDisk(x-1,y-1,1,'#ffb0bc');return;}
+  case 'bolt':bx.save();bx.translate(x,y);bx.rotate(a);bx.fillStyle='#131b1b';bx.fillRect(-6,-2,12,4);bx.fillStyle='#ff9a2a';bx.fillRect(-5,-1,10,2);bx.fillStyle='#fff3b0';bx.fillRect(1,-1,4,2);bx.restore();return;
+  case 'rock':{const r2=Math.floor(T*10+b.life*5)%2;rect('#131b1b',x-3,y-3,7,7);rect('#8a6440',x-2,y-2,5,5);rect('#b08a5a',x-2,y-2,2+r2,2);rect('#5a3a22',x+1,y+1,2,2);return;}
+  case 'spore2':{bx.globalAlpha=.4;pxDisk(x,y,4+(Math.sin(T*9+b.life*4)>.3?1:0),'#c9a6ff');bx.globalAlpha=1;pxDisk(x,y,2,'#8a5ac0');rect('#efe0ff',x-1,y-1,1,1);return;}}
+ o(b);};}
+
+/* ---------- 4. Dungeon obstacles: what you see is what blocks ---------- */
+/* hitbox = the visible sprite: w and h as a share of the sprite, t = transparent margin at the top */
+const OBSFIT={tree_green:{w:.84,t:.1},tree_pine:{w:.8,t:.22},tree_dead:{w:.78,t:.18},tree_snowpine:{w:.8,t:.3},tree_round:{w:.84,t:.1},stump_big:{w:.86,t:.06},
+ rock_grey:{w:.88,t:.08},rock_s:{w:.88,t:.1},rock_blue:{w:.88,t:.08},rock_snow:{w:.88,t:.08},rock_tall:{w:.84,t:.08},bush1:{w:.84,t:.14},bush2:{w:.86,t:.12},bush3:{w:.86,t:.14}};
+function obsBox(k){const s=SPR[k],f=OBSFIT[k]||{w:.85,t:.12};return{w:Math.round(s[3]*2*f.w),h:Math.max(16,Math.round(s[4]*2*(1-f.t))-4)};}
+genObstacles=function(){const A=arena();R.obs=[];R.deco=[];const n=R.bossRoom?ri(0,2):ri(2,5),L=OBSL[R.region];let tries=0;
+ while(R.obs.length<n&&tries++<90){const k=pick(L),{w,h}=obsBox(k),ylo=A.y0+64,yhi=A.y1-110-h;if(yhi<=ylo)continue;const x=rnd(A.x0+10,A.x1-10-w),y=rnd(ylo,yhi);
+  if(R.obs.some(b=>x<b.x+b.w+34&&x+w+34>b.x&&y<b.y+b.h+34&&y+h+34>b.y))continue;R.obs.push({x,y,w,h,k});}
+ const D=RDECO[R.region];if(D.length)for(let i=0;i<9;i++){const x=rnd(A.x0+16,A.x1-16),y=rnd(A.y0+30,A.y1-20);if(!inObsR(x,y,20))R.deco.push({x,y,k:pick(D)});}};
+
+/* ---------- 5. A companion is part of the house: chosen after the door goes in, and for good ---------- */
+{const o=objective;objective=function(){if(S&&S.farm&&hph()>=2&&!S.pet)return{t:'Un compañero',d:'Entra en casa y elige un compañero en su rincón. Te acompañará para siempre, así que elige con calma.',ready:true};return o();};}
+{const o=ACT.run;ACT.run=id=>{if(S&&hph()>=2&&!S.pet){S.runFrom=null;closeSheet();say([{who:'narr',t:'Antes de volver a bajar, tu casa nueva pide alguien que te espere dentro.'},{who:'narr',t:'Entra en casa y elige un compañero en su rincón.'}]);return;}o(id);};}
+{const o=ACT.hbuild;ACT.hbuild=i=>{const b=hph();o(i);if(+i===1&&b===1&&hph()===2&&!S.pet)cine([{say:[{who:'narr',t:'Junto a la puerta nueva queda un rincón con una manta vieja y un cuenco de barro. Rosa lo hizo para su perro.'},{who:'narr',t:'Una casa con puerta pide alguien que te espere dentro. Entra y elige un compañero en su rincón. Será tuyo para siempre: elige con calma.'}]}],()=>{refreshAll();save();});};}
+
+/* ---------- 6. Losing a run: what to improve before going down again ---------- */
+function betterWeapon(){const cur=S.weapons[S.eq];if(!cur)return null;const d=wDmg(cur);return S.weapons.find((w,i)=>i!==S.eq&&wDmg(w)>d*1.15)||null;}
+function powerTips(){const T_=[];const wl=wmLvl(),ml=maxLvl();
+ if(wl<ml){const c=upCost();T_.push({k:'forja',t:canPay(c.in,c.gold,c.ess)?`Forja de Tobías (pueblo): ya puedes subir el Maestro de armas a nv. ${wl+1} (+10% de daño).`:`Forja de Tobías (pueblo): sube el Maestro de armas (ahora nv. ${wl}). Cada nivel, +10% de daño.`});}
+ if(S.flags.metGus){const g=gearS(),miss=Object.keys(GEAR).filter(k=>!g[k]);T_.push({k:'gus',t:miss.length?`Gran Forja de Gus (Desfiladero de Hierro): te faltan ${miss.length} pieza${miss.length>1?'s':''} de equipo (${miss.map(k=>GSLOT[k].toLowerCase()).join(', ')}).`:'Gran Forja de Gus: sube la rareza de tu equipo.'});}
+ if(S.flags.metMav){const n=skPoints();if(n>0)T_.push({k:'arbol',t:`Mavilah (Bosque Susurrante): tienes ${n} punto${n>1?'s':''} de habilidad sin gastar.`});}
+ const bw=betterWeapon();if(bw)T_.push({k:'baul',t:`Baúl de casa: tienes un arma más fuerte que la que llevas (${wName(bw)}).`});
+ if(!S.buff)T_.push({k:'cocina',t:'Cocina de casa: prepara un plato para la grieta antes de bajar (más vida, más daño o una mejora).'});
+ if(S.pet&&petLv()>=2&&!S.pet.on)T_.push({k:'mascota',t:`Lleva a ${S.pet.name} contigo: en las grietas te ayuda.`});
+ T_.push({k:'vecinos',t:`Vecinos: cada corazón de amistad te da +2 de vida (ahora +${totalHearts()*2}).`});
+ return T_;}
+function tipsHTML(n){const L=powerTips().slice(0,n||4);return `<div class="tipbox"><b>Mejora tu equipo antes de volver a bajar</b><ul>${L.map(x=>`<li>${esc(x.t)}</li>`).join('')}</ul><p class="sub">Lo tienes todo en la Guía del valle, dentro de la mochila.</p></div>`;}
+{const o=endRun;endRun=function(kind){const lose=kind==='lose'&&R&&!R.ended&&!R.abyss&&!R.evo;o(kind);if(!lose)return;
+ setTimeout(()=>{const ov=$('#ovbox'),btn=ov&&ov.querySelector('[data-a=endrun]');if(!btn||ov.querySelector('.tipbox'))return;
+  const sub=ov.querySelector('.sub');if(sub)sub.textContent='Despiertas junto a la grieta con la mitad del botín. Ahí abajo te han superado.';btn.insertAdjacentHTML('beforebegin',tipsHTML(4));},60);};}
+{const st=document.createElement('style');st.textContent=`.tipbox{margin:10px 0 12px;padding:10px 12px;border-radius:10px;background:#fff3d6;box-shadow:0 0 0 2px var(--ink),0 3px 0 2px #c9a26b;text-align:left}
+.tipbox b{display:block;font-size:15px;color:#7a2e1e;margin-bottom:4px}.tipbox ul{margin:0;padding-left:18px}.tipbox li{font-size:13.5px;line-height:1.35;margin:3px 0;color:var(--tdark)}.tipbox .sub{margin-top:6px;font-size:12px}
+.gsec{margin-top:6px}.gcard .name .tag{margin-left:6px}.gcard.off{opacity:.62}.gcard .where{font-size:12.5px;color:#7a5a3a;margin:1px 0 2px}
+.qguide{margin-top:8px;width:100%}`;document.head.appendChild(st);}
+
+/* ---------- 7. The guide to the valley: where everything is, what it does, and a nudge the first time ---------- */
+const GUIDE=[
+ {id:'mercado',n:'Mercado de Pía',ic:'coin',where:'Pueblo, en la plaza. De noche queda abierto el puesto de fuera.',what:'Compra semillas y vende cosechas y materiales.',on:()=>true,mark:{map:'town',at:()=>[12*TS,7.75*TS]}},
+ {id:'forja',n:'Forja de Tobías',ic:'t_anvil',where:'Pueblo, a la izquierda de la plaza. Abre de día.',what:'Sube el Maestro de armas (+10% de daño por nivel), forja armas nuevas y artefactos para el huerto.',on:()=>S.ch>=1,mark:{map:'town',at:()=>[5.5*TS,7*TS]},
+  map:'town',intro:()=>[{who:'tobias',t:'¿Así que vas a bajar a la grieta? Entonces pásate por mi forja, aquí en la plaza.'},{who:'tobias',t:'Con oro y materiales te subo el Maestro de armas: más daño con todas tus armas. Y si me traes buen hierro, te forjo armas nuevas y aspersores para el huerto.'}]},
+ {id:'casa',n:'Obras de la casa',ic:'martillo',where:'Granja: el cartel de obras, junto a la puerta de casa.',what:'Repara la casa por fases. Cada fase da ventajas y hace falta para bajar a una grieta nueva.',on:()=>S.ch>=1,
+  map:'farm',intro:()=>[{who:'narr',t:'Junto a la puerta de casa has clavado los planos que dejó Rosa. Es el cartel de obras: ahí ves qué hace falta para cada arreglo.'},{who:'narr',t:'Una casa firme no es solo un techo: cada parte te hace más fuerte y te deja bajar más lejos.'}]},
+ {id:'taller',n:'Mesa de trabajo',ic:'t_axe',where:'Granja, junto a la casa.',what:'Construye decoraciones y adornos para la granja.',on:()=>S.ch>=1,mark:{map:'farm',at:()=>[BENCH.x*TS,(BENCH.y-1.15)*TS]}},
+ {id:'cocina',n:'Cocina',ic:'sopa',where:'Dentro de tu casa.',what:'Platos que dan energía y platos que te dan ventaja en la siguiente grieta.',on:()=>S.ch>=1,mark:{map:'home',at:()=>[7.5*TS,2.3*TS]},
+  map:'home',intro:()=>[{who:'narr',t:'La cocina de Rosa todavía tira. Algunos platos devuelven la energía; otros te dan ventaja en la siguiente grieta: más vida, más daño o una mejora al empezar.'}]},
+ {id:'baul',n:'Baúl de armas',ic:'w_honda',where:'Dentro de tu casa.',what:'Elige qué arma llevas a la grieta.',on:()=>S.weapons.length>1,mark:{map:'home',at:()=>[9.3*TS,9.3*TS]},
+  map:'home',intro:()=>[{who:'narr',t:'Ya tienes más de un arma. Las guardas en el baúl de casa: ahí eliges cuál llevas a la grieta.'}]},
+ {id:'mascota',n:'Rincón del compañero',ic:'heart',where:'Dentro de tu casa.',what:'Tu compañero: te acompaña, te trae regalos y, con Rengo, aprende habilidades.',on:()=>hph()>=2||!!S.pet,mark:{map:'home',at:()=>[HPET.x,HPET.y-30]}},
+ {id:'alqui',n:'Mesa de Lía',ic:'tonico',where:'Casa de Lía, en el pueblo.',what:'Tónicos y abonos.',on:()=>NPCS.lia.avail(),mark:{map:'liain',at:()=>[4.8*TS,3.2*TS]},
+  map:'town',intro:()=>[{who:'lia',t:'¡{name}! Si alguna vez necesitas tónicos o abono, pásate por mi casa. Tengo una mesa de laboratorio que da un poco de miedo.'}]},
+ {id:'mapa',n:'Mapa de Darío',ic:'letter',where:'Torre de Darío, en el pueblo.',what:'Qué cofres y reliquias te faltan en cada zona del valle.',on:()=>S.ch>=1&&NPCS.dario.avail(),mark:{map:'darioin',at:()=>[4.1*TS,5.95*TS]},
+  map:'town',intro:()=>[{who:'dario',t:'Si te pierdes, sube a mi torre. Tengo el mapa del valle clavado en la pared y te marco los cofres que te faltan.'}]},
+ {id:'gus',n:'Gran Forja de Gus',ic:'casco',where:'Al final del Desfiladero de Hierro (salida este del pueblo).',what:'Casco, peto, mallas, botas y abalorios; y subirles la rareza.',on:()=>!!S.flags.metGus,mark:{map:'gusin',at:()=>[4.6*TS,6.7*TS]}},
+ {id:'arbol',n:'Habilidades de Mavilah',ic:'xp',where:'Torre de Mavilah, en el Bosque Susurrante.',what:'Cada nivel que ganas en las grietas te da un punto de habilidad.',on:()=>!!S.flags.metMav,mark:{map:'mavin',at:()=>[9.6*TS,6*TS]}},
+ {id:'taxi',n:'Pájaros de Paloma',ic:'pluma',where:'Perchas de madera repartidas por el valle.',what:'Viaja volando a los sitios donde ya has estado.',on:()=>!!S.flags.taxi},
+ {id:'correo',n:'Torre del Correo',ic:'letter',where:'Al sur del pueblo (salida suroeste).',what:'Cartas que se quedaron sin entregar y una percha de carreras.',on:()=>correoOpen(),
+  map:'town',intro:()=>[{who:'paloma',t:'Mi abuelo llevaba el correo del valle desde la torre del sur. He apartado el árbol que cortaba el camino.'},{who:'paloma',t:'Allí quedan cartas que nunca llegaron. A lo mejor conoces a alguien a quien iban dirigidas.'}]},
+ {id:'rengo',n:'Nido de Rengo',ic:'huevod',where:'Lo alto de los Riscos del Dragón, al norte de tu granja.',what:'Entrena a tu compañero hasta que despierte el dragón que lleva dentro.',on:()=>rengoKnown(),mark:{map:'riscos',at:()=>[12.5*TS,4*TS]}},
+ {id:'crisol',n:'Crisol Ancestral',ic:'w_honda',where:'En la Gran Forja de Gus.',what:'Despierta tus armas: más daño y una habilidad única.',on:()=>!!S.flags.gusEvo}];
+const gvS=()=>S.flags.gv||(S.flags.gv={});
+const giS=()=>S.flags.gi||(S.flags.gi={});
+{const o=openSheet;openSheet=function(t){if(S&&GUIDE.some(g=>g.id===t))gvS()[t]=1;return o(t);};}
+function sheetGuia(){let h=sheetHead('Guía del valle','Dónde está cada cosa y qué puedes hacer allí.');
+ const T_=powerTips();h+=`<h3>Para hacerte más fuerte</h3><div class="tipbox gsec"><ul>${T_.map(x=>`<li>${esc(x.t)}</li>`).join('')}</ul></div>`;
+ h+='<h3>Lugares</h3><div class="list">';
+ for(const g of GUIDE){const on=g.on(),nw=on&&g.mark&&!gvS()[g.id];
+  h+=on?`<div class="card gcard"><span class="wic">${ic(g.ic,'l')}</span><div class="body"><div class="name">${g.n}${nw?'<span class="tag gold">Nuevo</span>':''}</div><p class="where">${g.where}</p><p class="sub">${g.what}</p></div></div>`
+   :`<div class="card gcard off"><span class="wic">${ic(g.ic,'l')}</span><div class="body"><div class="name">???</div><p class="sub">Todavía no lo has descubierto.</p></div></div>`;}
+ return h+'</div>';}
+XSHEET.guia=sheetGuia;
+ACT.guia=()=>{const q=$('#qPanel');if(q)q.hidden=true;openSheet('guia');snd('menu',.6);};
+{const o=sheetMochila;sheetMochila=function(){const h=o();return h.replace('</header>','</header><div class="row" style="margin:8px 0 2px"><button class="btn" data-a="guia" style="flex:1">Guía del valle</button></div>');};}
+{const o=renderQuests;renderQuests=function(){o();const el=$('#qPanel');if(el)el.insertAdjacentHTML('beforeend','<button class="btn alt sm qguide" data-a="guia">Guía del valle: dónde está todo</button>');};}
+/* the "!" over places you have not opened yet */
+function newMark(ax,ay){const y=Math.round(ay+Math.sin(T*4)*2);for(let i=0;i<5;i++){rect('#131b1b',ax-5+i,y-6+i,11-2*i,1+(i===4?1:0));}rect('#131b1b',ax-6,y-7,13,1);for(let i=0;i<4;i++)rect(i===0?'#fff3b0':'#ffd75e',ax-4+i,y-6+i,9-2*i,1);rect('#131b1b',ax-2,y-11,5,5);rect('#ffd75e',ax-1,y-10,3,3);if(Math.sin(T*6)>.3){rect('#ffffff',ax+5,y-12,1,1);rect('#ffffff',ax-6,y-3,1,1);}}
+/* drawn after the weather and the withering, so they keep their colour */
+const MARKQ=[];
+function guideMarks(map,add){if(!S||CINE.on||scene!=='world')return;for(const g of GUIDE){if(!g.mark||g.mark.map!==map||gvS()[g.id]||!g.on())continue;const[x,y]=g.mark.at();add(1e6,()=>{const bx0=P2(x),by0=P2(y);MARKQ.push(()=>newMark(bx0-CX,by0-CY));});}}
+{const o=drawWorld;drawWorld=function(){MARKQ.length=0;o();};}
+{const o=drawWeather;drawWeather=function(){o();if(scene==='world')for(const f of MARKQ)f();MARKQ.length=0;};}
+{const o=drawExitSigns;drawExitSigns=function(add){o(add);if(S)guideMarks(P.map,add);};}
+{const o=drawHomeExtra;drawHomeExtra=function(add){o(add);if(S)guideMarks('home',add);};}
+{const o=drawAreaCast;drawAreaCast=function(M,add,vis){o(M,add,vis);if(S)guideMarks(M.id,add);};}
+/* a short introduction the first time something opens up, said by whoever runs it */
+function guideTick(){if(!S||scene!=='world'||CINE.on||fading||!$('#dlg').hidden||!$('#sheet').hidden||S.ch<1||S.pend)return;const gi=giS();
+ for(const g of GUIDE){if(gi[g.id]||!g.intro||!g.on()||(g.map&&g.map!==P.map))continue;if(g.map==='town'&&isNight())continue;gi[g.id]=1;save();say(g.intro(),()=>{refreshAll();save();});return;}
+ if(!gi.guia&&gi.forja&&gi.casa){gi.guia=1;save();say([{who:'narr',t:'Si alguna vez no sabes qué hacer o dónde está algo, abre la mochila: la Guía del valle lo tiene todo apuntado. Y en «Misiones» tienes lo que te queda pendiente.'}],()=>{refreshAll();save();});}}
+{const o=onMapEnter;onMapEnter=function(m){o(m);setTimeout(guideTick,1400);};}
+
+/* ---------- 8. Rengo: a hook of your own, then his lessons in person ---------- */
+Object.assign(ITEMS,{garra:{n:'Garra de garfio',p:0,c:'#9aa0a8',k:'key',d:'La punta de hierro del garfio de Rengo. Tiene una «R» grabada.'},
+ cuerda:{n:'Cuerda de domador',p:0,c:'#c9a26b',k:'key',d:'Cuerda de crin trenzada, fuerte como para sujetar a un dragón pequeño.'},
+ anilla:{n:'Anilla de bronce',p:0,c:'#d08a3a',k:'key',d:'La anilla que une la cuerda a la garra.'}});
+Object.assign(ICONS,{garra:ICONS.garfio,cuerda:ICONS.fibra,anilla:ICONS.anillo});
+Object.defineProperty(ITEMS.garfio,'n',{get:()=>S&&S.flags&&S.flags.hookMade?'Garfio de domador':'Garfio de Darío',configurable:true});
+const HOOKP=[{k:'garra',map:'canteras',at:[5,16],short:'la garra (Senda de las Canteras)',where:'Senda de las Canteras, la salida noroeste del pueblo.',
+  txt:()=>[{who:'narr',t:'Entre dos piedras de la cantera asoma una garra de hierro con tres puntas. Oxidada, pero entera. Tiene una «R» grabada.'}]},
+ {k:'cuerda',map:'altozano',at:[9,8],short:'la cuerda (Altozano)',where:'Altozano, el pueblo del circo, al sur del pueblo.',
+  txt:()=>[{who:'narr',t:'Atada a un poste viejo del circo cuelga una cuerda de crin trenzada. Un letrero: «Prohibido columpiarse. Es del funambulista».'},{who:'narr',t:'Ya no queda funambulista. Te la llevas.'}]},
+ {k:'anilla',map:'observatorio',at:[14,3],short:'la anilla (Observatorio)',where:'Observatorio, la salida norte del pueblo, junto al telescopio.',
+  txt:()=>[{who:'narr',t:'Colgada del telescopio hay una anilla de bronce, demasiado grande para una cortina. Por dentro tiene una «R» grabada.'}]}];
+for(const p of HOOKP){const A=AREA[p.map];A.items=A.items||{};A.items[p.at[0]+','+p.at[1]]={k:p.k,cond:()=>S.flags.hookQ&&!S.flags.hookMade&&!inv(p.k)&&!rengoKnown(),txt:p.txt,after:()=>{const n=HOOKP.filter(x=>inv(x.k)).length;toast(n<3?`Piezas del garfio: ${n}/3`:'¡Las tres piezas! Llévaselas a Tobías.',2800);}};}
+{const b=buildWorld;buildWorld=function(){b();for(const p of HOOKP){const M=WORLD[p.map];if(M&&!M.o.some(o=>o.x===p.at[0]&&o.y===p.at[1]&&o.c==='q'))M.o.push({c:'q',x:p.at[0],y:p.at[1]});}};}
+function hookQuestHTML(){
+ if(!S.flags.hookQ)return `<div class="card"><div class="body"><p class="sub">${RLET[0]}</p><div class="name">El garfio del domador</div><p class="sub">Encuentra las tres piezas del garfio de Rengo y llévaselas a Tobías para que lo forje.</p></div><button class="btn sm" data-a="hookaccept">Aceptar</button></div>`;
+ if(!S.flags.hookMade&&!inv('garfio')){const all=HOOKP.every(p=>inv(p.k));return `<div class="card"><div class="body"><div class="name">El garfio del domador</div>${HOOKP.map(p=>`<p class="sub irow"><b>${ITEMS[p.k].n}:</b> ${inv(p.k)?'<span class="tag gold">La tienes</span>':p.where}</p>`).join('')}<p class="sub">${all?'¡Ya las tienes todas! Llévaselas a Tobías, a la forja.':'Cuando tengas las tres, Tobías te forjará el garfio.'}</p></div></div>`;}
+ return `<div class="card"><div class="body"><div class="name">Al nido de Rengo</div><p class="sub">Ya tienes garfio. Sube a los Riscos del Dragón, al norte de tu granja, y cruza las simas hasta lo más alto. Rengo te espera allí.</p></div></div>`;}
+function rengoNestHTML(){const lv=petLv(),q=S.pet&&S.pet.q!=null?PETQ[S.pet.q]:null,n=esc(S.pet.name);
+ if(lv>=5)return '<p class="sub">«Ya no te hacen falta mis encargos. Pero sube a verme con ese dragón de vez en cuando.»</p>';
+ if(q){const prog=q.give?Object.keys(q.give).map(k=>`${ITEMS[k].n} ${Math.min(inv(k),q.give[k])}/${q.give[k]}`).join(' · '):`${Math.min(S.pet.qp||0,petGoal(q))}/${petGoal(q)}`;
+  return `<div class="card"><div class="body"><div class="name">${q.n}</div><p class="sub">${q.d}</p><p class="sub irow"><b>Progreso:</b> ${prog}</p><p class="sub">${petReady(q)?`¡Cumplido! Lleva a ${n} al nido de Rengo, en lo alto de los Riscos.`:'Rengo te espera en su nido, en lo alto de los Riscos.'}</p></div></div>`;}
+ if(S.ch>=RENGOCH[lv])return `<p class="sub">Rengo tiene un encargo nuevo para ${n}: <b>${PETQ[lv].n}</b>. Te espera en su nido, en lo alto de los Riscos.</p>`;
+ return `<p class="sub">Rengo entrena a ${n} en persona. Te mandará una nota con los pájaros de Paloma cuando esté listo para el siguiente encargo.</p>`;}
+ACT.hookaccept=()=>{if(!S.pet||S.flags.hookQ)return;S.flags.hookQ=1;S.flags.rl=S.flags.rl||{};S.flags.rl[0]=1;snd('menu');closeSheet();
+ say([{who:'narr',t:'Guardas la carta de Rengo. Tres piezas: la garra en la Senda de las Canteras, la cuerda en el Altozano y la anilla en el Observatorio.'},{who:'narr',t:'Cuando las tengas, Tobías te forjará el garfio.'}],()=>{refreshAll();save();});};
+function hookCard(){if(!S.flags.hookQ||S.flags.hookMade||inv('garfio'))return'';const R_={garra:1,cuerda:1,anilla:1,hierro:4};
+ return `<h3>Encargo de Rengo</h3><div class="card"><span class="wic">${ic('garfio','l')}</span><div class="body"><div class="name">Garfio de domador</div><p class="sub">«¿Un garfio de domador? Hacía años que no veía uno. Tráeme la garra, la cuerda y la anilla, y te lo dejo como nuevo».</p>${costHTML(R_,150)}</div><button class="btn sm" data-a="forgehook" ${has(R_)&&S.gold>=150?'':'disabled'}>Forjar</button></div>`;}
+{const o=sheetForja;sheetForja=function(){return o()+hookCard();};}
+ACT.forgehook=()=>{const R_={garra:1,cuerda:1,anilla:1,hierro:4};if(!S.flags.hookQ||S.flags.hookMade||!has(R_)||S.gold<150)return;take(R_);S.gold-=150;S.flags.hookMade=1;if(!inv('garfio'))addI('garfio');closeSheet();snd('hit');shake=5;
+ setTimeout(()=>say([{who:'tobias',t:'Ahí lo tienes. La garra muerde la madera de los postes y no la suelta. Lánzalo con calma.'},{who:'narr',t:'Consigues: Garfio de domador.'},{who:'tobias',t:'Los Riscos del Dragón están al norte de tu granja. Si Rengo sigue vivo, estará en lo más alto. Dale recuerdos de mi parte. O no: me debe dinero.'}],()=>{refreshAll();save();}),400);};
+/* the hook quest in the quest log */
+{const o=questList;questList=function(){const L=o();if(!S||!S.pet||rengoKnown()||petLv()!==0||S.pet.q!=null)return L;
+ if(!S.flags.hookQ){if(rengoReady()&&(S.flags.rlb||{})[0])L.push({c:'Mascota',t:'Una carta de Rengo',d:`Ha llegado una carta para ti. Está en el rincón de ${S.pet.name}, en casa.`,ready:true});}
+ else if(!S.flags.hookMade&&!inv('garfio')){const got=HOOKP.filter(p=>inv(p.k)).length;L.push({c:'Mascota',t:'El garfio del domador',d:got<3?`Busca las piezas del garfio de Rengo (${got}/3): ${HOOKP.filter(p=>!inv(p.k)).map(p=>p.short).join(', ')}.`:'Ya tienes las tres piezas: llévaselas a Tobías, a la forja.',ready:got>=3});}
+ else L.push({c:'Mascota',t:'Al nido de Rengo',d:'Sube a lo alto de los Riscos del Dragón, al norte de tu granja, cruzando las simas con el garfio.'});
+ return L;};}
+/* meeting him early: no Nilo yet, just a man, two dragons and a fire */
+function cineRengoEarly(){if(rengoKnown())return;const pn=S.pet?S.pet.name:'tu compañero';
+ cine([{fn:()=>{S.flags.rengoMet=1;S.flags.rnote=S.flags.rnote||{};S.flags.rnote[0]=1;taxiS().ren=1;placeNPCs();}},{say:[{who:'narr',t:'En lo alto del risco, entre tiendas de piel y una hoguera, duermen dos dragones enormes.'}]},{cam:[12,5],spd:2},
+  {say:[{who:'rengo',t:'¡Vaya! Así que eres tú. El garfio aguanta, ¿eh? Tobías no ha perdido la mano.'},{who:'rengo',t:'Soy Rengo. Domador de dragones. El último, creo.'},{who:'rengo',t:'Cuando llegó la Marchitez, los dragones se fueron del valle. Yo me quedé a cuidar los huevos que dejaron. Tres han eclosionado. Faltan muchos.'},
+   {who:'rengo',t:S.pet?`Y este es ${pn}. Buena mirada, sí señor. Con paciencia, cualquier compañero fiel puede despertar el dragón que lleva dentro.`:'¿Y tu compañero? Adopta uno en tu casa y tráemelo. Los dragones no se eligen: se crían.'},
+   {who:'rengo',t:'Desde hoy, los encargos te los doy aquí, en persona. Los pájaros de Paloma ya saben llegar hasta el nido.'},{who:'rengo',t:'Y con ese garfio, las plumas de todos los Riscos son tuyas. Empezaremos por ahí. Háblame en el nido cuando quieras.'}]},{cam:'P',spd:3}],()=>{refreshAll();save();},'rengo0');}
+{const o=areaExit;areaExit=function(){if(S&&P.map==='riscos'&&S.ch<8&&!S.flags.metRengo){S.flags.metRengo=1;let r;try{r=o();}finally{delete S.flags.metRengo;}if(r)return r;
+  if(P.y/TS<8.7&&!S.flags.rengoMet&&!CINE.on&&!HOOK.on&&inv('garfio')){cineRengoEarly();return true;}return false;}return o();};}
+/* a note from Rengo when the next lesson is ready (in person, no more letters) */
+{const o=sleep;sleep=function(){const msgs=o();try{if(rengoKnown()&&S.pet&&S.pet.q==null){const lv=petLv(),nt=S.flags.rnote||(S.flags.rnote={});if(lv<5&&S.ch>=RENGOCH[lv]&&!nt[lv]){nt[lv]=1;msgs.push({who:'narr',t:`Un pájaro de Paloma trae una nota de Rengo: «Sube al nido cuando puedas. Tengo un encargo nuevo para ${S.pet.name}».`});}}}catch(e){}return msgs;};}
+/* the nest: lessons that are not ready yet say so instead of asking */
+{const o=sheetRengo;sheetRengo=function(){let h=o();if(!S.pet)return h;const lv=petLv();if(lv<5&&S.pet.q==null&&S.ch<RENGOCH[lv])h=h.replace('<button class="btn sm" data-a="petaccept">Aceptar</button>','<span class="tag">Más adelante</span>').replace('<h3>Siguiente encargo</h3>','<h3>Siguiente encargo</h3><p class="sub">«Todavía no. Un compañero se cría despacio. Paloma te traerá una nota mía cuando esté listo».</p>');return h;};}
+
+/* ---------- 9. Old saves ---------- */
+function migrate27(s){if((s.v||0)>=8)return;const f=s.flags=s.flags||{};
+ /* a feather quest accepted by letter, with no way up to Rengo: it becomes the hook quest */
+ if(s.pet&&s.pet.q===0&&!f.metRengo&&!(s.inv&&s.inv.garfio)){s.pet.q=null;s.pet.qp=0;f.hookQ=1;f.rl=f.rl||{};f.rl[0]=1;f.news27=1;}
+ /* places already in use count as known; the guide will be pointed out once */
+ f.gi=f.gi||{};f.gv=f.gv||{};f.gi.mercado=1;f.gi.forja=f.gi.forja||(s.ch>=2?1:0);f.gi.casa=f.gi.casa||(s.farm&&s.farm.ph>=1?1:0);f.gi.cocina=f.gi.cocina||(s.ch>=2?1:0);f.gi.mapa=f.gi.mapa||(s.ch>=3?1:0);f.gi.alqui=f.gi.alqui||(s.ch>=5?1:0);
+ if(f.taxi)f.gi.correo=1;f.gi.guia=1;f.guideNews=1;s.v=8;}
+{const o=migrate;migrate=function(s){o(s);try{migrate27(s);}catch(e){console.warn(e);}return s;};}
+{const o=onMapEnter;onMapEnter=function(m){o(m);if(!S)return;
+ if(S.flags.news27&&m!=='home'){delete S.flags.news27;setTimeout(()=>{if(CINE.on)return;say([{who:'narr',t:'Rengo ha vuelto a escribir: «A mi nido no se sube andando. Encuentra las piezas de mi viejo garfio y que Tobías te forje uno. Las plumas, cuando subas».'},{who:'narr',t:'La carta está en el rincón de tu compañero.'}],()=>{refreshAll();save();});},900);}
+ else if(S.flags.guideNews){delete S.flags.guideNews;setTimeout(()=>toast('Nuevo: la Guía del valle, en la mochila, te dice dónde está cada cosa.',4200),1000);}};}
+{const o=freshState;freshState=function(n){const s=o(n);s.v=Math.max(s.v||0,8);s.flags=s.flags||{};s.flags.gi={mercado:1};s.flags.gv={};return s;};}
+/* met before the Nilo chapter: he cannot talk about Nilo yet */
+{const o=talk;talk=function(id){if(id!=='rengo'||!S||S.flags.metRengo)return o(id);const keep=LINES.rengo.map(a=>a.slice()),h3=HEV.rengo&&HEV.rengo[3];
+ LINES.rengo.forEach(a=>{for(let i=0;i<a.length;i++)if(/Nilo/.test(a[i]))a[i]='Los huevos que quedan necesitan calor y paciencia. Como los compañeros.';});
+ if(h3)HEV.rengo[3]=()=>h3().map(l=>/Nilo/.test(l.t)?{...l,t:'De ese huevo salió la pequeña que duerme junto a la hoguera. Así que, en cierto modo, Brasa sigue aquí.'}:l);
+ try{return o(id);}finally{LINES.rengo.forEach((a,i)=>{a.length=0;a.push(...keep[i]);});if(h3)HEV.rengo[3]=h3;}};}
 
 
 /* ================= BOOT ================= */

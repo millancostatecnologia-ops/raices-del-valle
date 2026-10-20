@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-180.png">
 <style>[hidden]{display:none!important}html,body{margin:0}</style>
-<script>window.BUILD_ID="bd550b6992";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
+<script>window.BUILD_ID="579455a910";(function(){if(!/github\.io$/.test(location.hostname))return;fetch(location.pathname+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=t.match(/window\.BUILD_ID="([0-9a-f]+)"/);if(!m||m[1]===window.BUILD_ID)return;var k='raices_upd_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');}catch(e){}try{if(typeof S!=='undefined'&&S&&typeof scene!=='undefined'&&scene!=='title')save();}catch(e){}location.replace(location.pathname+'?b='+m[1]);}).catch(function(){});})();</script>
 <script src="bundle.js?v=76c7ee24"></script>
 <title>Raíces del Valle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1825,6 +1825,7 @@ for(const t in EVO){const E=EVO[t],k='evo_'+t;
  RFLOOR[k]=E.th.floor;RWALL[k]=E.th.wall;RBORDER[k]=E.th.border;RDECO[k]=E.th.deco;OBSL[k]=E.th.obs;
  BOSS[k+'_m']={n:E.mid[1],hp:450,r:24,spd:60,pats:E.mid[2]};BSPR[k+'_m']=E.mid[0];
  BOSS[k+'_f']={n:E.fin[1],hp:800,r:26,spd:55,pats:E.fin[2]};BSPR[k+'_f']=E.fin[0];}
+const wArt=(t,cap)=>['arco','baston'].includes(t)?(cap?'El':'el'):(cap?'La':'la');
 const evoS=()=>S.evo||(S.evo={done:{},active:null});
 const evoDone=t=>!!(S&&S.evo&&S.evo.done[t]);
 /* the trial no longer opens on the farm: it starts at Gus's Crisol Ancestral */
@@ -1839,7 +1840,7 @@ function evoForgeHTML(){const wl=wmLvl(),E_=evoS();let h='<h3>Evoluciones</h3>';
   h+=`<div class="card"><span class="wic">${ic('w_'+t,'l')}</span><div class="body"><div class="name">${WEAPONS[t].n} → ${X.n}</div><p class="sub">${X.d}</p><p class="sub">+30% de daño con esta arma.</p>${!done&&!mine?evoCropNote(X,t):''}${!done&&!mine?costHTML(X.cost.in,X.cost.gold):''}${st?`<div class="row">${st}</div>`:''}</div>${!done&&!mine?`<button class="btn sm" data-a="evobuy" data-v="${t}" ${act||!canPay(X.cost.in,X.cost.gold)?'disabled':''}>${act?'Otra en curso':'Comprar'}</button>`:''}</div>`;}
  return h+'</div>';}
 ACT.evobuy=t=>{const X=EVO[t],E_=evoS();if(wmLvl()<EVOLV||E_.done[t]||E_.active||!canPay(X.cost.in,X.cost.gold))return;S.gold-=X.cost.gold;take(X.cost.in);E_.active={t,k:0,ready:0};snd('powerup');closeSheet();refreshAll();save();
- say([{who:'gus',t:`¿La ${WEAPONS[t].n}? Buena elección. El acero no despierta en el crisol: despierta en la pelea.`},{who:'gus',t:`Derrota a ${EVOK} enemigos con ella. Luego vuelve al crisol.`}]);};
+ say([{who:'gus',t:`¿${wArt(t,1)} ${WEAPONS[t].n}? Buena elección. El acero no despierta en el crisol: despierta en la pelea.`},{who:'gus',t:`Derrota a ${EVOK} enemigos con ${wArt(t)==='el'?'él':'ella'}. Luego vuelve al crisol.`}]);};
 /* ---- quest progress (called on every kill) ---- */
 function evoKill(){const a=S.evo&&S.evo.active;if(!a||a.ready||R.evo||R.st.wt!==a.t)return;a.k++;
  if(a.k>=EVOK){a.ready=1;FT.push({x:R.p.x,y:R.p.y-70,t:'¡El arma está lista!',c:EVO[a.t].col,life:2.4,vy:-12,big:1});setTimeout(()=>toast(`El crisol de Gus arde por tu ${WEAPONS[a.t].n.toLowerCase()}.`,4200),600);}}
@@ -1850,20 +1851,20 @@ function drawEvoPortal(){const t=S.evo.active.t,c=EVO[t].col,ax=P2(EVOP.x),ay=P2
  for(let i=0;i<6;i++){const a=T*2.2+i*1.047,d=7+((T*1.5+i*.31)%1)*7;rect(i%2?c:'#ffffff',ax+Math.round(Math.cos(a)*d),ay-12+Math.round(Math.sin(a)*d),1,1);}
  const p=ICONS['w_'+t];if(p&&Math.sin(T*2)>-.6){bx.globalAlpha=.85;blit(IMG.icons,p[0]*16,p[1]*16,16,16,ax-8,ay-36+Math.round(Math.sin(T*2.5)*2));bx.globalAlpha=1;}}
 function openEvoPortal(){const t=S.evo.active.t,X=EVO[t];
- openOv(`<h2>${X.dn}</h2><p class="sub">Un camino hecho para la ${WEAPONS[t].n}. Al fondo te espera ${X.fin[1]}.</p><p class="sub">Si caes, el portal seguirá aquí. Cuesta 20 de energía.</p><div class="row"><button class="btn" data-a="evogo" ${S.energy<20?'disabled':''}>Entrar</button><button class="btn alt" data-a="closeov">Todavía no</button></div>`);}
+ openOv(`<h2>${X.dn}</h2><p class="sub">Un camino hecho para ${wArt(t)} ${WEAPONS[t].n}. Al fondo te espera ${X.fin[1]}.</p><p class="sub">Si caes, el portal seguirá aquí. Cuesta 20 de energía.</p><div class="row"><button class="btn" data-a="evogo" ${S.energy<20?'disabled':''}>Entrar</button><button class="btn alt" data-a="closeov">Todavía no</button></div>`);}
 ACT.evogo=()=>{closeOv();const t=S.evo.active.t;startRun('evo_'+t,{evo:t});};
 function evoWeaponIdx(t){if(S.weapons[S.eq]&&S.weapons[S.eq].t===t)return S.eq;const i=S.weapons.findIndex(w=>w.t===t);return i<0?S.eq:i;}
 function evoRunSetup(t){let tier=0;REGIONS.forEach((r,i)=>{if(S.bossDone[r.boss])tier=i;});const base=REG[REGIONS[tier].id];
  R.evo=t;R.rooms=7;R.midRoom=4;R.lvl=0;R.hpMul=base.hp;R.dmgMul=base.dm;REG['evo_'+t].drops=TIERDROPS[tier];}
 /* ---- awakening after the mid boss ---- */
 function evoAwaken(){const t=R.evo;R.pendingPerk=1;R.evoFx={t:0};snd('magic');shake=4;
- setTimeout(()=>{if(!R||R.ended)return;say([{who:'narr',t:`La ${WEAPONS[t].n} tiembla en tu mano. La grieta le susurra algo muy antiguo.`},{who:'narr',t:`¡Se ha convertido en ${EVO[t].n}!`},{who:'narr',t:EVO[t].d},{who:'narr',t:`Vence a ${EVO[t].fin[1]}, al fondo, para que la evolución sea para siempre.`}],()=>{if(!R)return;R.st.evo=true;R.st.dmg*=1.3;R.pendingPerk=0;jing('level');FT.push({x:R.p.x,y:R.p.y-60,t:EVO[t].n,c:EVO[t].col,life:2.2,vy:-14,big:1});});},1500);}
+ setTimeout(()=>{if(!R||R.ended)return;say([{who:'narr',t:`${wArt(t,1)} ${WEAPONS[t].n} tiembla en tu mano. La grieta le susurra algo muy antiguo.`},{who:'narr',t:`¡Se ha convertido en ${EVO[t].n}!`},{who:'narr',t:EVO[t].d},{who:'narr',t:`Vence a ${EVO[t].fin[1]}, al fondo, para que la evolución sea para siempre.`}],()=>{if(!R)return;R.st.evo=true;R.st.dmg*=1.3;R.pendingPerk=0;jing('level');FT.push({x:R.p.x,y:R.p.y-60,t:EVO[t].n,c:EVO[t].col,life:2.2,vy:-14,big:1});});},1500);}
 function drawEvoFx(){const f=R.evoFx;if(!f)return;const k=f.t,p=R.p,ax=P2(p.x),ay=P2(p.y),c=EVO[R.evo].col;
  const a=k<.3?k/.3:k<1.2?1:Math.max(0,1-(k-1.2)/.4);if(a<=0)return;
  bx.globalAlpha=.35*a;rect(c,ax-6,ay-200,12,200);bx.globalAlpha=.6*a;rect('#ffffff',ax-2,ay-200,4,200);
  for(let i=0;i<12;i++){const an=T*3+i*.524,d=26*(1-Math.min(1,k/1.2))+6;bx.globalAlpha=a;rect(i%2?c:'#ffffff',ax+Math.round(Math.cos(an)*d),ay-10+Math.round(Math.sin(an)*d*.6),2,2);}
  if(k>1&&k<1.25){bx.globalAlpha=(1.25-k)*3;rect('#ffffff',CX,CY,BW,BH);}bx.globalAlpha=1;}
-function evoDoneMsg(t){say([{who:'narr',t:`${EVO[t].fin[1]} se desvanece. La ${EVO[t].n} ya no volverá a dormirse.`},{who:'gus',t:'Lo he notado desde mi forja. Esa arma ya no duerme: ahora es tuya de verdad.'}]);}
+function evoDoneMsg(t){say([{who:'narr',t:`${EVO[t].fin[1]} se desvanece. ${wArt(t,1)} ${EVO[t].n} ya no volverá a dormirse.`},{who:'gus',t:'Lo he notado desde mi forja. Esa arma ya no duerme: ahora es tuya de verdad.'}]);}
 /* ---- mechanics of evolved weapons (called after each hit) ---- */
 function evoShot(x,y,a,o){const W=WEAPONS[R.st.wt];R.ps.push(Object.assign({x,y,vx:Math.cos(a)*W.spd,vy:Math.sin(a)*W.spd,kind:W.kind,r:W.r,col:W.col,pierce:0,bounce:0,wall:0,hit:new Set(),life:1.2,t:0,ret:false,spd:W.spd},o));}
 function evoOnHit(e,s){if(!R.st.evo)return;const a=Math.atan2(s.vy,s.vx);
@@ -6882,6 +6883,110 @@ Object.defineProperty(HPH[HPH.length-1],'hint',{get:()=>S?veletaSteps():'',confi
    {who:'tobias',t:'Dos trozos los tiré por la Senda de las Canteras, el otro se quedó en la Fragua Partida. Si alguna vez los encuentras... no sé. Quizá sea hora de arreglar las cosas.'}],()=>{refreshAll();save();});return;}
  return o(id);};}
 {const g=GUIDE.find(x=>x.id==='taxi');if(g){g.where='Perchas de madera repartidas por el valle. Y, si la construyes en la mesa de trabajo, una en tu granja.';g.what='Viaja volando entre las paradas donde ya has estado. Tu granja también puede ser una parada.';}}
+
+/* ================= v30 ================= */
+/* ---------- 1. Weapon trials: ten rooms (guardian in 5, final boss in 10), and no crash once Cardo is beaten ---------- */
+/* the loot table had five tiers but the valley now has six guardians: with Cardo beaten the trial had no drops and every room clear crashed */
+TIERDROPS.push(['ceniza','brasa','escama','hierro']);
+const EVOROOMS=10,EVOMID=5;
+{const o=evoRunSetup;evoRunSetup=function(t){o(t);R.rooms=EVOROOMS;R.midRoom=EVOMID;const k='evo_'+t;if(!REG[k].drops||!REG[k].drops.length)REG[k].drops=TIERDROPS[TIERDROPS.length-1];
+ R.label=`${REG[k].n} ${R.room}/${R.rooms}`;const el=$('#rLbl');if(el)el.textContent=R.label;};}
+{const o=openEvoPortal;openEvoPortal=function(){o();const p=document.querySelector('#ov .sub');if(p&&S.evo&&S.evo.active){const X=EVO[S.evo.active.t];p.textContent=`Un camino de ${EVOROOMS} salas hecho para ${wArt(S.evo.active.t)} ${WEAPONS[S.evo.active.t].n}. En la ${EVOMID} te espera ${X.mid[1]}; al fondo, ${X.fin[1]}.`;}};}
+
+/* ---------- 2. The Heart's chamber: the last fight always happens in the same place ---------- */
+/* the Heart's chamber: painted once (static), animated on top */
+const FINBG={c:null,veins:null,x0:-34,y0:0,w:262,h:440};
+function hsh(n){const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s);}
+function paintFinBG(ax0,ax1,ay0,ay1){const W=FINBG.w,H=FINBG.h,ox=FINBG.x0,oy=FINBG.y0,c=mkCanvas(W,H),g=c.getContext('2d');
+ const X=x=>x-ox,Y=y=>y-oy,px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(Math.round(X(x)),Math.round(Y(y)),w||1,h||1);};
+ g.fillStyle='#0d080e';g.fillRect(0,0,W,H);
+ /* floor: dark earth, speckles, cracked slabs */
+ g.fillStyle='#211620';g.fillRect(X(ax0),Y(ay0),ax1-ax0,ay1-ay0);
+ for(let i=0;i<900;i++){const x=ax0+hsh(i)*(ax1-ax0),y=ay0+hsh(i+.5)*(ay1-ay0);px(i%3?'#2a1c28':'#181018',x,y,i%7?1:2,1);}
+ for(let i=0;i<26;i++){let x=ax0+hsh(i*3.3)*(ax1-ax0),y=ay0+30+hsh(i*7.1)*(ay1-ay0-40);for(let k=0;k<9;k++){px('#120a10',x,y,2,1);x+=hsh(i*11+k)*6-3;y+=1+hsh(i*13+k)*2;}}
+ for(let i=0;i<40;i++){const x=ax0+hsh(i*2.7)*(ax1-ax0),y=ay0+hsh(i*4.1)*(ay1-ay0),w=10+hsh(i*6.6)*14,h=6+hsh(i*8.8)*8;px('#271a25',x,y,w,h);px('#2f2130',x,y,w,1);px('#170e15',x,y+h,w,1);}
+ for(let i=0;i<30;i++){const x=ax0+hsh(i*9.7)*(ax1-ax0),y=ay0+hsh(i*5.3)*(ay1-ay0);for(let k=0;k<6;k++)px(k%2?'#3a2a32':'#33242c',x+hsh(i+k)*8,y+hsh(i*2+k)*5,2,1);}
+ for(let i=0;i<22;i++){const x=ax0+8+hsh(i*12.1)*(ax1-ax0-16),y=ay0+20+hsh(i*3.9)*(ay1-ay0-30),d=hsh(i)<.5?1:-1;for(let k=0;k<5;k++)px('#3c2430',x+k*d,y-(k>>1),1,1);px('#6a4a58',x+5*d,y-3,1,1);}
+ /* ritual ring in the middle of the floor */
+ const cx=(ax0+ax1)/2,cy=ay0+(ay1-ay0)*.5;
+ for(let a=0;a<6.283;a+=.012){const r1=70,r2=62;px('#33223e',cx+Math.cos(a)*r1,cy+Math.sin(a)*r1*.62);px('#2c1d36',cx+Math.cos(a)*r2,cy+Math.sin(a)*r2*.62);}
+ for(let i=0;i<12;i++){const a=i/12*6.283,x=cx+Math.cos(a)*66,y=cy+Math.sin(a)*66*.62;px('#4a3060',x-1,y-1,3,1);px('#4a3060',x,y-2,1,3);}
+ /* veins: dark grooves from the heart down the floor (kept for the glow) */
+ const hx=cx,hy=ay0+52,V=[];
+ const ends=[[ax0+8,ay0+120],[ax0+22,ay1-40],[cx-38,ay1-10],[cx+6,ay1-4],[cx+44,ay1-14],[ax1-20,ay1-60],[ax1-8,ay0+140]];
+ ends.forEach(([ex,ey],i)=>{const mx=(hx+ex)/2+(hsh(i*5)-.5)*60,my=(hy+ey)/2+(hsh(i*9)-.5)*60,pts=[];for(let k=0;k<=240;k++){const t=k/240,u=1-t;pts.push([u*u*hx+2*u*t*mx+t*t*ex,u*u*hy+2*u*t*my+t*t*ey]);}V.push(pts);
+  for(const[x,y] of pts)px('#120810',x-1,y-1,3,3);for(const[x,y] of pts)px('#341a3e',x,y,1,1);});
+ FINBG.veins=V;
+ /* side walls: tangled roots */
+ const vine=(p0,p1,p2,r0,r1,C)=>{const n=40;for(let pass=0;pass<3;pass++)for(let i=0;i<=n;i++){const t=i/n,u=1-t,x=u*u*p0[0]+2*u*t*p1[0]+t*t*p2[0],y=u*u*p0[1]+2*u*t*p1[1]+t*t*p2[1],r=r0+(r1-r0)*t,rr=pass===0?r+1:pass===1?r:Math.max(0,r-1.6);
+   if(pass===2&&r<1.5)continue;g.fillStyle=C[pass];for(let yy=-Math.ceil(rr);yy<=Math.ceil(rr);yy++){const k=Math.floor(Math.sqrt(Math.max(0,rr*rr-yy*yy))+.35);g.fillRect(Math.round(X(x-(pass===2?rr*.35:0)))-k,Math.round(Y(y-(pass===2?rr*.45:0)))+yy,k*2+1,1);}}};
+ const RC=['#07040a','#2a1622','#46283a'],RC2=['#07040a','#33192a','#5a3048'];
+ for(const side of [-1,1]){const wx=side<0?ax0:ax1;
+  for(let i=0;i<14;i++){const y0=ay0-30+i*30+hsh(i+side)*14;vine([wx+side*30,y0],[wx+side*(4+hsh(i)*10),y0+16],[wx+side*20,y0+44],4.5,2.2,i%2?RC:RC2);}
+  for(let i=0;i<9;i++){const y=ay0+20+i*44+hsh(i*3+side)*20;vine([wx+side*26,y],[wx-side*2,y+8],[wx-side*6+side*hsh(i)*4,y+22],2.2,.8,RC2);}
+  for(let i=0;i<10;i++){const y=ay0+10+i*42+hsh(i*7+side)*16,x=wx+side*(6+hsh(i*5)*12);px('#131b1b',x-2,y-2,5,5);px('#7a3a9a',x-1,y-1,3,3);px('#d8a8ff',x-1,y-1,1,1);}}
+ /* the top: a wall of roots behind the heart */
+ for(let i=0;i<12;i++){const x0=ax0-20+i*20;vine([x0,ay0-60],[x0+10*(i%2?1:-1),ay0-20],[x0+(hsh(i)-.5)*30,ay0+6],5,2,i%2?RC:RC2);}
+ g.fillStyle='rgba(0,0,0,.35)';g.fillRect(X(ax0),Y(ay0),ax1-ax0,6);
+ /* the Withered Heart */
+ const hc=[cx,ay0+24];
+ const lobe=(x,y,r,col)=>{g.fillStyle=col;for(let yy=-r;yy<=r;yy++){const k=Math.round(Math.sqrt(r*r-yy*yy));g.fillRect(Math.round(X(x))-k,Math.round(Y(y))+yy,k*2+1,1);}};
+ const heart=(sc,col,dy)=>{lobe(hc[0]-20*sc,hc[1]-14*sc+dy,Math.round(22*sc),col);lobe(hc[0]+20*sc,hc[1]-14*sc+dy,Math.round(22*sc),col);
+  g.fillStyle=col;for(let yy=0;yy<=Math.round(40*sc);yy++){const k=Math.round((42*sc)*(1-yy/(40*sc)));g.fillRect(Math.round(X(hc[0]))-k,Math.round(Y(hc[1]-6*sc+dy))+yy,k*2+1,1);}};
+ heart(1.06,'#07040a',0);heart(1,'#3a0c24',0);heart(.86,'#561434',-2);heart(.6,'#741c44',-5);heart(.34,'#8e2a58',-8);
+ for(let i=0;i<9;i++){const a=-2.6+i*.65;vine([hc[0]+Math.cos(a)*44,hc[1]-14+Math.sin(a)*30],[hc[0]+Math.cos(a+.5)*20,hc[1]-6+Math.sin(a+.5)*14],[hc[0]+Math.cos(a+1.2)*36,hc[1]+Math.sin(a+1.2)*26],2.6,1.2,['#07040a','#2a1020','#4a2034']);}
+ for(let i=0;i<5;i++){const a=.6+i*.48;vine([hc[0]+Math.cos(a)*8,hc[1]+30],[hc[0]+Math.cos(a)*30,hc[1]+38],[hc[0]+Math.cos(a)*58,hc[1]+52+i*3],3,1,RC);}
+ let cxk=hc[0],cyk=hc[1]-30;for(let k=0;k<40;k++){px('#1a0410',cxk-1,cyk,3,1);px('#ff6ac0',cxk,cyk,1,1);cxk+=(hsh(k*3)-.5)*2.4;cyk+=1;}
+ for(let i=0;i<14;i++){const a=hsh(i*17)*6.283,r=18+hsh(i*19)*26;px('#e8b0d0',hc[0]+Math.cos(a)*r,hc[1]-12+Math.sin(a)*r*.7);}
+ FINBG.c=c;FINBG.hx=hc[0];FINBG.hy=hc[1]-10;return c;}
+const finRoom=()=>!!(R&&R.region==='raiz'&&!R.abyss&&!R.evo&&R.room>=R.rooms&&R.rooms>=6);
+{const o=nextRoom;nextRoom=function(){o();if(finRoom()){R.obs=[];R.deco=[];R.seed=4242;R.heartFx=null;R.cardoDown=null;}};}
+function finBeat(){const per=R.cardoDown?2.3:1.15,b=(T%per)/per;return Math.exp(-b*7)+.45*Math.exp(-Math.abs(b-.22)*18);}
+function drawFinBG(){const A=arena(),ax0=P2(A.x0),ax1=P2(A.x1),ay0=P2(A.y0),ay1=P2(A.y1);
+ if(!FINBG.c||FINBG.k!==ax0+','+ay0+','+ax1+','+ay1){FINBG.h=Math.max(440,ay1+40);paintFinBG(ax0,ax1,ay0,ay1);FINBG.k=ax0+','+ay0+','+ax1+','+ay1;}
+ bx.drawImage(FINBG.c,FINBG.x0,FINBG.y0);
+ const H=R.heartFx,pu=H&&!H.good?0:finBeat(),hx=FINBG.hx,hy=FINBG.hy;
+ /* the veins carry the beat down to the floor */
+ FINBG.veins.forEach((pts,i)=>{const n=pts.length;bx.globalAlpha=.1+.18*pu;bx.fillStyle='#8a3ab0';for(let k=0;k<n;k+=4)bx.fillRect(Math.round(pts[k][0]),Math.round(pts[k][1]),1,1);
+  if(!H||H.good){const head=((T*.55+i*.137)%1)*n;for(let k=0;k<26;k++){const j=Math.floor(head-k*1.5);if(j<0||j>=n)continue;bx.globalAlpha=(1-k/26)*(H?.5:.85);bx.fillStyle=H?'#bff0c0':k<4?'#ffd0f0':'#c070ff';bx.fillRect(Math.round(pts[j][0]),Math.round(pts[j][1]),1,1);}}});
+ /* the Heart itself */
+ bx.globalAlpha=.12+.22*pu;pxDisk(hx,hy+6,Math.round(46+6*pu),H?(H.good?'#5ad08a':'#4a4a4a'):'#b02a78');bx.globalAlpha=.35+.5*pu;pxDisk(hx,hy+6,Math.round(5+3*pu),H?(H.good?'#e8fff0':'#2a2a2a'):'#ff6ac0');bx.globalAlpha=1;
+ if(H){H.t=(H.t||0)+1/60;const k=Math.min(1,H.t/2);
+  if(H.good){bx.globalAlpha=.3*k;pxDisk(hx,hy+4,30,'#9ff0b8');bx.globalAlpha=k;const ly=hy+4;for(let i=0;i<6;i++){const a=i/6*6.283+T*.3;rect('#ffffff',hx+Math.round(Math.cos(a)*5)-1,ly+Math.round(Math.sin(a)*4)-1,3,2);}rect('#fff6c0',hx-1,ly-1,3,3);
+   for(let i=0;i<5;i++){const q=(T*.6+i/5)%1;bx.globalAlpha=(1-q)*k;rect('#e8fff0',hx-20+i*10,ly-Math.round(q*40),1,2);}}
+  else{bx.globalAlpha=.55*k;pxDisk(hx,hy+4,40,'#3a3a3a');bx.globalAlpha=k;for(let i=0;i<6;i++){const a=-1.2+i*.5;let x=hx,y=hy;for(let s=0;s<14;s++){rect('#0d0d0d',Math.round(x),Math.round(y),1,1);x+=Math.cos(a)*1.6;y+=Math.sin(a)*1.6+.4;}}
+   for(let i=0;i<8;i++){const q=(T*.5+i/8)%1;bx.globalAlpha=(1-q)*.8;rect('#d8d8d8',hx-30+i*8,hy+10-Math.round(q*60),1,1);}}bx.globalAlpha=1;}
+ /* ash drifting up from the floor */
+ const w=ax1-ax0,hh=ay1-ay0;for(let i=0;i<34;i++){const sp=8+hsh(i*3)*14,y=ay1-((T*sp+hsh(i*5)*hh)%hh),x=ax0+hsh(i)*w+Math.sin(T*.7+i)*5;bx.globalAlpha=.25+.3*hsh(i*7);rect(i%4?'#8a7a8a':'#c070ff',Math.round(x),Math.round(y),1,1);}bx.globalAlpha=1;
+ /* the marks have to stay readable on top of the new floor */
+ for(const m of R.marks){const k=1-m.t/m.max,MC=m.k==='root'?['#8a5a2a','#ffcf8a']:m.k==='hail'?['#5ab0e0','#e8f8ff']:['#ff5d4a','#ffb0a0'];bx.globalAlpha=.25+.35*k;pxDisk(P2(m.x),P2(m.y),Math.max(1,Math.round(m.r/2*k)),MC[0]);bx.globalAlpha=.9;pxRing(P2(m.x),P2(m.y),Math.round(m.r/2),MC[1]);bx.globalAlpha=1;}}
+{const o=drawFinaleGround;drawFinaleGround=function(){if(finRoom())try{drawFinBG();}catch(e){console.warn(e);}o();if(R&&R.cardoDown)drawCardoDown();};}
+/* a dark edge around the chamber */
+{const o=drawFinaleFx;drawFinaleFx=function(){o();if(!finRoom())return;const g=bx.createRadialGradient(CX+BW/2,CY+BH*.5,BH*.32,CX+BW/2,CY+BH*.5,BH*.62);g.addColorStop(0,'rgba(10,4,14,0)');g.addColorStop(1,'rgba(10,4,14,.55)');bx.fillStyle=g;bx.fillRect(CX,CY,BW,BH);};}
+
+/* ---------- 3. Cardo's defeat is told where it happens: in the Heart's chamber ---------- */
+function drawCardoDown(){const D=R.cardoDown,im=IMG.b_Cardo;if(!im)return;D.t=(D.t||0)+1/60;const ax=P2(D.x),ay=P2(D.y),W=36,H=30;
+ shadowAt(ax,ay+16,22,.7);bx.drawImage(im,0,0,32,32,ax-17,ay-16,34,34);bx.globalAlpha=.25;pxDisk(ax,ay,14,'#1a0d1e');bx.globalAlpha=1;
+ if(D.t<3){for(let i=0;i<3;i++){const q=(D.t*1.3+i/3)%1;bx.globalAlpha=(1-q)*(1-D.t/3);rect(i%2?'#b28cff':'#2a1a30',ax-8+i*8,ay-12-Math.round(q*26),2,2);}bx.globalAlpha=1;}}
+const CARDO_OUTRO=OUTRO.cardo;
+{const o=OUTRO.cardo;OUTRO.cardo=()=>S&&S.flags.cardoOutroIn?[{who:'narr',t:'El portal te devuelve a la superficie, a tu granja.'}]:o();}
+{const o=kill;kill=function(e){const fin=e&&e.key==='cardo'&&finRoom()&&!R.abyss;o(e);if(fin&&!R.cardoDown)R.cardoDown={x:e.x,y:e.y,t:0};};}
+const eiraGoodEnd=()=>hearts('eira')>=6||(S.flags.otra&&hearts('eira')>=4);
+{const o=spawnExitPortal;spawnExitPortal=function(){if(!finRoom()||R.storyBoss!=='cardo'||S.bossDone.cardo||S.flags.cardoOutroIn||R.outroOn)return o();R.outroOn=1;R.p.inv=99;
+ const good=eiraGoodEnd(),L=CARDO_OUTRO();
+ cutRun([{wait:1.4},{say:L},...(good?[{fn:()=>{const A=arena();(R.allies=R.allies||[]).push({id:'eira',k:'OldWoman',n:'Eira',x:180,y:A.y1+40,tx:150,ty:A.y0+200,face:1,dir:'up',walk:0,tag:3});}},{wait:2.6}]:[]),{fn:()=>{R.heartFx={good,t:0};snd(good?'heal':'boom',.8,good?1:.6);shake=good?2:8;}},{wait:1.6},
+  {say:good?[{who:'narr',t:'Pones la mano sobre el Corazón. No golpeas: plantas un lirio de luz en la herida.'},{who:'eira',t:'...Late distinto. Como tierra después de llover.'},{who:'eira',t:'Me quedo, brote. Alguien tendrá que vigilar lo que queda aquí abajo. Y quiero conocerte sin ceniza en los ojos.'}]
+   :[{who:'narr',t:'El Corazón se rompe y la Marchitez se deshace en ceniza blanca.'}]},
+  {fn:()=>{S.flags.cardoOutroIn=1;S.flags.cardoGoodIn=good?1:0;save();R.p.inv=1;o();}}]);};}
+{const o=ending;ending=function(){if(!S.flags.cardoOutroIn)return o();endingNow=true;const good=eiraGoodEnd();S.flags.eiraGood=good?1:0;S.flags.eiraTree=good?0:1;S.flags.post=1;S.ch=POSTCH;S.stage='post';placeNPCs();
+ const G=good?[{who:'narr',t:'Arriba, el valle huele a tierra después de llover.'}]:[{who:'narr',t:'A la mañana siguiente, junto a tu granja, hay un árbol de corteza plateada que ayer no estaba.'},{who:'narr',t:'Cuando sopla el viento, huele a manzana.'}];
+ say(G,()=>cineFinale(good));save();};}
+/* once he has said his piece, leaving the chamber by any door counts as the win */
+{const o=endRun;endRun=function(kind){if(kind!=='win'&&R&&!R.ended&&R.cardoDown&&finRoom()&&S.flags.cardoOutroIn&&!S.bossDone.cardo)kind='win';return o(kind);};}
+/* no "▲ Sigue" over the Heart: the way out is the portal */
+{const o=drawRun;drawRun=function(){if(R&&R.cleared&&finRoom()){R.cleared=false;try{o();}finally{if(R)R.cleared=true;}return;}o();};}
+/* while Cardo's story is told, the others still walk */
+{const o=cutTick;cutTick=function(dt){o(dt);if(R&&R.cardoDown&&R.allies)moveAllies(dt);};}
 
 
 /* ================= BOOT ================= */
